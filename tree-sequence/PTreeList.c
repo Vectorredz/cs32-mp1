@@ -60,7 +60,7 @@ typedef struct _PTreeList {
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 
-void _getHighestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
+void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
     int k = 0;
     int pow = 1;
     while (pow < num){
@@ -106,7 +106,7 @@ void _constructPTreesFromRange(DATA* seq, LENGTH lower, LENGTH upper, PTreeListN
     while (currentStart <= upper){
         printf("-------------\n");
         LENGTH l, k;
-        _getHighestPowerOfTwo((upper-currentStart) + 1, &l, &k);
+        _getGreatestPowerOfTwo((upper-currentStart) + 1, &l, &k);
         printf("%d, %d, %d, %d, %d\n", (upper-lower)+1, k, l, currentStart, upper);
 
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
@@ -216,11 +216,11 @@ void set(PTreeList* list, LENGTH i, DATA v){
 
 int main(){
     // TODO: REVERT TYPEDEFS TO INT64_T AND SIZE_T
-    int n = 5;
-    DATA seq[5] = {1, 2, 3, 4, 5};
-    PTreeList* list = make(seq, 5);
+    int n = 1;
+    DATA seq[17] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+    PTreeList* list = make(seq, n);
     printf("Pass.");
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < n; i++){
         printf("Yeah: %d, %d\n", get(list, i), _getPTreeNodeAtIndex(list, i)->index);
     }
 }
