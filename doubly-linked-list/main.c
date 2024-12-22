@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "dynamic_array.h"
+#include "dynamic_list.h"
+
+// Build linked list 
 
 list *make(int n, int64_t *seq){
     node *head = malloc(sizeof(node));
@@ -35,9 +37,13 @@ list *make(int n, int64_t *seq){
 }
 
 void push_left(list *l, int64_t v);
+// TODO
 void push_right(list *l, int64_t v);
+// TODO
 bool pop_left(list *l);
+// TODO
 bool pop_right(list *l);
+// TODO
 
 int64_t peek_left(list *l){
     return l->head->left;
@@ -60,9 +66,13 @@ bool empty(list *l){
 }
 
 int64_t get(list *l, int i);
+// TODO
 
 void set(list *l, int i, int64_t v);
+// TODO
+
 void reverse(list *l);
+// TODO
 
 void display(list *head){
     list *curr = head;

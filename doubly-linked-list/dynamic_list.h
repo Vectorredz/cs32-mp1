@@ -1,5 +1,5 @@
-#ifndef IMBALANCES_H
-#define IMBALANCES_H
+#ifndef DYNAMIC_LIST_H
+#define DYNAMIC_LIST_H
 
 #include <stdbool.h>
 #include <stdint.h>
