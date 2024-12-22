@@ -50,6 +50,7 @@ typedef struct _PTreeList {
     LENGTH n;
     PTreeListNode* head;
     PTreeListNode* tail;
+    bool reverse;
 } PTreeList;
 
 // --------------------------------------------------------- >>
@@ -204,24 +205,47 @@ PTreeList* make(DATA* seq, LENGTH n){
     list->n = n;
     list->head = head;
     list->tail = tail;
+    list->reverse = false;
     return list;
 }
+
+
+LENGTH size(PTreeList* list){
+    return list->n;
+}
+bool empty(PTreeList* list){
+    return size(list) == 0;
+}
+
 DATA get(PTreeList* list, LENGTH i){
-    return _getPTreeNodeAtIndex(list, i)->data;
+    return _getPTreeNodeAtIndex(list, list->reverse == false ? i : (list->n)-1-i)->data;
 }
 void set(PTreeList* list, LENGTH i, DATA v){
-    _getPTreeNodeAtIndex(list, i)->data = v;
+    _getPTreeNodeAtIndex(list, list->reverse == false ? i : (list->n)-1-i)->data = v;
+}
+DATA peek_left(PTreeList* list){
+    return get(list, 0);
+}
+DATA peek_right(PTreeList* list){
+    return get(list, (list->n)-1);
+}
+
+void reverse(PTreeList* list){
+    list->reverse = !(list->reverse);
 }
 
 
 int main(){
     // TODO: REVERT TYPEDEFS TO INT64_T AND SIZE_T
-    int n = 1;
+    int n = 17;
     DATA seq[17] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
     PTreeList* list = make(seq, n);
     printf("Pass.");
+    reverse(list);
     for (int i = 0; i < n; i++){
         printf("Yeah: %d, %d\n", get(list, i), _getPTreeNodeAtIndex(list, i)->index);
     }
+    printf("LEFT: %d\n", peek_left(list));
+    printf("RIGHT: %d\n", peek_right(list));
 }
 
