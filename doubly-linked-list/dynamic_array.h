@@ -4,9 +4,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct list{
+typedef struct node{
     int val;
-    struct list *next;
+    struct node*left;
+    struct node *right;
+} node;
+
+typedef struct list{
+    struct node *head;
+    struct node *tail;
+    int size;
+    bool reversed;
 } list;
 
 list *make(int n, int64_t *seq);
