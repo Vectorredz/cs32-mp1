@@ -1,15 +1,16 @@
 #ifndef DYNAMIC_LIST_H
 #define DYNAMIC_LIST_H
-//test branch
 #include <stdbool.h>
 #include <stdint.h>
 
+// ADT for a doubly-linked list node
 typedef struct node{
-    int val;
+    int64_t val;
     struct node*left;
     struct node *right;
 } node;
 
+// ADT for a doubly-linked list 
 typedef struct list{
     struct node *head;
     struct node *tail;

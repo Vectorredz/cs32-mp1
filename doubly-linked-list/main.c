@@ -1,13 +1,6 @@
-
-
-
-
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "dynamic_list.h"
-
 
 list *make(int n, int64_t *seq){
     node *head = malloc(sizeof(node));
@@ -17,8 +10,7 @@ list *make(int n, int64_t *seq){
     ptr->size = n;
     curr->right = NULL;
     if (n == 0){
-        ptr = NULL;
-        return ptr;
+        return NULL;
     }
     else {
         for (int i = 0; i < n; i++){
@@ -41,20 +33,77 @@ list *make(int n, int64_t *seq){
     }
 }
 
-void push_left(list *l, int64_t v);
-// TODO
-void push_right(list *l, int64_t v);
-// TODO
-bool pop_left(list *l);
-// TODO
-bool pop_right(list *l);
-// TODO
+void push_left(list *l, int64_t v){
+    node *curr = malloc(sizeof(node));
+    curr->val = v;
+    curr->right = curr->left = NULL;
+    if (l->head == NULL){
+        l->head = l->tail = curr;
+    }
+    else {
+        curr->right = l->head;
+        l->head->left = curr;
+        l->head = curr;
+    }
+}
+
+void push_right(list *l, int64_t v){
+    node *curr = malloc(sizeof(node));
+    curr->val = v;
+    curr->left = curr->right = NULL;
+    if (l->tail == NULL){
+        l->head = l->tail = curr;
+    }
+    else {
+        curr->left = l->tail;
+        l->tail->right = curr;
+        l->tail = curr;
+    }
+}
+
+bool pop_left(list *l){
+    node *curr = l->head;
+    node *next = curr->right;
+    if (l->head == NULL && l->tail == NULL){
+        return false;
+    }
+    if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){
+        l->tail = l->head = NULL;
+        return false;
+    }
+    else{
+        curr->right = NULL;
+        next->left = NULL;
+        l->head = next;
+        return true;
+    }
+}
+
+bool pop_right(list *l){
+    node *curr = l->tail;
+    node *prev = curr->left;
+    if (l->head == NULL && l->tail == NULL){
+        return false;
+    }
+    if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){
+        l->tail = l->head = NULL;
+        return false;
+    }
+    else{
+        curr->left = NULL;
+        prev->right = NULL;
+        l->tail = prev;
+        return true;
+    }
+}
 
 int64_t peek_left(list *l){
-    return l->head->left;
+    node *curr = l->head;
+    return curr->val;
 }
 int64_t peek_right(list *l){
-    return l->head->right;
+    node *curr = l->tail;
+    return curr->val;
 }
 
 int size(list *l){
@@ -70,22 +119,50 @@ bool empty(list *l){
     }
 }
 
-int64_t get(list *l, int i);
-// TODO
-
-void set(list *l, int i, int64_t v);
-// TODO
-
-void reverse(list *l);
-// TODO
-
-void display(list *head){
-    list *curr = head;
-
-    while (curr->head){
-        printf("%d <-> ", curr->head->val);
-        curr->head = curr->head->right;
+int64_t get(list *l, int i){
+    node *curr = l->head;
+    if (i < 0){
+        return 0;
     }
+    if (i >= size(l)){
+        return 0;
+    }
+    int j = 0;
+    while (j != i-1){
+        curr = curr->right;
+        j++;
+    }
+    return curr->val;
+}
+
+void set(list *l, int i, int64_t v){
+    node *curr = l->head;
+    if (i < 0){
+        return;
+    }
+    if (i >= size(l)){
+        return;
+    }
+    int j = 0;
+    while (j != i){
+        curr = curr->right;
+        j++;
+    }
+    curr->val = v;
+
+}
+
+void reverse(list *l){
+    l->reversed = !(l->reversed);
+}
+
+void display(list *l){
+    node *curr = l->head;
+    while (curr){
+        printf("%ld <-> ", curr->val);
+        curr = curr->right;
+    }
+    printf("NULL\n");
 }
 
 int main(){
@@ -95,8 +172,4 @@ int main(){
         array[i] = i;
     }
     list *head = make(n, array);
-    display(head);
-    int ret = size(head);
-    printf("%d ", ret);
-
 }
