@@ -397,7 +397,7 @@ bool _pop_right_base(PTreeList* list){
     }
     (list->n)--;
 
-    PTree* rightPTree = list->head->ptree;
+    PTree* rightPTree = list->tail->ptree;
     if (rightPTree->k == 0){
         list->tail = list->tail->prev;
         return true;
