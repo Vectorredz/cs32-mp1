@@ -18,6 +18,7 @@ typedef struct list{
     bool is_reversed;
 } list;
 
+list init(void);
 list *make(int n, int64_t *seq);
 void push_left(list *l, int64_t v);
 void push_right(list *l, int64_t v);

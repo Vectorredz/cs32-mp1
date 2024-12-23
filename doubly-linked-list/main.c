@@ -8,6 +8,11 @@
 
 //*-------------------------------------------------------------*//
 
+list init(void){
+    list l = {NULL, NULL, 0,0};
+    return l;
+}
+
 list *make(int n, int64_t *seq){
     node *head = malloc(sizeof(node));
     list *ptr = malloc(sizeof(list));
@@ -96,7 +101,6 @@ void push_right(list *l, int64_t v){
             l->head = curr;
         }
     }
-   
 }
 
 bool pop_left(list *l){
@@ -259,13 +263,4 @@ void display(list *l){
         curr = curr->right;
     }
     printf("NULL\n");
-}
-
-int main(){
-    int n = 1;
-    int64_t *array = malloc(n * sizeof(int64_t));
-    for (int i = 0; i < n; i++){
-        array[i] = i;
-    }
-    list *head = make(n, array);
 }
