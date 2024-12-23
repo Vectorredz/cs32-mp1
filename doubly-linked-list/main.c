@@ -1,8 +1,13 @@
+
+
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "dynamic_list.h"
 
-// Build linked list 
 
 list *make(int n, int64_t *seq){
     node *head = malloc(sizeof(node));
