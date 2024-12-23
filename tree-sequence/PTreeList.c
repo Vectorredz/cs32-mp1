@@ -379,8 +379,8 @@ bool _pop_left_base(PTreeList* list){
         return true;
     }
 
-    PTreeListNode* head;
-    PTreeListNode* tail;
+    PTreeListNode* head = NULL;
+    PTreeListNode* tail = NULL;
     _cascadeRemoval(leftPTree, &head, &tail);
     tail->next = list->head->next;
     if (tail->next != NULL){
@@ -403,8 +403,8 @@ bool _pop_right_base(PTreeList* list){
         return true;
     }
 
-    PTreeListNode* head;
-    PTreeListNode* tail;
+    PTreeListNode* head = NULL;
+    PTreeListNode* tail = NULL;
     _cascadeRemoval(rightPTree, &head, &tail);
     head->prev = list->tail->prev;
     if (head->prev != NULL){
