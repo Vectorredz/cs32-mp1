@@ -38,8 +38,8 @@ Perfect Binary Tree / Phantom Segment Tree
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 
-typedef int DATA;
-typedef int LENGTH;
+typedef int64_t DATA;
+typedef size_t LENGTH;
 
 typedef struct _PTreeNode {
     bool leaf;
