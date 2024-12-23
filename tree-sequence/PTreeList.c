@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-
+#include <H_PTreeList.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -25,54 +25,6 @@ Perfect Binary Tree / Phantom Segment Tree
     only revealed once the list and trees are traversed with get/set operations.
 
 */
-
-
-
-
-
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- TYPEDEFS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
-typedef int64_t DATA;
-typedef size_t LENGTH;
-
-typedef struct _PTreeNode {
-    bool leaf;
-    union {
-        // Leaf Node (Contains Data)
-        struct {
-            DATA data;
-        };
-
-        // Non-Leaf Node (Contains Index Segment)
-        struct {
-            struct _PTreeNode* left;
-            struct _PTreeNode* right;
-        };
-    };
-} PTreeNode;
-typedef struct _PTree {
-    LENGTH l; // number of leaf nodes
-    LENGTH k; // power of two
-    PTreeNode* root;
-} PTree;
-
-typedef struct _PTreeListNode {
-    PTree* ptree;
-    struct _PTreeListNode* next;
-    struct _PTreeListNode* prev;
-} PTreeListNode;
-typedef struct _PTreeList {
-    LENGTH n; // number of leaf nodes across all trees
-    PTreeListNode* head;
-    PTreeListNode* tail;
-    bool reverse;
-} PTreeList;
 
 
 
@@ -170,10 +122,9 @@ PTreeNode* _getPTreeNodeAtIndex(PTreeList* list, LENGTH i){
     }
     PTreeListNode* currentListNode = list->head;
     LENGTH offset = 0;
-    printf("----------------------------------\nDesired Index: %d\n", i);
-    while (currentListNode != NULL){
-        printf("----------------\n");
 
+    while (currentListNode != NULL){
+        
         PTree* ptree = currentListNode->ptree;
         PTreeNode* currentTreeNode = ptree->root;
 
@@ -209,7 +160,7 @@ PTreeNode* _getPTreeNodeAtIndex(PTreeList* list, LENGTH i){
                 }
 
             } else {
-                printf("%d, %d\n", lowerBound, upperBound);
+                
                 LENGTH mid = (upperBound+lowerBound)/2;
                 if (lowerBound <= i && i <= mid) {
                     upperBound = mid;
@@ -248,7 +199,7 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
     PTreeListNode* currentListNode = startNode;
     PTreeListNode* nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
     while (currentListNode != NULL && nextListNode != NULL){
-        printf("--------------------------\n");
+        
         PTree* leftPTree = currentListNode->ptree;
         PTree* rightPTree = nextListNode->ptree;
 
@@ -263,9 +214,6 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
         root->leaf = false;
         root->left = leftPTree->root;
         root->right = rightPTree->root;
-        _printLeaves(leftPTree->root);
-        printf("----\n");
-        _printLeaves(rightPTree->root);
 
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
         ptree->l = leftPTree->l + rightPTree->l;
