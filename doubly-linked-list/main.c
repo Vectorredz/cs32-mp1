@@ -268,13 +268,4 @@ int main(){
         array[i] = i;
     }
     list *head = make(n, array);
-    display(head);
-    push_left(head, 1);
-    display(head);
-    reverse(head);
-    push_left(head, 1);
-    display(head);
-    reverse(head);
-    push_left(head, 1);
-    display(head);
 }
