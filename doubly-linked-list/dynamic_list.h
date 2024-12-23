@@ -15,7 +15,7 @@ typedef struct list{
     struct node *head;
     struct node *tail;
     int size;
-    bool reversed;
+    bool is_reversed;
 } list;
 
 list *make(int n, int64_t *seq);
