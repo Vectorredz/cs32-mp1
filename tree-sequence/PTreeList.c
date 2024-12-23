@@ -23,22 +23,20 @@ typedef struct _PTreeNode {
     union {
         // Leaf Node (Contains Data)
         struct {
-            LENGTH index;
             DATA data;
         };
 
         // Non-Leaf Node (Contains Index Segment)
         struct {
-            LENGTH lower;
-            LENGTH upper;
+            struct _PTreeNode* left;
+            struct _PTreeNode* right;
         };
     };
 } PTreeNode;
 typedef struct _PTree {
-    LENGTH c; // number of nodes
     LENGTH l; // number of leaf nodes
     LENGTH k; // power of two
-    PTreeNode** nodes;
+    PTreeNode* root;
 } PTree;
 
 typedef struct _PTreeListNode {
@@ -53,6 +51,8 @@ typedef struct _PTreeList {
     bool reverse;
 } PTreeList;
 
+
+
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
 
@@ -60,6 +60,19 @@ typedef struct _PTreeList {
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
+
+void _printLeaves(PTreeNode* node){
+    if (node->leaf == false){
+        _printLeaves(node->left);
+    }
+    if (node->leaf == true){
+        printf("%d\n", node->data);
+        return;
+    }
+    if (node->leaf == false){
+        _printLeaves(node->right);
+    }
+}
 
 void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
     int k = 0;
@@ -76,58 +89,50 @@ void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
     *kRef = k;
 }
 
-void _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, PTreeNode** nodes, LENGTH index, LENGTH lower, LENGTH upper){
+PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
-    //printf("%d\n", upper-lower+1);
-    if ((upper-lower+1) == 1){
+    
+    if ((upperBound-lowerBound+1) == 1){
         newTreeNode->leaf = true;
-        newTreeNode->index = lower;
-        newTreeNode->data = seq[lower+seqIndexOffset];
-        //printf("TEST: %d, %d\n", newTreeNode->index, seq[lower]);
+        newTreeNode->data = seq[lowerBound+seqIndexOffset];
 
     } else {
         newTreeNode->leaf = false;
-        newTreeNode->lower = lower;
-        newTreeNode->upper = upper;
 
-        LENGTH mid = (upper+lower)/2;
-        //printf("Segment: %d, %d\n", lower, upper);
-        //printf("%d, MID: %d, %d\n", lower, mid, upper);
-        _constructPTreeNodesFromRange(seq, seqIndexOffset, nodes, 2*index + 1, lower, mid);
-        _constructPTreeNodesFromRange(seq, seqIndexOffset, nodes, 2*index + 2, mid+1, upper);
+        LENGTH mid = (upperBound+lowerBound)/2;
+        newTreeNode->left = _constructPTreeNodesFromRange(seq, seqIndexOffset, lowerBound, mid);
+        newTreeNode->right = _constructPTreeNodesFromRange(seq, seqIndexOffset, mid+1, upperBound);
     }
-
-    nodes[index] = newTreeNode;
+    
+    return newTreeNode;
 }
-void _constructPTreesFromRange(DATA* seq, LENGTH lower, LENGTH upper, PTreeListNode** headRef, PTreeListNode** tailRef){
+
+
+void _constructPTreesFromRange(DATA* seq, LENGTH lowerBound, LENGTH upperBound, PTreeListNode** headRef, PTreeListNode** tailRef){
     PTreeListNode* head = NULL;
     PTreeListNode* tail = NULL;
     
-    LENGTH currentStart = lower;
-    while (currentStart <= upper){
-        //printf("-------------\n");
+    LENGTH currentStart = lowerBound;
+    while (currentStart <= upperBound){
         LENGTH l, k;
-        _getGreatestPowerOfTwo((upper-currentStart) + 1, &l, &k);
-        //printf("%d, %d, %d, %d, %d\n", (upper-lower)+1, k, l, currentStart, upper);
+        _getGreatestPowerOfTwo((upperBound-currentStart) + 1, &l, &k);
 
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
-        ptree->c = (1 << (k+1)) - 1;
         ptree->l = l;
         ptree->k = k;
-        ptree->nodes = (PTreeNode**) malloc((ptree->c)*sizeof(PTreeNode*));
-        _constructPTreeNodesFromRange(seq, 0, ptree->nodes, 0, currentStart, currentStart+l-1);
+        ptree->root = _constructPTreeNodesFromRange(seq, currentStart, 0, l-1);
 
-        PTreeListNode* newPTreeListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
-        newPTreeListNode->ptree = ptree;
+        PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
+        newListNode->ptree = ptree;
         if (head == NULL){
-            newPTreeListNode->prev = NULL;
-            head = newPTreeListNode;
-        } else {
-            tail->next = newPTreeListNode;
-            newPTreeListNode->prev = tail;
+            head = newListNode;
         }
-        newPTreeListNode->next = NULL;
-        tail = newPTreeListNode;
+        if (tail != NULL){
+            tail->next = newListNode;
+        }
+        newListNode->prev = tail;
+        newListNode->next = NULL;
+        tail = newListNode;
 
         currentStart += l;
     }
@@ -135,124 +140,122 @@ void _constructPTreesFromRange(DATA* seq, LENGTH lower, LENGTH upper, PTreeListN
     *headRef = head;
     *tailRef = tail;
 }
+
 PTreeNode* _getPTreeNodeAtIndex(PTreeList* list, LENGTH i){
     if (list->n == 0){
         return NULL;
     }
     PTreeListNode* currentListNode = list->head;
+    LENGTH offset = 0;
+    printf("----------------------------------\nDesired Index: %d\n", i);
     while (currentListNode != NULL){
+        printf("----------------\n");
+
         PTree* ptree = currentListNode->ptree;
-        PTreeNode** nodes = ptree->nodes;
-        
-        PTreeNode* root = nodes[0];
-        if (root->leaf == true){
-            //printf("???: %d, %d\n", root->index, i);
-            if (root->index == i){
-                return root;
+        PTreeNode* currentTreeNode = ptree->root;
+
+        LENGTH lowerBound = offset;
+        LENGTH upperBound = offset + ptree->l - 1;
+
+        if (currentTreeNode->leaf == true){
+            if (lowerBound == i){
+                return currentTreeNode;
             } else {
+                offset++;
                 currentListNode = currentListNode->next;
                 continue;
             }
+            
         } else {
-            if (!(root->lower <= i && i <= root->upper)){
+            if (!(lowerBound <= i && i <= upperBound)){
+                offset += ptree->l;
                 currentListNode = currentListNode->next;
                 continue;
             }
         }
 
-        LENGTH currentIndex = 0;
-        while (currentIndex < ptree->c){
-            //printf("Wtf\n");
-            PTreeNode* leftChild = nodes[2*currentIndex + 1];
-            PTreeNode* rightChild = nodes[2*currentIndex + 2];
+        while (currentTreeNode->leaf == false){
+            PTreeNode* leftChild = currentTreeNode->left;
+            PTreeNode* rightChild = currentTreeNode->right;
+
             if (leftChild->leaf == true){
-                //printf("INDEX: %d\n", leftChild->lower);
-                if (leftChild->index == i){
+                if (lowerBound == i){
                     return leftChild;
                 } else {
                     return rightChild;
                 }
+
             } else {
-                if (leftChild->lower <= i && i <= leftChild->upper) {
-                    currentIndex = 2*currentIndex + 1;
+                printf("%d, %d\n", lowerBound, upperBound);
+                LENGTH mid = (upperBound+lowerBound)/2;
+                if (lowerBound <= i && i <= mid) {
+                    upperBound = mid;
+                    currentTreeNode = leftChild;
                 } else {
-                    currentIndex = 2*currentIndex + 2;
+                    lowerBound = mid + 1;
+                    currentTreeNode = rightChild;
                 }
             }
         }
 
+        offset += ptree->l;
         currentListNode = currentListNode->next;
     }
     return NULL;
 }
 
-
 PTree* _constructZeroPTree(DATA v){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
     newTreeNode->leaf = true;
-    newTreeNode->index = 0;
     newTreeNode->data = v;
 
     PTree* ptree = (PTree*) malloc(sizeof(PTree));
-    ptree->c = 1;
     ptree->l = 1;
     ptree->k = 0;
-    ptree->nodes = (PTreeNode**) malloc((ptree->c)*sizeof(PTreeNode*));
-    (ptree->nodes)[0] = newTreeNode;
+    ptree->root = newTreeNode;
 
     return ptree;
 }
 
-void _mergeNonDistinctPTrees(PTreeList* list, bool fromRight){
+void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool traverseLeft){
     if (list->n <= 1){
         return;
     }
-    PTreeListNode* currentListNode = fromRight == false ? list->head : list->tail;
-    PTreeListNode* nextListNode = fromRight == false ? currentListNode->next : currentListNode->prev;
+
+    PTreeListNode* currentListNode = startNode;
+    PTreeListNode* nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
     while (currentListNode != NULL && nextListNode != NULL){
-        printf("-----------------------");
+        printf("--------------------------\n");
         PTree* leftPTree = currentListNode->ptree;
         PTree* rightPTree = nextListNode->ptree;
-        
+
         if (leftPTree->k != rightPTree->k){
-            break;
+            currentListNode = nextListNode;
+            nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
+            continue;
         }
 
         // Construct PTree with the two roots as children
+        PTreeNode* root = (PTreeNode*) malloc(sizeof(PTreeNode));
+        root->leaf = false;
+        root->left = leftPTree->root;
+        root->right = rightPTree->root;
+        _printLeaves(leftPTree->root);
+        printf("----\n");
+        _printLeaves(rightPTree->root);
+
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
-        ptree->c = leftPTree->c + leftPTree->c + 1;
         ptree->l = leftPTree->l + rightPTree->l;
         ptree->k = leftPTree->k + 1;
-        ptree->nodes = (PTreeNode**) malloc((ptree->c)*sizeof(PTreeNode*));
-        
-        DATA* newSeq = (DATA*) malloc((ptree->l)*sizeof(DATA));
-        LENGTH index = 0;
-        for (LENGTH i = (leftPTree->c)-(leftPTree->l); i < (leftPTree->c); i++){
-            newSeq[index] = ((leftPTree->nodes)[i])->data;
-            index++;
-        }
-        for (LENGTH i = (rightPTree->c)-(rightPTree->l); i < (rightPTree->c); i++){
-            newSeq[index] = ((rightPTree->nodes)[i])->data;
-            index++;
-        }
-        printf("The fuck?\n");
-        LENGTH lower = (leftPTree->nodes)[0]->lower;
-        LENGTH upper = (rightPTree->nodes)[0]->upper;
-        printf("Wtf?!?\n");
-        for (LENGTH i = 0; i < ptree->l; i++){
-            printf("%d\n", newSeq[i]);
-        }
-        _constructPTreeNodesFromRange(newSeq, -lower, ptree->nodes, 0, lower, upper);
-
+        ptree->root = root;
 
         // Add to list and link neighbors
         PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
         newListNode->ptree = ptree;
-        newListNode->prev = fromRight == false ? currentListNode->prev : nextListNode->prev;
-        newListNode->next = fromRight == false ? nextListNode->next  : currentListNode->next;
+        newListNode->prev = traverseLeft == false ? currentListNode->prev : nextListNode->prev;
+        newListNode->next = traverseLeft == false ? nextListNode->next  : currentListNode->next;
         if (currentListNode == list->head || nextListNode == list->head){
             list->head = newListNode;
-            printf("Yeahzz\n");
         }
         if (currentListNode == list->tail || nextListNode == list->tail){
             list->tail = newListNode;
@@ -264,12 +267,50 @@ void _mergeNonDistinctPTrees(PTreeList* list, bool fromRight){
             newListNode->next->prev = newListNode;
         }
 
-        printf("K: %d\n", (nextListNode->ptree->nodes)[0]->lower);
         currentListNode = newListNode;
         if (currentListNode != NULL){
-            nextListNode = fromRight == false ? currentListNode->next : currentListNode->prev;
+            nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
         }
     }
+}
+
+void _cascadeRemoval(PTree* ptree, PTreeListNode** headRef, PTreeListNode** tailRef){
+    PTreeListNode* head = NULL;
+    PTreeListNode* tail = NULL;
+
+    LENGTH currentL = ptree->l;
+    LENGTH currentK = ptree->k;
+    PTreeNode* currentTreeNode = ptree->root;
+    while (currentTreeNode != NULL){
+        if (currentTreeNode->leaf == true){
+            currentTreeNode = NULL;
+
+        } else {
+            PTree* rightPTree = (PTree*) malloc(sizeof(PTree));
+            rightPTree->l = currentL/2;
+            rightPTree->k = currentK-1;
+            rightPTree->root = currentTreeNode->right;
+            
+            PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
+            newListNode->ptree = rightPTree;
+            if (tail == NULL){
+                tail = newListNode;
+            }
+            if (head != NULL){
+                head->prev = newListNode;
+            }
+            newListNode->prev = NULL;
+            newListNode->next = head;
+            head = newListNode;
+
+            currentL = currentL / 2;
+            currentK--;
+            currentTreeNode = currentTreeNode->left;
+        }
+    }
+
+    *headRef = head;
+    *tailRef = tail;
 }
 
 
@@ -286,7 +327,7 @@ void _push_left_base(PTreeList* list, DATA v){
     (list->n)++;
 
     // Fix non-distinct types
-    _mergeNonDistinctPTrees(list, false);
+    _mergeNonDistinctPTrees(list, list->head, false);
 }
 void _push_right_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (which is also a leaf)
@@ -301,9 +342,56 @@ void _push_right_base(PTreeList* list, DATA v){
     (list->n)++;
 
     // Fix non-distinct types
-    _mergeNonDistinctPTrees(list, true);
+    _mergeNonDistinctPTrees(list, list->tail, true);
 }
+bool _pop_left_base(PTreeList* list){
+    if (list->n == 0){
+        return false;
+    }
+    (list->n)--;
 
+    PTree* leftPTree = list->head->ptree;
+    if (leftPTree->k == 0){
+        list->head = list->head->next;
+        return true;
+    }
+
+    PTreeListNode* head;
+    PTreeListNode* tail;
+    _cascadeRemoval(leftPTree, &head, &tail);
+    tail->next = list->head->next;
+    if (tail->next != NULL){
+        tail->next->prev = tail;
+    }
+    list->head = head;
+    _mergeNonDistinctPTrees(list, list->head, false);
+
+    return true;
+}
+bool _pop_right_base(PTreeList* list){
+    if (list->n == 0){
+        return false;
+    }
+    (list->n)--;
+
+    PTree* rightPTree = list->head->ptree;
+    if (rightPTree->k == 0){
+        list->tail = list->tail->prev;
+        return true;
+    }
+
+    PTreeListNode* head;
+    PTreeListNode* tail;
+    _cascadeRemoval(rightPTree, &head, &tail);
+    head->prev = list->tail->prev;
+    if (head->prev != NULL){
+        head->prev->next = head;
+    }
+    list->tail = tail;
+    _mergeNonDistinctPTrees(list, list->tail, true);
+
+    return true;
+}
 
 
 // --------------------------------------------------------- >>
@@ -361,6 +449,13 @@ void push_left(PTreeList* list, DATA v){
 void push_right(PTreeList* list, DATA v){
     list->reverse == false ? _push_right_base(list, v) : _push_left_base(list, v);
 }
+bool pop_left(PTreeList* list){
+    return list->reverse == false ? _pop_left_base(list) : _pop_right_base(list);
+}
+bool pop_right(PTreeList* list){
+    return list->reverse == false ? _pop_right_base(list) : _pop_left_base(list);
+}
+
 
 
 
@@ -369,49 +464,43 @@ void push_right(PTreeList* list, DATA v){
 int main(){
     // TODO: REVERT TYPEDEFS TO INT64_T AND SIZE_T
     // TODO: free memory
-    // int n = 17;
-    // DATA seq[17] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
-    // PTreeList* list = make(n, seq);
-    // //printf("Pass.");
-    // reverse(list);
-    // for (int i = 0; i < n; i++){
-    //     //printf("Yeah: %d, %d\n", get(list, i), _getPTreeNodeAtIndex(list, i)->index);
-    // }
-    // //printf("LEFT: %d\n", peek_left(list));
-    // //printf("RIGHT: %d\n", peek_right(list));
+    int n = 17;
+    DATA seq[17] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+    PTreeList* list0 = make(n, seq);
+    printf("Pass.");
+    reverse(list0);
+    for (int i = 0; i < n; i++){
+        printf("Yeah: %d\n", get(list0, i));
+    }
+    printf("LEFT: %d\n", peek_left(list0));
+    printf("RIGHT: %d\n", peek_right(list0));
 
     DATA seq1[4] = {1, 2, 3, 4};
     LENGTH l1, k1;
     _getGreatestPowerOfTwo(4, &l1, &k1);
 
     PTree* ptree1 = (PTree*) malloc(sizeof(PTree));
-    ptree1->c = (1 << (k1+1)) - 1;
     ptree1->l = l1;
     ptree1->k = k1;
-    ptree1->nodes = (PTreeNode**) malloc((ptree1->c)*sizeof(PTreeNode*));
-    _constructPTreeNodesFromRange(seq1, 0, ptree1->nodes, 0, 0, 3);
+    ptree1->root = _constructPTreeNodesFromRange(seq1, 0, 0, 3);
 
     DATA seq2[4] = {5, 6, 7, 8};
     LENGTH l2, k2;
     _getGreatestPowerOfTwo(4, &l2, &k2);
 
     PTree* ptree2 = (PTree*) malloc(sizeof(PTree));
-    ptree2->c = (1 << (k2+1)) - 1;
     ptree2->l = l2;
     ptree2->k = k2;
-    ptree2->nodes = (PTreeNode**) malloc((ptree2->c)*sizeof(PTreeNode*));
-    _constructPTreeNodesFromRange(seq2, -4, ptree2->nodes, 0, 4, 7);
+    ptree2->root = _constructPTreeNodesFromRange(seq2, 0, 0, 3);
 
     DATA seq3[8] = {9, 10, 11, 12, 13, 14, 15, 16};
     LENGTH l3, k3;
     _getGreatestPowerOfTwo(8, &l3, &k3);
 
     PTree* ptree3 = (PTree*) malloc(sizeof(PTree));
-    ptree3->c = (1 << (k3+1)) - 1;
     ptree3->l = l3;
     ptree3->k = k3;
-    ptree3->nodes = (PTreeNode**) malloc((ptree3->c)*sizeof(PTreeNode*));
-    _constructPTreeNodesFromRange(seq3, -8, ptree3->nodes, 0, 8, 15);
+    ptree3->root = _constructPTreeNodesFromRange(seq3, 0, 0, 7);
 
     PTreeList* list = (PTreeList*) malloc(sizeof(PTreeList));
     list->n = 16;
@@ -435,17 +524,25 @@ int main(){
     list->head = a;
     list->tail = c;
 
-    _mergeNonDistinctPTrees(list, false);
+    _mergeNonDistinctPTrees(list, list->head, false);
     printf("??\n");
     PTreeListNode* currentListNode = list->head;
     while (currentListNode != NULL){
         PTree* ptree = currentListNode->ptree;
         printf("KK: %d\n", ptree->k);
-        for (LENGTH i = ptree->c-ptree->l; i < ptree->c; i++){
-            printf("%d\n", (ptree->nodes)[i]->data);
-        }
+        _printLeaves(ptree->root);
+        currentListNode = currentListNode->next;
+        printf("-------------------\n");
+    }
+
+    printf("POP:\n");
+    pop_left(list);
+    currentListNode = list->head;
+    while (currentListNode != NULL){
+        PTree* ptree = currentListNode->ptree;
+        printf("KK: %d\n", ptree->k);
+        _printLeaves(ptree->root);
         currentListNode = currentListNode->next;
         printf("-------------------\n");
     }
 }
-
