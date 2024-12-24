@@ -12,4 +12,4 @@ typedef size_t LENGTH;
 
 
 
-#endif GLOBAL_H
+#endif

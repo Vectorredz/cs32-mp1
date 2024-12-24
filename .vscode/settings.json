@@ -2,6 +2,8 @@
     "files.associations": {
         "stdio.h": "c",
         "stdlib.h": "c",
-        "dynamic_list.h": "c"
+        "dynamic_list.h": "c",
+        "h_ptreelist.h": "c",
+        "h_global.h": "c"
     }
 }

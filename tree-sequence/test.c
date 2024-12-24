@@ -1,89 +1,170 @@
-
-#include <stdlib.h>
+// --------------------------------------------------------- >>
+// Modify both header and typedef to the list to test
 #include "PTreeList.c"
+typedef PTreeList Reflection;
+
+// --------------------------------------------------------- >>
+// Do not edit past this point!
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+
+
+
+#include "../H_global.h"
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX_DATA_DIGITS 20
+
+void getTests(int* tRef, char**** testsRef){
+    FILE *f = fopen("test_csv.csv", "r");
+    int lines = 0;
+    bool newline = true;
+
+    char* testBuffer = (char*) malloc(2*sizeof(char));
+    while (true){
+        while (fgets(testBuffer, 2, f) != NULL){
+            if (testBuffer[0] == '\n'){
+                newline = true;
+            }
+            if (newline == true){
+                newline = false;
+                lines++;
+            }
+        }
+
+        if (ferror(f)){
+            return;
+        } else {
+            break;
+        }
+    }
+    rewind(f);
+    char*** tests = (char***) malloc(lines*sizeof(char**));
+
+    int i = 0;
+    while (true){
+        long seekBack = ftell(f);
+        int length = 0;
+        bool nlSkip = false;
+        bool eof = false;
+        while (fgets(testBuffer, 2, f) != NULL){
+            if (testBuffer[0] == '\n'){
+                nlSkip = true;
+                break;
+            }
+            length++;
+        }
+        if (ferror(f)){ 
+            return;
+        } else if (!nlSkip){
+            eof = true;
+        }
+        fseek(f, seekBack, SEEK_SET);
+        
+        char* buffer = (char*) malloc((length+1)*sizeof(char));
+        fgets(buffer, length+1, f);
+        
+        char** testLine = (char**) malloc(4*sizeof(char*));
+        char* token = strtok(buffer, "|");
+        int j = 0;
+        while (token != NULL){
+            char* testInfo = (char*) malloc((strlen(token)+1)*sizeof(char));
+            strcpy(testInfo, token);
+            testLine[j] = testInfo;
+            j++;
+            token = strtok(NULL, "|");
+        }
+        tests[i] = testLine;
+        i++;
+
+        if (eof == true){
+            break;
+        }
+        if (nlSkip == true){
+            fgets(testBuffer, 2, f); // fseek +2 for '\n' is weird so lets just do this lol
+        }
+        free(buffer);
+    }
+    free(testBuffer);
+
+    *tRef = lines;
+    *testsRef = tests;
+    fclose(f);
+}
+
+
+
+char* getAllElementsAsResult(Reflection* list){
+    LENGTH n = size(list);
+    LENGTH numberOfCommas = n-1;
+
+    LENGTH m = numberOfCommas+(n*MAX_DATA_DIGITS)+1;
+    char* mRESULT = (char*) malloc(m*sizeof(char));
+    LENGTH m0 = 0;
+    for (LENGTH i = 0; i < n; i++){
+        DATA data = get(list, i);
+        m0 += sprintf(&mRESULT[m0], "%" PRIu64, data);
+        if (i < n-1){
+            m0 += sprintf(&mRESULT[m0], ",");
+        }
+    }
+    return mRESULT;
+}
+
+void WRITE(FILE* f, char* operation, LENGTH n, clock_t c){
+    fprintf(f, "%s|%zu|%f", operation, n, c);
+}
 
 int main(){
-    // TODO: REVERT TYPEDEFS TO INT64_T AND SIZE_T
-    // TODO: free memory
-    int n = 17;
-    DATA seq[17] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
-    PTreeList* list0 = make(n, seq);
-    printf("Pass.");
-    reverse(list0);
-    for (int i = 0; i < n; i++){
-        printf("Yeah: %d\n", get(list0, i));
-    }
-    printf("LEFT: %d\n", peek_left(list0));
-    printf("RIGHT: %d\n", peek_right(list0));
+    int t = 0;
+    char*** tests = NULL;
+    getTests(&t, &tests);
 
-    DATA seq1[4] = {1, 2, 3, 4};
-    LENGTH l1, k1;
-    _getGreatestPowerOfTwo(4, &l1, &k1);
+    FILE* f = fopen("output.csv", "w+");
+    Reflection* list = NULL;
+    for (int t0 = 0; t0 < t; t0++){
+        char** testLine = tests[t0];
+        char* operation = testLine[0];
+        char* arg1 = testLine[1];
+        char* arg2 = testLine[2];
+        char* RESULT = testLine[3];
 
-    PTree* ptree1 = (PTree*) malloc(sizeof(PTree));
-    ptree1->l = l1;
-    ptree1->k = k1;
-    ptree1->root = _constructPTreeNodesFromRange(seq1, 0, 0, 3);
+        LENGTH n = list != NULL ? size(list) : 0;
+        clock_t c = 0;
 
-    DATA seq2[4] = {5, 6, 7, 8};
-    LENGTH l2, k2;
-    _getGreatestPowerOfTwo(4, &l2, &k2);
+        if (strcmp(operation, "make") == 0){
+            n = atoll(arg1);
+            DATA* seq = (DATA*) malloc(n*sizeof(DATA));
+            char* token = strtok(arg2, ",");
+            int i = 0;
+            while (token != NULL){
+                seq[i] = atoll(token);
+                i++;
+                token = strtok(NULL, ",");
+            }
 
-    PTree* ptree2 = (PTree*) malloc(sizeof(PTree));
-    ptree2->l = l2;
-    ptree2->k = k2;
-    ptree2->root = _constructPTreeNodesFromRange(seq2, 0, 0, 3);
+            c = clock();
+            list = make(n, seq);
+            c = clock() - c;
+            
+            if (strcmp(getAllElementsAsResult(list), RESULT) != 0){
+                return -1;
+            }
+        } else if (operation == "get"){
+            c = clock();
+            DATA data = get(list, atoll(arg1));
+            c = clock() - c;
 
-    DATA seq3[8] = {9, 10, 11, 12, 13, 14, 15, 16};
-    LENGTH l3, k3;
-    _getGreatestPowerOfTwo(8, &l3, &k3);
+            char datastr[MAX_DATA_DIGITS];
+            sprintf(datastr, "%" PRIu64, data);
+            if (strcmp(datastr, RESULT) != 0){
+                return -1;
+            }
+        }
 
-    PTree* ptree3 = (PTree*) malloc(sizeof(PTree));
-    ptree3->l = l3;
-    ptree3->k = k3;
-    ptree3->root = _constructPTreeNodesFromRange(seq3, 0, 0, 7);
-
-    PTreeList* list = (PTreeList*) malloc(sizeof(PTreeList));
-    list->n = 16;
-    list->reverse = false;
-    
-    PTreeListNode* a = (PTreeListNode*) malloc(sizeof(PTreeListNode));
-    a->prev = NULL;
-    a->ptree = ptree1;
-
-    PTreeListNode* b = (PTreeListNode*) malloc(sizeof(PTreeListNode));
-    b->prev = a;
-    a->next = b;
-    b->ptree = ptree2;
-
-    PTreeListNode* c = (PTreeListNode*) malloc(sizeof(PTreeListNode));
-    c->next = NULL;
-    c->prev = b;
-    b->next = c;
-    c->ptree = ptree3;
-
-    list->head = a;
-    list->tail = c;
-
-    _mergeNonDistinctPTrees(list, list->head, false);
-    printf("??\n");
-    PTreeListNode* currentListNode = list->head;
-    while (currentListNode != NULL){
-        PTree* ptree = currentListNode->ptree;
-        printf("KK: %d\n", ptree->k);
-        _printLeaves(ptree->root);
-        currentListNode = currentListNode->next;
-        printf("-------------------\n");
-    }
-
-    printf("POP:\n");
-    pop_left(list);
-    currentListNode = list->head;
-    while (currentListNode != NULL){
-        PTree* ptree = currentListNode->ptree;
-        printf("KK: %d\n", ptree->k);
-        _printLeaves(ptree->root);
-        currentListNode = currentListNode->next;
-        printf("-------------------\n");
+        WRITE(f, operation, n, c);
     }
 }

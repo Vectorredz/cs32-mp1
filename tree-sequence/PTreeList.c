@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "H_global.h"
-#include <H_PTreeList.h>
+#include "../H_global.h"
+#include "H_PTreeList.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -427,7 +427,6 @@ bool pop_left(PTreeList* list){
 bool pop_right(PTreeList* list){
     return list->reverse == false ? _pop_right_base(list) : _pop_left_base(list);
 }
-
 
 
 

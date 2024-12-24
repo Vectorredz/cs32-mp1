@@ -1,7 +1,7 @@
 #ifndef P_TREE_H
 #define P_TREE_H
 
-#include "H_global.h"
+#include "../H_global.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdbool.h>
