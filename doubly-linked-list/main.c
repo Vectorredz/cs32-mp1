@@ -45,137 +45,107 @@ list *make(int n, int64_t *seq){
 }
 
 void push_left(list *l, int64_t v){
-    if (!(l->is_reversed)){
-        node *curr = malloc(sizeof(node));
-        curr->val = v;
-        curr->right = curr->left = NULL;
-        if (l->head == NULL){
-            l->head = l->tail = curr;
+    node *newNode = malloc(sizeof(node));
+    newNode->val = v;
+    newNode->left = newNode->right = NULL;
+    node *curr = l->is_reversed ? l->head : l->tail;
+    //empty_list case
+    if (!(curr)) l->head = l->tail = newNode;
+    else {
+        if (!(l->is_reversed)){
+            newNode->right = l->head;
+            l->head->left = newNode;
+            l->head = newNode;
         }
         else {
-            curr->right = l->head;
-            l->head->left = curr;
-            l->head = curr;
+            newNode->left = l->tail;
+            l->tail->right = newNode;
+            l->tail = newNode;
         }
     }
-    else { // When is_reversed is ON -> push_left operation is done instead
-        node *curr = malloc(sizeof(node));
-        curr->val = v;
-        curr->left = curr->right = NULL;
-        if (l->tail == NULL){ // out-of-bounds check
-            l->head = l->tail = curr;
-        }
-        else {
-            curr->left = l->tail;
-            l->tail->right = curr;
-            l->tail = curr;
-        }
-    }
-   
+    (l->size)++;
 }
 
 void push_right(list *l, int64_t v){
-    if (!(l->is_reversed)){
-        node *curr = malloc(sizeof(node));
-        curr->val = v;
-        curr->left = curr->right = NULL;
-        if (l->tail == NULL){ // out-of-bounds check
-            l->head = l->tail = curr;
+    node *newNode = malloc(sizeof(node));
+    newNode->val = v;
+    newNode->left = newNode->right = NULL;
+    node *curr = l->is_reversed ? l->head : l->tail;
+    //empty_list case
+    if (!(curr)) l->head = l->tail = newNode;
+    else {
+        if (l->is_reversed){
+            newNode->right = l->head;
+            l->head->left = newNode;
+            l->head = newNode;
         }
         else {
-            curr->left = l->tail;
-            l->tail->right = curr;
-            l->tail = curr;
+            newNode->left = l->tail;
+            l->tail->right = newNode;
+            l->tail = newNode;
         }
     }
-    else { // When is_reversed is ON -> push_left operation is done instead
-        node *curr = malloc(sizeof(node));
-        curr->val = v;
-        curr->right = curr->left = NULL;
-        if (l->head == NULL){
-            l->head = l->tail = curr;
-        }
-        else {
-            curr->right = l->head;
-            l->head->left = curr;
-            l->head = curr;
-        }
-    }
+    (l->size)++;
 }
 
 bool pop_left(list *l){
-    if (!(l->is_reversed)){
-        node *curr = l->head;
-        node *next = curr->right;
-        if (l->head == NULL && l->tail == NULL){ // out-of-bounds check
-            return false;
+    // empty_list
+    if (!(l->head) && !(l->tail)) return false;
+    node *curr = !(l->is_reversed) ? l->head : l->tail;
+    node *store = !(l->is_reversed) ? curr->right : curr->left;
+    // single_node case
+    if ((l->tail) == (l->head)){
+        free(curr);
+        l->head = l->tail = NULL;
+        // reduce the size
+        (l->size)--;
+        // free the node
+        return true; 
+    }
+    else {
+        if (!(l->is_reversed)){ // is_reversed ON
+            store->left = NULL;
+            l->head = store;
         }
-        if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){ 
-            l->tail = l->head = NULL;
-            return false;
-        }
-        else{
-            curr->right = NULL;
-            next->left = NULL;
-            l->head = next;
-            return true;
+        else {
+            store->right = NULL;
+            l->tail = store;
         }
     }
-    else { // When is_reversed is ON -> pop_right operation is done instead
-        node *curr = l->tail;
-        node *prev = curr->left;
-        if (l->head == NULL && l->tail == NULL){
-            return false;
-        }
-        if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){
-            l->tail = l->head = NULL;
-            return false;
-        }
-        else{
-            curr->left = NULL;
-            prev->right = NULL;
-            l->tail = prev;
-            return true;
-        }
-    }
+    (l->size)--;
+    free(curr);
+    return true;
 }
 
 bool pop_right(list *l){
-    if (!(l->is_reversed)){
-        node *curr = l->tail;
-        node *prev = curr->left;
-        if (l->head == NULL && l->tail == NULL){
-            return false;
+    // empty_list
+    if (!(l->head) && !(l->tail)) return false;
+    node *curr = l->is_reversed ? l->head : l->tail;
+    node *store = l->is_reversed ? curr->right : curr->left;
+    // single_node case
+    if ((l->tail) == (l->head)){
+        free(curr);
+        l->head = l->tail = NULL;
+        // reduce the size
+        (l->size)--;
+        // free the node
+        return true; 
+    }
+    else {
+        if (l->is_reversed){ // is_reversed ON
+            store->left = NULL;
+            l->head = store;
         }
-        if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){
-            l->tail = l->head = NULL;
-            return false;
-        }
-        else{
-            curr->left = NULL;
-            prev->right = NULL;
-            l->tail = prev;
-            return true;
+        else {
+            store->right = NULL;
+            l->tail = store;
         }
     }
-    else { // When is_reversed is ON -> pop_left operation is done instead
-        node *curr = l->head;
-        node *next = curr->right;
-        if (l->head == NULL && l->tail == NULL){ // out-of-bounds check
-            return false;
-        }
-        if (l->head->right == NULL && l->head->left == NULL && l->tail->right == NULL && l->tail->left == NULL){ 
-            l->tail = l->head = NULL;
-            return false;
-        }
-        else{
-            curr->right = NULL;
-            next->left = NULL;
-            l->head = next;
-            return true;
-        }
-    }
+    (l->size)--;
+    free(curr);
+    return true;
 }
+
 
 int64_t peek_left(list *l){
     if (!(l->is_reversed)){
@@ -205,12 +175,7 @@ int size(list *l){
 }
 
 bool empty(list *l){
-    if (!(size(l))){
-        return true;
-    }
-    else {
-        return false;
-    }
+    return (l->size == 0);
 }
 
 int64_t get(list *l, int i){
@@ -248,6 +213,7 @@ void set(list *l, int i, int64_t v){
 
 void reverse(list *l){
     // l->is_reversed = l->is_reversed == 0 ? 1 : 0;
+    // l->is_reversed = !(l->is_reversed);
     if (l->is_reversed == 0){
         l->is_reversed = 1;
     }
@@ -258,9 +224,10 @@ void reverse(list *l){
 
 void display(list *l){
     node *curr = l->head;
+    printf("\n");
     while (curr){
         printf("%ld <-> ", curr->val);
         curr = curr->right;
     }
-    printf("NULL\n");
+    printf("NULL \n");
 }
