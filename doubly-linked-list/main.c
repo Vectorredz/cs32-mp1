@@ -13,8 +13,8 @@ list init(void){
 }
 
 list *make(int n, int64_t *seq){
-    node *head = malloc(sizeof(node));
-    list *ptr = malloc(sizeof(list));
+    node *head = (node*)malloc(sizeof(node));
+    list *ptr = (node*)malloc(sizeof(list));
     node *curr = head;
     ptr->head = head;
     ptr->size = n;
@@ -24,12 +24,13 @@ list *make(int n, int64_t *seq){
     }
     else {
         for (int i = 0; i < n; i++){
+            // if the index = 0, means that it is the first element
             if (i == 0){
                 curr->val = seq[i];
                 curr->left = NULL;
             }
             else {
-                node *new = malloc(sizeof(node));
+                node *new = (node*)malloc(sizeof(node));
                 new->val = seq[i];
                 curr->right = new;
                 new->left = curr;
@@ -44,7 +45,7 @@ list *make(int n, int64_t *seq){
 }
 
 void push_left(list *l, int64_t v){
-    node *newNode = malloc(sizeof(node));
+    node *newNode = (node*)malloc(sizeof(node));
     newNode->val = v;
     newNode->left = newNode->right = NULL;
     node *curr = l->is_reversed ? l->head : l->tail;
@@ -66,7 +67,7 @@ void push_left(list *l, int64_t v){
 }
 
 void push_right(list *l, int64_t v){
-    node *newNode = malloc(sizeof(node));
+    node *newNode = (node*)malloc(sizeof(node));
     newNode->val = v;
     newNode->left = newNode->right = NULL;
     node *curr = l->is_reversed ? l->head : l->tail;
@@ -94,18 +95,18 @@ bool pop_left(list *l){
         return false;
     };
     node *curr = !(l->is_reversed) ? l->head : l->tail;
-    node *store = !(l->is_reversed) ? curr->right : curr->left;
+    node *store = !(l->is_reversed) ? curr->right : curr->left; // if left, then store next
     // single_node case
     if ((l->tail) == (l->head)){
-        free(curr);
         l->head = l->tail = NULL;
+        free(curr);
         // reduce the size
         (l->size)--;
         // free the node
         return true; 
     }
     else {
-        if (!(l->is_reversed)){ // is_reversed ON
+        if (!(l->is_reversed)){ // is_reversed toggled ON
             store->left = NULL;
             l->head = store;
         }
@@ -123,18 +124,18 @@ bool pop_right(list *l){
     // empty_list
     if (!(l->head) && !(l->tail)) return false;
     node *curr = l->is_reversed ? l->head : l->tail;
-    node *store = l->is_reversed ? curr->right : curr->left;
+    node *store = l->is_reversed ? curr->right : curr->left; // if right, then store prev
     // single_node case
     if ((l->tail) == (l->head)){
-        free(curr);
         l->head = l->tail = NULL;
+        free(curr);
         // reduce the size
         (l->size)--;
         // free the node
         return true; 
     }
     else {
-        if (l->is_reversed){ // is_reversed ON
+        if (l->is_reversed){ // is_reversed toggled ON
             store->left = NULL;
             l->head = store;
         }
@@ -148,12 +149,11 @@ bool pop_right(list *l){
     return true;
 }
 
-
 int64_t peek_left(list *l){
     // peek from an empty list
     if (!(l->head) && !(l->tail)){
         fprintf(stderr, "\nIndexError: Peek From Empty List\n");
-        return -1;
+        exit(1);\
     }
     node *curr = !(l->is_reversed) ? l->head : l->tail;
     return curr->val;
@@ -163,13 +163,17 @@ int64_t peek_right(list *l){
     // peek from an empty list
     if (!(l->head) && !(l->tail)){
         fprintf(stderr, "\nIndexError: Peek From Empty List\n");
-        return -1;
+        exit(1);\
     }
     node *curr = (l->is_reversed) ? l->head : l->tail;
     return curr->val;
 }
 
 int size(list *l){
+    if (l->size < 0){
+        fprintf(stderr, "\nIndexError: invalid size\n");
+        exit(1);\
+    }
     return l->size;
 }
 
@@ -178,26 +182,31 @@ bool empty(list *l){
 }
 
 int64_t get(list *l, int i){
-    node *curr = l->head;
+    node *curr = l->is_reversed ? l->tail : l->head;
     // raise an exception
     if (i < 0){
-        fprintf(stderr, "IndexError: list index out of range\n");\
+        fprintf(stderr, "\nIndexError: list index out of range\n");\
         exit(1);\
     }
     if (i >= size(l)){
-        fprintf(stderr, "IndexError: list index out of range\n");\
+        fprintf(stderr, "\nIndexError: list index out of range\n");\
         exit(1);\
     }
     int j = 0;
     while (j != i){
-        curr = curr->right;
+        if (l->is_reversed){
+            curr = curr->left; 
+        }
+        else {
+            curr = curr->right; 
+        }
         j++;
     }
     return curr->val;
 }
 
 void set(list *l, int i, int64_t v){
-    node *curr = l->head;
+    node *curr = l->is_reversed ? l->tail : l->head;
     if (i < 0){
         fprintf(stderr, "IndexError: list index out of range\n");\
         exit(1);\
@@ -208,7 +217,12 @@ void set(list *l, int i, int64_t v){
     }
     int j = 0;
     while (j != i){
-        curr = curr->right;
+        if (l->is_reversed){
+            curr = curr->left; 
+        }
+        else {
+            curr = curr->right; 
+        }
         j++;
     }
     curr->val = v;
@@ -235,3 +249,4 @@ void display(list *l){
     }
     printf("NULL \n");
 }
+
