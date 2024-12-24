@@ -1,5 +1,4 @@
 // DOUBLY-LINKED LIST IMPLEMENTATION OF DYNAMIC LIST 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "dynamic_list.h"
@@ -167,14 +166,17 @@ bool empty(list *l){
 
 int64_t get(list *l, int i){
     node *curr = l->head;
+    // raise an exception
     if (i < 0){
-        return 0;
+        fprintf(stderr, "IndexError: list index out of range\n");\
+        exit(1);\
     }
     if (i >= size(l)){
-        return 0;
+        fprintf(stderr, "IndexError: list index out of range\n");\
+        exit(1);\
     }
     int j = 0;
-    while (j != i-1){
+    while (j != i){
         curr = curr->right;
         j++;
     }
@@ -184,10 +186,12 @@ int64_t get(list *l, int i){
 void set(list *l, int i, int64_t v){
     node *curr = l->head;
     if (i < 0){
-        return;
+        fprintf(stderr, "IndexError: list index out of range\n");\
+        exit(1);\
     }
     if (i >= size(l)){
-        return;
+        fprintf(stderr, "IndexError: list index out of range\n");\
+        exit(1);\
     }
     int j = 0;
     while (j != i){
