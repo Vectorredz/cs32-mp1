@@ -70,10 +70,10 @@ int main(){
     VERIFY(empty(&l1));
 
     // make operation
-    int n = 6;
-    int64_t *array = malloc(n * sizeof(int64_t));
-    int64_t *seq1 = make_seq(n, array);
-    list *l2 = make(n, seq1);
+    int n1 = 6;
+    int64_t *array = malloc(n1 * sizeof(int64_t));
+    int64_t *seq1 = make_seq(n1, array);
+    list *l2 = make(n1, seq1);
     display(l2);
 
     // SETTERS & GETTERS operation
@@ -82,15 +82,47 @@ int main(){
     
     set(l2, 0, 9);
     VERIFY(peek_left(l2) == 9);
-    set(l2, n-1, 0);
-    VERIFY(peek_right(l2) == 1);
+    set(l2, n1-1, 0);
+    VERIFY(peek_right(l2) == 0);
 
-    printf("\nVERIFIED: TEST CASE #%d PASSED.", t1);
-    
+    printf("\nVERIFIED: TEST CASE #%d PASSED.\n", t1);
 
-    // Test case #3 : Out-of-bounds Check
-    // Test case #4 : Edge-cases
+    // Test case #2 : Out-of-bounds Check
+    /* Aims to check the bounds for each operation. This includes "index out of range", "invalid value passed", etc. */
 
-    //TODO ...
-    
+    // int t2 = 2;
+    // printf("\n | ************* | TEST CASE #%d | ************* |\n\n", t2);
+
+    // // make operation
+    int n2 = 0;
+    int64_t *array1 = malloc(n2 * sizeof(int64_t));
+    int64_t *seq2 = make_seq(n2, array);
+    list *l3 = make(n2, seq1);
+    display(l3);
+
+    // // pop_? operations
+
+    // // 1. popping a single node
+    // VERIFY(pop_left(l3));
+
+    // // 2. popping an empty list 
+    // // this must throw an exception: "IndexError: Pop From Empty List"
+    // VERIFY(pop_left(l3) == false);
+
+    // // peek_? operations
+
+    // // 1. peeking an empty list
+    // // this must throw an exception: "IndexError: Peek From Empty List"
+    // VERIFY(peek_left(l3));
+    // VERIFY(peek_right(l3));
+
+    // // SETTERS and GETTERS
+
+    // // 1. getting an element from an empty list
+    // // this must throw an exception: "IndexError: list index out of range"
+    // VERIFY(get(l3, 2));
+
+    // // 2. setting an element from an empty list
+    // // this must throw an exception: "IndexError: list index out of range"
+    // set(l3, 2, 1);
 }

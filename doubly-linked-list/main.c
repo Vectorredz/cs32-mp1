@@ -89,7 +89,10 @@ void push_right(list *l, int64_t v){
 
 bool pop_left(list *l){
     // empty_list
-    if (!(l->head) && !(l->tail)) return false;
+    if (!(l->head) && !(l->tail)){
+        fprintf(stderr, "\nIndexError: Pop From Empty List\n");
+        return false;
+    };
     node *curr = !(l->is_reversed) ? l->head : l->tail;
     node *store = !(l->is_reversed) ? curr->right : curr->left;
     // single_node case
@@ -147,11 +150,21 @@ bool pop_right(list *l){
 
 
 int64_t peek_left(list *l){
+    // peek from an empty list
+    if (!(l->head) && !(l->tail)){
+        fprintf(stderr, "\nIndexError: Peek From Empty List\n");
+        return -1;
+    }
     node *curr = !(l->is_reversed) ? l->head : l->tail;
     return curr->val;
 }
 
 int64_t peek_right(list *l){
+    // peek from an empty list
+    if (!(l->head) && !(l->tail)){
+        fprintf(stderr, "\nIndexError: Peek From Empty List\n");
+        return -1;
+    }
     node *curr = (l->is_reversed) ? l->head : l->tail;
     return curr->val;
 }
