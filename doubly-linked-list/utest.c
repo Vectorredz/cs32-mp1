@@ -85,44 +85,77 @@ int main(){
     set(l2, n1-1, 0);
     VERIFY(peek_right(l2) == 0);
 
+    // reverse operation
+    // once called, it would toggle reverse operation
+
+    // toggle on reverse hence pop_left <-> pop_right
+    reverse(l2);
+    pop_left(l2);
+    display(l2);
+    pop_right(l2);
+    display(l2);
+
+    // toggle off reverse hence pop_left <-> pop_right
+    reverse(l2);
+    pop_left(l2);
+    display(l2);
+    pop_right(l2);
+    display(l2);
+
+    // GETTERS
+    VERIFY(get(l2, 1) == 3);
+    reverse(l2);
+    VERIFY(get(l2, 1) == 2);
+
+    // SETTERS
+    // reverse is toggled ON so traversal will be from tail -> head
+    set(l2, 0, 1);
+    VERIFY(peek_left(l2) == 1);
+    // reverse is toggled OFF so traversal will be from head -> tail
+    reverse(l2);
+    
+    set(l2, 0, 3);
+    VERIFY(peek_left(l2) == 3);
+
+
     printf("\nVERIFIED: TEST CASE #%d PASSED.\n", t1);
 
     // Test case #2 : Out-of-bounds Check
     /* Aims to check the bounds for each operation. This includes "index out of range", "invalid value passed", etc. */
 
-    // int t2 = 2;
-    // printf("\n | ************* | TEST CASE #%d | ************* |\n\n", t2);
+    int t2 = 2;
+    printf("\n | ************* | TEST CASE #%d | ************* |\n\n", t2);
 
-    // // make operation
-    int n2 = 0;
+    // make operation
+    int n2 = 1;
     int64_t *array1 = malloc(n2 * sizeof(int64_t));
     int64_t *seq2 = make_seq(n2, array);
     list *l3 = make(n2, seq1);
     display(l3);
 
-    // // pop_? operations
+    // pop_? operations
 
-    // // 1. popping a single node
-    // VERIFY(pop_left(l3));
+    // 1. popping a single node
+    VERIFY(pop_left(l3));
 
-    // // 2. popping an empty list 
-    // // this must throw an exception: "IndexError: Pop From Empty List"
-    // VERIFY(pop_left(l3) == false);
+    // 2. popping an empty list 
+    // this must throw an exception: "IndexError: Pop From Empty List"
+    VERIFY(pop_left(l3) == false);
 
-    // // peek_? operations
+    // peek_? operations
 
-    // // 1. peeking an empty list
-    // // this must throw an exception: "IndexError: Peek From Empty List"
-    // VERIFY(peek_left(l3));
-    // VERIFY(peek_right(l3));
+    // 1. peeking an empty list
+    // this must throw an exception: "IndexError: Peek From Empty List"
+    VERIFY(peek_left(l3));
+    VERIFY(peek_right(l3));
 
-    // // SETTERS and GETTERS
+    // SETTERS and GETTERS
 
-    // // 1. getting an element from an empty list
-    // // this must throw an exception: "IndexError: list index out of range"
-    // VERIFY(get(l3, 2));
+    // 1. getting an element from an empty list
+    // this must throw an exception: "IndexError: list index out of range"
+    VERIFY(get(l3, 2));
 
-    // // 2. setting an element from an empty list
-    // // this must throw an exception: "IndexError: list index out of range"
-    // set(l3, 2, 1);
+    // 2. setting an element from an empty list
+    // this must throw an exception: "IndexError: list index out of range"
+    set(l3, 2, 1);
 }
