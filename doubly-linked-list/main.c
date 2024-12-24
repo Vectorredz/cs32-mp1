@@ -148,26 +148,13 @@ bool pop_right(list *l){
 
 
 int64_t peek_left(list *l){
-    if (!(l->is_reversed)){
-        node *curr = l->head;
-        return curr->val;
-    }
-    else { // When is_reversed is ON -> peek_right operation is done instead
-        node *curr = l->tail;
-        return curr->val;
-    }
-    
+    node *curr = !(l->is_reversed) ? l->head : l->tail;
+    return curr->val;
 }
-int64_t peek_right(list *l){
-    if (!(l->is_reversed)){
-        node *curr = l->tail;
-        return curr->val;
-    }
-    else { // When is_reversed is ON -> peek_left operation is done instead
-        node *curr = l->tail;
-        return curr->val;
-    }
 
+int64_t peek_right(list *l){
+    node *curr = (l->is_reversed) ? l->head : l->tail;
+    return curr->val;
 }
 
 int size(list *l){
