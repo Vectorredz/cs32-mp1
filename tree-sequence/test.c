@@ -19,8 +19,8 @@ typedef PTreeList Reflection;
 
 #define MAX_NUMBER_DIGITS 25
 
-void getTests(int* tRef, char**** testsRef){
-    FILE *f = fopen("test_csv.csv", "r");
+void getTests(char* fileName, int* tRef, char**** testsRef){
+    FILE *f = fopen(fileName, "r");
     int lines = 0;
     bool newline = true;
 
@@ -117,11 +117,15 @@ char* getAllElementsAsResult(Reflection* list){
 
 LENGTH strToLength(char* lStr){
     char* e;
-    return strtoll(lStr, &e, 10);
+    LENGTH l = strtoll(lStr, &e, 10);
+    free(e);
+    return l;
 }
 DATA strToData(char* dataStr){
     char* e;
-    return strtoll(dataStr, &e, 10);
+    DATA data = strtoll(dataStr, &e, 10);
+    free(e);
+    return data;
 }
 char* lengthToStr(LENGTH l){
     char* lengthStr = (char*) malloc((MAX_NUMBER_DIGITS+1)*sizeof(char));
@@ -139,7 +143,8 @@ char* boolToStr(bool b){
 
 void VERIFY(char* mRESULT, char* RESULT){
     printf("%s, %s\n", mRESULT, RESULT);
-    if (strcmp("X", RESULT) != 0) {assert(strcmp(mRESULT, RESULT) == 0);};
+    if (strcmp("X", RESULT) != 0) assert(strcmp(mRESULT, RESULT) == 0);
+    free(mRESULT);
 }
 void WRITE(FILE* f, char* operation, LENGTH n, clock_t c, bool newLine){
     fprintf(f, "%s|%zu|%f", operation, n, c);
@@ -151,9 +156,9 @@ void WRITE(FILE* f, char* operation, LENGTH n, clock_t c, bool newLine){
 int main(){
     int t = 0;
     char*** tests = NULL;
-    getTests(&t, &tests);
+    getTests("test_csv_0.csv", &t, &tests);
 
-    FILE* f = fopen("output.csv", "w+");
+    FILE* f = fopen("test_output.csv", "w+");
     Reflection* list = NULL;
     for (int t0 = 0; t0 < t; t0++){
         char** testLine = tests[t0];
@@ -259,9 +264,16 @@ int main(){
             c = clock() - c;
 
             VERIFY(getAllElementsAsResult(list), RESULT);
-            
+
         }
 
         WRITE(f, operation, n, c, t0<t-1 ? true : false);
+        free(operation);
+        free(arg1);
+        free(arg2);
+        free(RESULT);
+        free(testLine);
     }
+    free(tests);
+    fclose(f);
 }
