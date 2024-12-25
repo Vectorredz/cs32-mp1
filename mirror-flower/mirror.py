@@ -262,6 +262,8 @@ for i in range(0, random.randint(500, 1000)):
         WRITE(True, mirror, chosen, randomData())
     if (random.randint(1, 10) == 1):
         WRITE(True, mirror, "reverse")
+    if (random.randint(1, 5) == 1):
+        WRITE(True, mirror, "set", randomIndex(mirror), randomData())
 WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
 
