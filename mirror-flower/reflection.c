@@ -229,7 +229,7 @@ int main(){
                 list = make(n, seq);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "size") == 0){
@@ -237,7 +237,7 @@ int main(){
                 LENGTH listSize = size(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, lengthToStr(listSize), RESULT);
+                    VERIFY(t0, operation, RESULT, lengthToStr(listSize));
                 }
 
             } else if (strcmp(operation, "empty") == 0){
@@ -245,7 +245,7 @@ int main(){
                 bool listEmpty = empty(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, boolToStr(listEmpty), RESULT);
+                    VERIFY(t0, operation, RESULT, boolToStr(listEmpty));
                 }
 
             } else if (strcmp(operation, "reverse") == 0){
@@ -253,7 +253,7 @@ int main(){
                 reverse(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "get") == 0){
@@ -263,7 +263,7 @@ int main(){
                 DATA data = get(list, i);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, dataToStr(data), RESULT);
+                    VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
 
             } else if (strcmp(operation, "set") == 0){
@@ -274,7 +274,7 @@ int main(){
                 set(list, i, v);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, dataToStr(get(list, i)), RESULT);
+                    VERIFY(t0, operation, RESULT, dataToStr(get(list, i)));
                 }
 
             } else if (strcmp(operation, "peek_left") == 0){
@@ -282,7 +282,7 @@ int main(){
                 DATA data = peek_left(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, dataToStr(data), RESULT);
+                    VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
 
             } else if (strcmp(operation, "peek_right") == 0){
@@ -290,7 +290,7 @@ int main(){
                 DATA data = peek_right(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, dataToStr(data), RESULT);
+                    VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
 
             } else if (strcmp(operation, "push_left") == 0){
@@ -300,7 +300,7 @@ int main(){
                 push_left(list, v);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "push_right") == 0){
@@ -310,7 +310,7 @@ int main(){
                 push_right(list, v);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "pop_left") == 0){
@@ -318,7 +318,7 @@ int main(){
                 pop_left(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "pop_right") == 0){
@@ -326,7 +326,7 @@ int main(){
                 pop_right(list);
                 GetSystemTime(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
+                    VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
             }
 
