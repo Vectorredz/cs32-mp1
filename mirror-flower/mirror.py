@@ -266,22 +266,22 @@ WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
 
 # ------------------------ LAYER 4: [[ dlroW derorriM ]]
-# print("> Mirrored World...")
-# WRITECUSTOM("LAYER", str(4))
-# operations = list(OPERATIONS.keys())
-# for i in range(0, random.randint(100000, 200000)):
-#     chosen = operations[random.randint(0, len(operations)-1)]
-#     args = ()
-#     if chosen == "get":
-#         args = tuple([randomIndex(mirror)])
-#     elif chosen == "set":
-#         args = tuple([randomIndex(mirror), randomData()])
-#     elif chosen == "push_left" or chosen == "push_right":
-#         args = tuple([randomData()])
+print("> Mirrored World...")
+WRITECUSTOM("LAYER", str(4))
+operations = list(OPERATIONS.keys())
+for i in range(0, random.randint(100000, 200000)):
+    chosen = operations[random.randint(0, len(operations)-1)]
+    args = ()
+    if chosen == "get":
+        args = tuple([randomIndex(mirror)])
+    elif chosen == "set":
+        args = tuple([randomIndex(mirror), randomData()])
+    elif chosen == "push_left" or chosen == "push_right":
+        args = tuple([randomData()])
 
-#     WRITE(False, mirror, chosen, *args)
-# WRITECUSTOM("LAYERFIN", str(4))
-# print("> Done.")
+    WRITE(False, mirror, chosen, *args)
+WRITECUSTOM("LAYERFIN", str(4))
+print("> Done.")
 
 
 testFile.truncate(testFile.tell()-len(os.linesep))
