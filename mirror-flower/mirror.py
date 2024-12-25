@@ -267,7 +267,7 @@ print("> Done.")
 
 # ------------------------ LAYER 4: [[ dlroW derorriM ]]
 print("> Mirrored World...")
-WRITECUSTOM("LAYER", str(4))
+WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 operations = list(OPERATIONS.keys())
 for i in range(0, random.randint(100000, 200000)):
     chosen = operations[random.randint(0, len(operations)-1)]
@@ -280,7 +280,7 @@ for i in range(0, random.randint(100000, 200000)):
         args = tuple([randomData()])
 
     WRITE(False, mirror, chosen, *args)
-WRITECUSTOM("LAYERFIN", str(4))
+WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
 print("> Done.")
 
 
