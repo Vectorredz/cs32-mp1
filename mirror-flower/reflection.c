@@ -9,7 +9,7 @@ typedef PTreeList Reflection;
 
 // Input File Path (contains operation, args, and correct result for cross-checks)
 // test_input_0.csv is for testing the tester itself
-#define INPUT_FILE "test_csv_0.csv"
+#define INPUT_FILE "test_input_0.csv"
 
 // Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.csv"
@@ -296,7 +296,8 @@ int main(){
         }
 
         WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
-        wd.operation = operation;
+        char* o = (char*) malloc(strlen(operation+1)*sizeof(char)); //wtf
+        wd.operation = strcpy(o, operation);
         wd.n = n;
         wd.c = c;
         writeDataLines[t0] = wd;
