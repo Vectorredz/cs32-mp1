@@ -36,7 +36,7 @@ typedef struct _PTreeList {
     LENGTH n; // number of leaf nodes across all trees
     PTreeListNode* head;
     PTreeListNode* tail;
-    bool reverse;
+    bool reversed;
 } PTreeList;
 
 

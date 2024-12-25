@@ -295,6 +295,9 @@ void _push_left_base(PTreeList* list, DATA v){
     newListNode->ptree = ptree;
     newListNode->prev = NULL;
     newListNode->next = list->head;
+    if (list->head != NULL){
+        list->head->prev = newListNode;
+    }
     list->head = newListNode;
     (list->n)++;
 
@@ -310,6 +313,9 @@ void _push_right_base(PTreeList* list, DATA v){
     newListNode->ptree = ptree;
     newListNode->next = NULL;
     newListNode->prev = list->tail;
+    if (list->tail != NULL){
+        list->tail->next = newListNode;
+    }
     list->tail = newListNode;
     (list->n)++;
 
@@ -385,13 +391,13 @@ PTreeList* make(LENGTH n, DATA* seq){
     list->n = n;
     list->head = head;
     list->tail = tail;
-    list->reverse = false;
+    list->reversed = false;
     return list;
 }
 
 // Flags/List Info
 void reverse(PTreeList* list){
-    list->reverse = !(list->reverse);
+    list->reversed = !(list->reversed);
 }
 LENGTH size(PTreeList* list){
     return list->n;
@@ -402,10 +408,10 @@ bool empty(PTreeList* list){
 
 // Getters/Setters
 DATA get(PTreeList* list, LENGTH i){
-    return _getPTreeNodeAtIndex(list, list->reverse == false ? i : (list->n)-1-i)->data;
+    return _getPTreeNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data;
 }
 void set(PTreeList* list, LENGTH i, DATA v){
-    _getPTreeNodeAtIndex(list, list->reverse == false ? i : (list->n)-1-i)->data = v;
+    _getPTreeNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data = v;
 }
 DATA peek_left(PTreeList* list){
     return get(list, 0);
@@ -416,16 +422,16 @@ DATA peek_right(PTreeList* list){
 
 // Insertions/Deletions
 void push_left(PTreeList* list, DATA v){
-    list->reverse == false ? _push_left_base(list, v) : _push_right_base(list, v);
+    list->reversed == false ? _push_left_base(list, v) : _push_right_base(list, v);
 }
 void push_right(PTreeList* list, DATA v){
-    list->reverse == false ? _push_right_base(list, v) : _push_left_base(list, v);
+    list->reversed == false ? _push_right_base(list, v) : _push_left_base(list, v);
 }
 bool pop_left(PTreeList* list){
-    return list->reverse == false ? _pop_left_base(list) : _pop_right_base(list);
+    return list->reversed == false ? _pop_left_base(list) : _pop_right_base(list);
 }
 bool pop_right(PTreeList* list){
-    return list->reverse == false ? _pop_right_base(list) : _pop_left_base(list);
+    return list->reversed == false ? _pop_right_base(list) : _pop_left_base(list);
 }
 
 

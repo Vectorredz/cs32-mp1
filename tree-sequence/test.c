@@ -15,8 +15,9 @@ typedef PTreeList Reflection;
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 
-#define MAX_DATA_DIGITS 20
+#define MAX_NUMBER_DIGITS 25
 
 void getTests(int* tRef, char**** testsRef){
     FILE *f = fopen("test_csv.csv", "r");
@@ -101,7 +102,7 @@ char* getAllElementsAsResult(Reflection* list){
     LENGTH n = size(list);
     LENGTH numberOfCommas = n-1;
 
-    LENGTH m = numberOfCommas+(n*MAX_DATA_DIGITS)+1;
+    LENGTH m = numberOfCommas+(n*MAX_NUMBER_DIGITS)+1;
     char* mRESULT = (char*) malloc(m*sizeof(char));
     LENGTH m0 = 0;
     for (LENGTH i = 0; i < n; i++){
@@ -114,8 +115,37 @@ char* getAllElementsAsResult(Reflection* list){
     return mRESULT;
 }
 
-void WRITE(FILE* f, char* operation, LENGTH n, clock_t c){
+LENGTH strToLength(char* lStr){
+    char* e;
+    return strtoll(lStr, &e, 10);
+}
+DATA strToData(char* dataStr){
+    char* e;
+    return strtoll(dataStr, &e, 10);
+}
+char* lengthToStr(LENGTH l){
+    char* lengthStr = (char*) malloc((MAX_NUMBER_DIGITS+1)*sizeof(char));
+    sprintf(lengthStr, "%zu", l);
+    return lengthStr;
+}
+char* dataToStr(DATA data){
+    char* dataStr = (char*) malloc((MAX_NUMBER_DIGITS+1)*sizeof(char));;
+    sprintf(dataStr, "%" PRIu64, data);
+    return dataStr;
+}
+char* boolToStr(bool b){
+    return b == false ? "0" : "1";
+}
+
+void VERIFY(char* mRESULT, char* RESULT){
+    printf("%s, %s\n", mRESULT, RESULT);
+    if (strcmp("X", RESULT) != 0) {assert(strcmp(mRESULT, RESULT) == 0);};
+}
+void WRITE(FILE* f, char* operation, LENGTH n, clock_t c, bool newLine){
     fprintf(f, "%s|%zu|%f", operation, n, c);
+    if (newLine == true){
+        fprintf(f, "\n");
+    }
 }
 
 int main(){
@@ -136,12 +166,12 @@ int main(){
         clock_t c = 0;
 
         if (strcmp(operation, "make") == 0){
-            n = atoll(arg1);
+            n = strToLength(arg1);
             DATA* seq = (DATA*) malloc(n*sizeof(DATA));
             char* token = strtok(arg2, ",");
             int i = 0;
             while (token != NULL){
-                seq[i] = atoll(token);
+                seq[i] = strToData(token);
                 i++;
                 token = strtok(NULL, ",");
             }
@@ -149,22 +179,89 @@ int main(){
             c = clock();
             list = make(n, seq);
             c = clock() - c;
+            VERIFY(getAllElementsAsResult(list), RESULT);
             
-            if (strcmp(getAllElementsAsResult(list), RESULT) != 0){
-                return -1;
-            }
-        } else if (operation == "get"){
+        } else if (strcmp(operation, "size") == 0){
             c = clock();
-            DATA data = get(list, atoll(arg1));
+            LENGTH listSize = size(list);
+            c = clock() - c;
+            VERIFY(lengthToStr(listSize), RESULT);
+
+        } else if (strcmp(operation, "empty") == 0){
+            c = clock();
+            bool listEmpty = empty(list);
+            c = clock() - c;
+            VERIFY(boolToStr(listEmpty), RESULT);
+            
+        } else if (strcmp(operation, "reverse") == 0){
+            c = clock();
+            reverse(list);
+            c = clock() - c;
+            VERIFY(getAllElementsAsResult(list), RESULT);
+
+        } else if (strcmp(operation, "get") == 0){
+            LENGTH i = strToLength(arg1);
+
+            c = clock();
+            DATA data = get(list, i);
+            c = clock() - c;
+            VERIFY(dataToStr(data), RESULT);
+
+        } else if (strcmp(operation, "set") == 0){
+            LENGTH i = strToLength(arg1);
+            DATA v = strToData(arg2);
+
+            c = clock();
+            set(list, i, v);
             c = clock() - c;
 
-            char datastr[MAX_DATA_DIGITS];
-            sprintf(datastr, "%" PRIu64, data);
-            if (strcmp(datastr, RESULT) != 0){
-                return -1;
-            }
+            VERIFY(dataToStr(get(list, i)), RESULT);
+        
+        } else if (strcmp(operation, "peek_left") == 0){
+            c = clock();
+            DATA data = peek_left(list);
+            c = clock() - c;
+            VERIFY(dataToStr(data), RESULT);
+        } else if (strcmp(operation, "peek_right") == 0){
+            c = clock();
+            DATA data = peek_right(list);
+            c = clock() - c;
+            VERIFY(dataToStr(data), RESULT);
+
+        } else if (strcmp(operation, "push_left") == 0){
+            DATA v = strToData(arg1);
+
+            c = clock();
+            push_left(list, v);
+            c = clock() - c;
+
+            VERIFY(getAllElementsAsResult(list), RESULT);
+
+        } else if (strcmp(operation, "push_right") == 0){
+            DATA v = strToData(arg1);
+
+            c = clock();
+            push_right(list, v);
+            c = clock() - c;
+
+            VERIFY(getAllElementsAsResult(list), RESULT);
+
+        } else if (strcmp(operation, "pop_left") == 0){
+            c = clock();
+            pop_left(list);
+            c = clock() - c;
+
+            VERIFY(getAllElementsAsResult(list), RESULT);
+
+        } else if (strcmp(operation, "pop_right") == 0){
+            c = clock();
+            pop_right(list);
+            c = clock() - c;
+
+            VERIFY(getAllElementsAsResult(list), RESULT);
+            
         }
 
-        WRITE(f, operation, n, c);
+        WRITE(f, operation, n, c, t0<t-1 ? true : false);
     }
 }

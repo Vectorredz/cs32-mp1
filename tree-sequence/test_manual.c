@@ -45,7 +45,7 @@ int main(){
 
     PTreeList* list = (PTreeList*) malloc(sizeof(PTreeList));
     list->n = 16;
-    list->reverse = false;
+    list->reversed = false;
     
     PTreeListNode* a = (PTreeListNode*) malloc(sizeof(PTreeListNode));
     a->prev = NULL;
