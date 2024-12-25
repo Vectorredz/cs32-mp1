@@ -14,14 +14,12 @@ list init(void){
 
 list *make(int n, int64_t *seq){
     node *head = (node*)malloc(sizeof(node));
-    list *ptr = (node*)malloc(sizeof(list));
+    list *ptr = (list*)malloc(sizeof(list));
     node *curr = head;
     ptr->head = head;
     ptr->size = n;
     curr->right = NULL;
-    if (n == 0){
-        return NULL;
-    }
+    if (n == 0) return NULL;
     else {
         for (int i = 0; i < n; i++){
             // if the index = 0, means that it is the first element
