@@ -7,10 +7,10 @@
 #include "PTreeList.c"
 typedef PTreeList Reflection;
 
-// Input File (contains operation, args, and correct result for cross-checks)
+// Input File Path (contains operation, args, and correct result for cross-checks)
 #define INPUT_FILE "test_csv_0.csv"
 
-// Output File (contains operation, current size (n), and deltatime benchmark for graph plotting)
+// Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.csv"
 
 // --------------------------------------------------------- >>
