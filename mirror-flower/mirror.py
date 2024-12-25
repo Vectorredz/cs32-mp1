@@ -16,7 +16,7 @@ INPUT_FILE = "test_input.csv"
 
 from collections.abc import Sequence, Callable
 from typing import TypeVar
-import csv, random
+import csv, random, os
 
 DATA = TypeVar("DATA")
 LENGTH = TypeVar("LENGTH")
@@ -26,26 +26,24 @@ type LENGTH = int
 class Mirror:
     _array: list[DATA]
     n: LENGTH
-    reversed: bool
     def __init__(self, n: LENGTH, seq: Sequence[DATA]):
         self._array = list[LENGTH]()
         for i in range(n):
             self._array.append(seq[i])
 
         self.n = n
-        self.reversed = False
     
     def size(self) -> LENGTH:
         return self.n
     def empty(self) -> bool:
         return self.n == 0
     def reverse(self):
-        self.reversed = not self.reversed
+        self._array.reverse()
 
     def get(self, i: LENGTH) -> DATA:
-        return self._array[i if not self.reversed else self.n-1-i]
+        return self._array[i]
     def set(self, i: LENGTH, v: DATA):
-        self._array[i if not self.reversed else self.n-1-i] = v
+        self._array[i] = v
     def peek_left(self) -> DATA:
         return self.get(0)
     def peek_right(self) -> DATA:
@@ -88,6 +86,8 @@ def randomIndex(mirror: Mirror):
     return random.randint(0, mirror.size()-1)
 
 def listToResult(seq: Sequence):
+    if len(seq) == 0:
+        return "EMPTY"
     return (",").join([str(data) for data in seq])
 
 # ----------------------------------------------------------------------
@@ -137,7 +137,7 @@ OPERATIONS["pop_right"] = RESULT_pop_right
 
 testFile = open(INPUT_FILE, "w+", newline="")
 fields = ["OPERATION", "ARG1", "ARG2", "RESULT"]
-writer = csv.DictWriter(testFile, fieldnames=fields)
+writer = csv.DictWriter(testFile, fieldnames=fields, delimiter="|")
 writer.writeheader
 
 def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
@@ -163,6 +163,14 @@ def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
         "RESULT": result
     })
 
+def WRITECUSTOM(msg: int = "None", arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
+    writer.writerow({
+        "OPERATION": msg,
+        "ARG1": arg1,
+        "ARG2": arg2,
+        "RESULT": RESULT,
+    })
+
 print("> Done.")
 # ------------------------------------------------
 
@@ -170,19 +178,23 @@ print("> Initializing tests...")
 
 # ------------------------ LAYER 0: Initialize
 print("> Layer 0...")
-_seq = list[DATA]()
-for i in range(random.randint(0, 200)):
-    _seq.append(randomData())
-mirror = Mirror(len(_seq), _seq)
+WRITECUSTOM("LAYER", str(0))
+n = random.randint(0, 200)
+seq = list[DATA]()
+for i in range(n):
+    seq.append(randomData())
+mirror = Mirror(n, seq)
 writer.writerow({
     "OPERATION": "make",
-    "ARG1": "None",
-    "ARG2": "None",
+    "ARG1": n,
+    "ARG2": listToResult(seq),
     "RESULT": listToResult(mirror.SPECIAL_getAllElements())
 })
+WRITECUSTOM("LAYERFIN", str(0))
 print("> Done.")
 # ------------------------ LAYER 1: No Insertions/Deletions
 print("> Layer 1...")
+WRITECUSTOM("LAYER", str(1))
 # check initial indices
 for i in range(mirror.size()):
     WRITE(True, mirror, "get", i)
@@ -203,23 +215,26 @@ for i in range(random.randint(5000, 10000)):
         WRITE(True, mirror, "reverse")
     WRITE(True, mirror, "size")
     WRITE(True, mirror, "empty")
+WRITECUSTOM("LAYERFIN", str(1))
 print("> Done.")
 
 # ------------------------ LAYER 2: Consecutive
 print("> Layer 2...")
+WRITECUSTOM("LAYER", str(2))
 
 # Consecutive Normal Pushes
 for i in range(0, random.randint(500, 1000)):
     WRITE(True, mirror, "push_left", randomData())
 
 # Consecutive Normal Pops
-for i in range(0, random.randint(500, 1000)):
+while (mirror.size() > 0):
     WRITE(True, mirror, "pop_left")
+    
 
 # Again.
 for i in range(0, random.randint(500, 1000)):
     WRITE(True, mirror, "push_right", randomData())
-for i in range(0, random.randint(500, 1000)):
+while (mirror.size() > 0):
     WRITE(True, mirror, "pop_right")
 
 # Double Consecutive Normal Punch
@@ -230,11 +245,13 @@ for i in range(0, random.randint(500, 1000)):
         WRITE(True, mirror, chosen)
     else:
         WRITE(True, mirror, chosen, randomData())
-
+WRITECUSTOM("LAYERFIN", str(2))
 print("> Done.")
 
 # ------------------------ LAYER 3: Killer Move: Serious Series
 print("> Layer 3...")
+WRITECUSTOM("LAYER", str(3))
+
 # Serious Punch
 operations = ["push_left", "push_right", "pop_left", "pop_right"]
 for i in range(0, random.randint(500, 1000)):
@@ -245,27 +262,29 @@ for i in range(0, random.randint(500, 1000)):
         WRITE(True, mirror, chosen, randomData())
     if (random.randint(1, 10) == 1):
         WRITE(True, mirror, "reverse")
-
+WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
 
 # ------------------------ LAYER 4: [[ dlroW derorriM ]]
-print("> Mirrored World...")
-operations = list(OPERATIONS.keys())
-for i in range(0, random.randint(100000, 200000)):
-    chosen = operations[random.randint(0, len(operations)-1)]
-    args = ()
-    if chosen == "get":
-        args = tuple([randomIndex(mirror)])
-    elif chosen == "set":
-        args = tuple([randomIndex(mirror), randomData()])
-    elif chosen == "push_left" or chosen == "push_right":
-        args = tuple([randomData()])
+# print("> Mirrored World...")
+# WRITECUSTOM("LAYER", str(4))
+# operations = list(OPERATIONS.keys())
+# for i in range(0, random.randint(100000, 200000)):
+#     chosen = operations[random.randint(0, len(operations)-1)]
+#     args = ()
+#     if chosen == "get":
+#         args = tuple([randomIndex(mirror)])
+#     elif chosen == "set":
+#         args = tuple([randomIndex(mirror), randomData()])
+#     elif chosen == "push_left" or chosen == "push_right":
+#         args = tuple([randomData()])
 
-    WRITE(False, mirror, chosen, *args)
+#     WRITE(False, mirror, chosen, *args)
+# WRITECUSTOM("LAYERFIN", str(4))
+# print("> Done.")
 
-print("> Done.")
 
-
+testFile.truncate(testFile.tell()-len(os.linesep))
 print("Tests successfully initialized.")
 print("Test operations can be found in (({INPUT_FILE:s}))\n".format(INPUT_FILE=INPUT_FILE))
 
