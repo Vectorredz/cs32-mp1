@@ -361,8 +361,9 @@ int main(){
     printf("> Done.\n");
 
     printf("\n<<<< TESTING SUCCESSFUL >>>>\n");
-    printf("? Ah...\n? Despite everything, it's still you.\n");
-    printf("> Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
+    printf("? Ah...\n? Despite everything, it's still you.\n\n... a mere illusion.\nA mere Reflection.\n\n");
+
+    printf("!! Time plot points can be found in ((" OUTPUT_FILE ")) !!\n\n");
     
     printf("Will you look into the Mirror once more?\n");
 }
