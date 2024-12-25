@@ -73,7 +73,7 @@ class Mirror:
 
 # ----------------------------------------------------------------------
 print("<< Mirror Flower. >>")
-print("Will your Reflection be the same as mine?\n")
+print("Will your Reflection be the same as mine?")
 
 print("> Initializing functions and file writing...")
 
