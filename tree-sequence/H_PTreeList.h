@@ -37,6 +37,9 @@ typedef struct _PTreeList {
     PTreeListNode* head;
     PTreeListNode* tail;
     bool reversed;
+
+    DATA leftmost;
+    DATA rightmost;
 } PTreeList;
 
 

@@ -297,6 +297,27 @@ void _cascadeRemoval(PTree* ptree, bool fromRight, PTreeListNode** headRef, PTre
     *tailRef = tail;
 }
 
+void _peekABoo(PTreeList* list, bool updateLeft, bool updateRight){
+    if (list->n == 0){
+        return;
+    }
+
+    PTreeNode* currentTreeNode = NULL;
+    if (updateLeft == true){
+        currentTreeNode = list->head->ptree->root;
+        while (currentTreeNode->leaf == false){
+            currentTreeNode = currentTreeNode->left;
+        }
+        list->leftmost = currentTreeNode->data;
+    }
+    if (updateRight == true){
+        currentTreeNode = list->tail->ptree->root;
+        while (currentTreeNode->leaf == false){
+            currentTreeNode = currentTreeNode->right;
+        }
+        list->rightmost = currentTreeNode->data;
+    }
+}
 
 void _push_left_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (also leaf)
@@ -318,6 +339,8 @@ void _push_left_base(PTreeList* list, DATA v){
 
     // Fix non-distinct types
     _mergeNonDistinctPTrees(list, list->head, false);
+
+    _peekABoo(list, true, false);
 }
 void _push_right_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (which is also a leaf)
@@ -339,6 +362,8 @@ void _push_right_base(PTreeList* list, DATA v){
 
     // Fix non-distinct types
     _mergeNonDistinctPTrees(list, list->tail, true);
+
+    _peekABoo(list, false, true);
 }
 bool _pop_left_base(PTreeList* list){
     if (list->n == 0){
@@ -370,9 +395,8 @@ bool _pop_left_base(PTreeList* list){
         }
     }
     list->head = head;
-
     _mergeNonDistinctPTrees(list, list->head, false);
-
+    _peekABoo(list, true, true);
     return true;
 }
 bool _pop_right_base(PTreeList* list){
@@ -406,7 +430,7 @@ bool _pop_right_base(PTreeList* list){
     }
     list->tail = tail;
     _mergeNonDistinctPTrees(list, list->tail, true);
-
+    _peekABoo(list, true, true);
     return true;
 }
 
@@ -433,6 +457,8 @@ PTreeList* make(LENGTH n, DATA* seq){
     list->head = head;
     list->tail = tail;
     list->reversed = false;
+    list->leftmost = seq[0];
+    list->rightmost = seq[n-1];
     return list;
 }
 
@@ -452,13 +478,20 @@ DATA get(PTreeList* list, LENGTH i){
     return _getPTreeNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data;
 }
 void set(PTreeList* list, LENGTH i, DATA v){
-    _getPTreeNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data = v;
+    LENGTH trueIndex = list->reversed == false ? i : (list->n)-1-i;
+    _getPTreeNodeAtIndex(list, trueIndex)->data = v;
+    if (trueIndex == 0){
+        list->leftmost = v;
+    }
+    if (trueIndex == list->n - 1){
+        list->rightmost = v;
+    }
 }
 DATA peek_left(PTreeList* list){
-    return get(list, 0);
+    return list->reversed == false ? list->leftmost : list->rightmost;
 }
 DATA peek_right(PTreeList* list){
-    return get(list, (list->n)-1);
+    return list->reversed == false ? list->rightmost : list->leftmost;
 }
 
 // Insertions/Deletions

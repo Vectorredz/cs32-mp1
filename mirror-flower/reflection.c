@@ -155,7 +155,7 @@ char* boolToStr(bool b){
 
 void VERIFY(int opNum, char* operation, char* RESULT, char* mRESULT){
     if (strcmp(mRESULT, RESULT) != 0){
-        printf("%s\n", mRESULT);
+        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("> !! Failed Operation !!\n");
         printf(":: line %d\n:: operation %s\n", opNum+1, operation);
         assert(0);
