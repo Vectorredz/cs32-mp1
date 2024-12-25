@@ -1,7 +1,17 @@
+/*
+    << Water Moon. >>
+    Look into the Mirror...
+*/
 // --------------------------------------------------------- >>
 // Modify both header and typedef to the list to test
 #include "PTreeList.c"
 typedef PTreeList Reflection;
+
+// Input File (contains operation, args, and correct result for cross-checks)
+#define INPUT_FILE "test_csv_0.csv"
+
+// Output File (contains operation, current size (n), and deltatime benchmark for graph plotting)
+#define OUTPUT_FILE "test_output.csv"
 
 // --------------------------------------------------------- >>
 // Do not edit past this point!
@@ -19,8 +29,8 @@ typedef PTreeList Reflection;
 
 #define MAX_NUMBER_DIGITS 25
 
-void getTests(char* fileName, int* tRef, char**** testsRef){
-    FILE *f = fopen(fileName, "r");
+void getTests(char* inputFileName, int* tRef, char**** testsRef){
+    FILE *f = fopen(inputFileName, "r");
     int lines = 0;
     bool newline = true;
 
@@ -141,24 +151,41 @@ char* boolToStr(bool b){
     return b == false ? "0" : "1";
 }
 
-void VERIFY(char* mRESULT, char* RESULT){
-    printf("%s, %s\n", mRESULT, RESULT);
-    if (strcmp("X", RESULT) != 0) assert(strcmp(mRESULT, RESULT) == 0);
+
+void VERIFY(int opNum, char* operation, char* RESULT, char* mRESULT){
+    if (strcmp("X", RESULT) != 0) {
+        if (strcmp(mRESULT, RESULT) != 0){
+            printf("> !! Failed Operation !!\n");
+            printf(":: line %d\n:: operation %s\n", opNum+1, operation);
+            assert(0);
+        }
+    }
     free(mRESULT);
 }
-void WRITE(FILE* f, char* operation, LENGTH n, clock_t c, bool newLine){
-    fprintf(f, "%s|%zu|%f", operation, n, c);
+
+typedef struct _WRITEDATA {
+    char* operation;
+    LENGTH n;
+    clock_t c;
+} WRITEDATA;
+void WRITE(FILE* f, WRITEDATA wd, bool newLine){
+    fprintf(f, "%s|%zu|%f", wd.operation, wd.n, wd.c);
     if (newLine == true){
         fprintf(f, "\n");
     }
 }
 
 int main(){
+    printf("<< Water Moon. >>\nLook into the Mirror...\n");
+    printf("> Getting tests for ((" INPUT_FILE ")) ...\n");
     int t = 0;
     char*** tests = NULL;
-    getTests("test_csv_0.csv", &t, &tests);
-
-    FILE* f = fopen("test_output.csv", "w+");
+    getTests(INPUT_FILE, &t, &tests);
+    printf("> Done.\n");
+    
+    printf("> Conducting test operations...\n");
+    WRITEDATA* writeDataLines = (WRITEDATA*) malloc(t*sizeof(WRITEDATA));
+    FILE* f = fopen(OUTPUT_FILE, "w+");
     Reflection* list = NULL;
     for (int t0 = 0; t0 < t; t0++){
         char** testLine = tests[t0];
@@ -184,25 +211,25 @@ int main(){
             c = clock();
             list = make(n, seq);
             c = clock() - c;
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
             
         } else if (strcmp(operation, "size") == 0){
             c = clock();
             LENGTH listSize = size(list);
             c = clock() - c;
-            VERIFY(lengthToStr(listSize), RESULT);
+            VERIFY(t0, operation, lengthToStr(listSize), RESULT);
 
         } else if (strcmp(operation, "empty") == 0){
             c = clock();
             bool listEmpty = empty(list);
             c = clock() - c;
-            VERIFY(boolToStr(listEmpty), RESULT);
+            VERIFY(t0, operation, boolToStr(listEmpty), RESULT);
             
         } else if (strcmp(operation, "reverse") == 0){
             c = clock();
             reverse(list);
             c = clock() - c;
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
 
         } else if (strcmp(operation, "get") == 0){
             LENGTH i = strToLength(arg1);
@@ -210,7 +237,7 @@ int main(){
             c = clock();
             DATA data = get(list, i);
             c = clock() - c;
-            VERIFY(dataToStr(data), RESULT);
+            VERIFY(t0, operation, dataToStr(data), RESULT);
 
         } else if (strcmp(operation, "set") == 0){
             LENGTH i = strToLength(arg1);
@@ -220,18 +247,18 @@ int main(){
             set(list, i, v);
             c = clock() - c;
 
-            VERIFY(dataToStr(get(list, i)), RESULT);
+            VERIFY(t0, operation, dataToStr(get(list, i)), RESULT);
         
         } else if (strcmp(operation, "peek_left") == 0){
             c = clock();
             DATA data = peek_left(list);
             c = clock() - c;
-            VERIFY(dataToStr(data), RESULT);
+            VERIFY(t0, operation, dataToStr(data), RESULT);
         } else if (strcmp(operation, "peek_right") == 0){
             c = clock();
             DATA data = peek_right(list);
             c = clock() - c;
-            VERIFY(dataToStr(data), RESULT);
+            VERIFY(t0, operation, dataToStr(data), RESULT);
 
         } else if (strcmp(operation, "push_left") == 0){
             DATA v = strToData(arg1);
@@ -240,7 +267,7 @@ int main(){
             push_left(list, v);
             c = clock() - c;
 
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
 
         } else if (strcmp(operation, "push_right") == 0){
             DATA v = strToData(arg1);
@@ -249,31 +276,52 @@ int main(){
             push_right(list, v);
             c = clock() - c;
 
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
 
         } else if (strcmp(operation, "pop_left") == 0){
             c = clock();
             pop_left(list);
             c = clock() - c;
 
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
 
         } else if (strcmp(operation, "pop_right") == 0){
             c = clock();
             pop_right(list);
             c = clock() - c;
 
-            VERIFY(getAllElementsAsResult(list), RESULT);
+            VERIFY(t0, operation, getAllElementsAsResult(list), RESULT);
 
         }
 
-        WRITE(f, operation, n, c, t0<t-1 ? true : false);
+        WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
+        wd.operation = operation;
+        wd.n = n;
+        wd.c = c;
+        writeDataLines[t0] = wd;
+        
         free(operation);
         free(arg1);
         free(arg2);
         free(RESULT);
         free(testLine);
     }
+    printf("> Done.\n");
+
+    printf("> Writing deltatimes to output...\n");
+    for (int t0 = 0; t0 < t; t0++){
+        WRITE(f, writeDataLines[t0], t0<t-1 ? true : false);
+    }
+    printf("> Done.\n");
+
+    printf("> Cleanup...\n");
     free(tests);
+    free(writeDataLines);
     fclose(f);
+    printf("> Done.\n");
+
+    printf("> Testing successful.\n");
+    printf("> Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
+    
+    printf("Will you look into the Mirror once more?\n");
 }

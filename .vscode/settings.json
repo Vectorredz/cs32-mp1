@@ -6,6 +6,7 @@
         "h_ptreelist.h": "c",
         "h_global.h": "c",
         "array": "c",
-        "string": "c"
+        "string": "c",
+        "random": "c"
     }
 }
