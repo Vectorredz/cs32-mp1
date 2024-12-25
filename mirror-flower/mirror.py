@@ -6,6 +6,9 @@ Will your Reflection be the same as mine?
 # File path to write the operations to
 INPUT_FILE = "test_input.csv"
 
+# If you want to test for large inputs (WARNING: takes a long time to test)
+LARGE_INPUTS = False
+
 # --------------------------------------------------------- >>
 # Do not edit past this point!
 # --------------------------------------------------------- >>
@@ -223,7 +226,7 @@ print("> Layer 2...")
 WRITECUSTOM("LAYER", str(2))
 
 # Consecutive Normal Pushes
-for i in range(0, random.randint(500, 1000)):
+for i in range(random.randint(500, 1000)):
     WRITE(True, mirror, "push_left", randomData())
 
 # Consecutive Normal Pops
@@ -232,13 +235,13 @@ while (mirror.size() > 0):
     
 
 # Again.
-for i in range(0, random.randint(500, 1000)):
+for i in range(random.randint(500, 1000)):
     WRITE(True, mirror, "push_right", randomData())
 while (mirror.size() > 0):
     WRITE(True, mirror, "pop_right")
 
 # Double Consecutive Normal Punch
-for i in range(0, random.randint(500, 1000)):
+for i in range(random.randint(500, 1000)):
     operations = ["push_left", "push_right", "pop_left", "pop_right"]
     chosen = operations[random.randint(0, len(operations)-1)]
     if chosen == "pop_left" or chosen == "pop_right":
@@ -254,7 +257,7 @@ WRITECUSTOM("LAYER", str(3))
 
 # Serious Punch
 operations = ["push_left", "push_right", "pop_left", "pop_right"]
-for i in range(0, random.randint(500, 1000)):
+for i in range(random.randint(500, 1000)):
     chosen = operations[random.randint(0, len(operations)-1)]
     if chosen.find("pop") != -1:
         WRITE(True, mirror, chosen)
@@ -270,8 +273,39 @@ print("> Done.")
 # ------------------------ LAYER 4: [[ dlroW derorriM ]]
 print("> Mirrored World...")
 WRITECUSTOM("LAYER", "dlroW>><<derorriM")
+
+if LARGE_INPUTS == True:
+    for i in range(random.randint(60000, 200000)):
+        WRITE(False, mirror, "push_left", randomData())
+        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(False, mirror, "get", randomIndex(mirror))
+        WRITE(False, mirror, "peek_left")
+        WRITE(False, mirror, "peek_right")
+    while (mirror.size() > 0):
+        WRITE(False, mirror, "pop_left")
+        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(False, mirror, "get", randomIndex(mirror))
+        WRITE(False, mirror, "peek_left")
+        WRITE(False, mirror, "peek_right")
+
+    for i in range(random.randint(60000, 200000)):
+        WRITE(False, mirror, "push_right", randomData())
+        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(False, mirror, "get", randomIndex(mirror))
+        WRITE(False, mirror, "peek_left")
+        WRITE(False, mirror, "peek_right")
+    while (mirror.size() > 0):
+        WRITE(False, mirror, "pop_right")
+        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(False, mirror, "get", randomIndex(mirror))
+        WRITE(False, mirror, "peek_left")
+        WRITE(False, mirror, "peek_right")
+
+    for i in range(random.randint(60000, 200000)):
+        WRITE(False, mirror, "push_left", randomData())
+
 operations = list(OPERATIONS.keys())
-for i in range(0, random.randint(100000, 200000)):
+for i in range(random.randint(100000, 200000)):
     chosen = operations[random.randint(0, len(operations)-1)]
     args = ()
     if chosen == "get":
@@ -280,8 +314,8 @@ for i in range(0, random.randint(100000, 200000)):
         args = tuple([randomIndex(mirror), randomData()])
     elif chosen == "push_left" or chosen == "push_right":
         args = tuple([randomData()])
-
     WRITE(False, mirror, chosen, *args)
+            
 WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
 print("> Done.")
 

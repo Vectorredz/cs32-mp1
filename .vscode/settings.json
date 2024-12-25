@@ -7,6 +7,7 @@
         "h_global.h": "c",
         "array": "c",
         "string": "c",
-        "random": "c"
+        "random": "c",
+        "windows.h": "c"
     }
 }
