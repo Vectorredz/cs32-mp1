@@ -1,7 +1,17 @@
 '''
-Water Moon.
+<< Mirror Flower. >>
 Will your Reflection be the same as mine?
 '''
+# --------------------------------------------------------- >>
+# File path to write the operations to
+INPUT_FILE = "test_input.csv"
+
+# --------------------------------------------------------- >>
+# Do not edit past this point!
+# --------------------------------------------------------- >>
+# --------------------------------------------------------- >>
+# --------------------------------------------------------- >>
+
 
 
 from collections.abc import Sequence, Callable
@@ -61,15 +71,33 @@ class Mirror:
     def SPECIAL_getAllElements(self): # dont modify using this lolo
         return self._array
 
+# ----------------------------------------------------------------------
+print("<< Mirror Flower. >>")
+print("Will your Reflection be the same as mine?\n")
+
+print("> Initializing functions and file writing...")
+
+
+dataBound = 10**18
+def randomData() -> DATA:
+    return random.randint(-dataBound, dataBound)
+
+def randomIndex(mirror: Mirror):
+    if mirror.size() == 0:
+        return 0
+    return random.randint(0, mirror.size()-1)
+
+def listToResult(seq: Sequence):
+    return (",").join([str(data) for data in seq])
 
 # ----------------------------------------------------------------------
 def RESULT_size(mirror: Mirror):
     return str(mirror.size())
 def RESULT_empty(mirror: Mirror):
-    return str(mirror.empty())
+    return "0" if mirror.empty() == False else "1"
 def RESULT_reverse(mirror: Mirror):
     mirror.reverse()
-    return str(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.SPECIAL_getAllElements())
 
 def RESULT_get(mirror: Mirror, i: LENGTH):
     return str(mirror.get(i))
@@ -83,16 +111,16 @@ def RESULT_peek_right(mirror: Mirror):
 
 def RESULT_push_left(mirror: Mirror, v: DATA):
     mirror.push_left(v)
-    return str(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.SPECIAL_getAllElements())
 def RESULT_push_right(mirror: Mirror, v: DATA):
     mirror.push_right(v)
-    return str(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.SPECIAL_getAllElements())
 def RESULT_pop_left(mirror: Mirror):
     mirror.pop_left()
-    return str(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.SPECIAL_getAllElements())
 def RESULT_pop_right(mirror: Mirror):
     mirror.pop_right()
-    return str(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.SPECIAL_getAllElements())
 
 OPERATIONS = dict()
 OPERATIONS["size"] = RESULT_size
@@ -107,7 +135,7 @@ OPERATIONS["push_right"] = RESULT_push_right
 OPERATIONS["pop_left"] = RESULT_pop_left
 OPERATIONS["pop_right"] = RESULT_pop_right
 
-testFile = open("test_input.csv", "w", newline="")
+testFile = open(INPUT_FILE, "w+", newline="")
 fields = ["OPERATION", "ARG1", "ARG2", "RESULT"]
 writer = csv.DictWriter(testFile, fieldnames=fields)
 writer.writeheader
@@ -135,21 +163,13 @@ def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
         "RESULT": result
     })
 
-testFile.truncate()
+print("> Done.")
+# ------------------------------------------------
 
-# ----------------------------------------------------------------------
-dataBound = 10**18
-def randomData() -> DATA:
-    return random.randint(-dataBound, dataBound)
-
-def randomIndex(mirror: Mirror):
-    if mirror.size() == 0:
-        return 0
-    return random.randint(0, mirror.size()-1)
-
-
+print("> Initializing tests...")
 
 # ------------------------ LAYER 0: Initialize
+print("> Layer 0...")
 _seq = list[DATA]()
 for i in range(random.randint(0, 200)):
     _seq.append(randomData())
@@ -158,11 +178,11 @@ writer.writerow({
     "OPERATION": "make",
     "ARG1": "None",
     "ARG2": "None",
-    "RESULT": str(mirror.SPECIAL_getAllElements())
+    "RESULT": listToResult(mirror.SPECIAL_getAllElements())
 })
-
+print("> Done.")
 # ------------------------ LAYER 1: No Insertions/Deletions
-
+print("> Layer 1...")
 # check initial indices
 for i in range(mirror.size()):
     WRITE(True, mirror, "get", i)
@@ -183,8 +203,11 @@ for i in range(random.randint(5000, 10000)):
         WRITE(True, mirror, "reverse")
     WRITE(True, mirror, "size")
     WRITE(True, mirror, "empty")
+print("> Done.")
 
 # ------------------------ LAYER 2: Consecutive
+print("> Layer 2...")
+
 # Consecutive Normal Pushes
 for i in range(0, random.randint(500, 1000)):
     WRITE(True, mirror, "push_left", randomData())
@@ -208,9 +231,10 @@ for i in range(0, random.randint(500, 1000)):
     else:
         WRITE(True, mirror, chosen, randomData())
 
+print("> Done.")
 
 # ------------------------ LAYER 3: Killer Move: Serious Series
-
+print("> Layer 3...")
 # Serious Punch
 operations = ["push_left", "push_right", "pop_left", "pop_right"]
 for i in range(0, random.randint(500, 1000)):
@@ -222,9 +246,10 @@ for i in range(0, random.randint(500, 1000)):
     if (random.randint(1, 10) == 1):
         WRITE(True, mirror, "reverse")
 
+print("> Done.")
 
 # ------------------------ LAYER 4: [[ dlroW derorriM ]]
-
+print("> Mirrored World...")
 operations = list(OPERATIONS.keys())
 for i in range(0, random.randint(100000, 200000)):
     chosen = operations[random.randint(0, len(operations)-1)]
@@ -238,9 +263,10 @@ for i in range(0, random.randint(100000, 200000)):
 
     WRITE(False, mirror, chosen, *args)
 
+print("> Done.")
 
 
-
-
+print("Tests successfully initialized.")
+print("Test operations can be found in (({INPUT_FILE:s}))\n".format(INPUT_FILE=INPUT_FILE))
 
 print("Will you look into the Mirror once more?")
