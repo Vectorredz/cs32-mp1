@@ -193,7 +193,7 @@ char* boolToStr(bool b){
 
 bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT){
     if (strcmp(mRESULT, RESULT) != 0){
-        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
+        printf("> !! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("> !! Failed Operation !!\n");
         printf(":: line %d\n:: operation %s\n", lineNum+1, operation);
         return false;
