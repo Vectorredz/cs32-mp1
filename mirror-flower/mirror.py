@@ -15,7 +15,28 @@ LARGE_INPUTS = False
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
 
-
+# ----------------------------------------- <<
+            #||-- LAYERS --||#
+# << -----------------------------------------
+'''
+LAYER 0:
+- Tests MAKE
+LAYER 1:
+- Tests GET (Random Index)
+- Tests SET (Random Index and Random Data)
+- Tests PEEK_*, SIZE, EMPTY, REVERSE
+LAYER 2:
+- Tests PUSH_*, POP_*
+LAYER 3:
+- Attempts to break the Reflection with PUSH_*, POP_* with occasional REVERSE and SET(Random Index, Random Data)
+LAYER 4:
+- (if LARGE_INPUTS setting is set to True):
+    - Attempts to break the Reflection with PUSH_*, POP_*, GET, SET, PEEK for RANDOM_INTEGER(60000, 200000) times
+- (executes regardless of LARGE_INPUTS):
+    - Attempts to break the Reflection with every single OPERATION for RANDOM_INTEGER(100000, 200000) times
+'''
+# --------------------------------------------------------- >>
+# --------------------------------------------------------- >>
 
 from collections.abc import Sequence, Callable
 from typing import TypeVar

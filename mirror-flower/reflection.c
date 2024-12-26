@@ -20,6 +20,18 @@ typedef PTreeList Reflection;
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 
+/* ----------------------------------------- <<
+            #||-- OUTPUT --||#
+<< ----------------------------------------- */
+/*
+- After the test, the tester will output OUTPUT_FILE
+- OUTPUT_FILE is a csv file composed of Fields (OPERATION | N | DELTATIME)
+It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
+constant, linear, or logarithmic in nature.
+*/
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+
 // TODO: implement other os later
 #include <windows.h>
 #include <sys/timeb.h>
