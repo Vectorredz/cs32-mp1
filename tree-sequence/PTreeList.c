@@ -475,9 +475,15 @@ bool empty(PTreeList* list){
 
 // Getters/Setters
 DATA get(PTreeList* list, LENGTH i){
+    if (!(0 <= i && i < list->n)){
+        return 0;
+    }
     return _getPTreeNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data;
 }
 void set(PTreeList* list, LENGTH i, DATA v){
+    if (!(0 <= i && i < list->n)){
+        return;
+    }
     LENGTH trueIndex = list->reversed == false ? i : (list->n)-1-i;
     _getPTreeNodeAtIndex(list, trueIndex)->data = v;
     if (trueIndex == 0){
@@ -488,9 +494,15 @@ void set(PTreeList* list, LENGTH i, DATA v){
     }
 }
 DATA peek_left(PTreeList* list){
+    if (list->n == 0){
+        return 0;
+    }
     return list->reversed == false ? list->leftmost : list->rightmost;
 }
 DATA peek_right(PTreeList* list){
+    if (list->n == 0){
+        return 0;
+    }
     return list->reversed == false ? list->rightmost : list->leftmost;
 }
 
