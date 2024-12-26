@@ -27,17 +27,20 @@ constant, linear, or logarithmic in nature.
 typedef LARGE_INTEGER TIMER1;
 typedef double TIMER2;
 #define TIME_FORMAT "lf"
+uint64_t freq;
+void _TIME_init(){
+    LARGE_INTEGER f;
+    QueryPerformanceFrequency(&f);
+    freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
+}
 void _TIME(TIMER1* cRef){
     QueryPerformanceCounter(cRef);
 }
 TIMER2 _PROCESSTIME(TIMER1 a, TIMER1 b){
-    LARGE_INTEGER f;
-    QueryPerformanceFrequency(&f);
     uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
     uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
-    uint64_t fQ = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
     uint64_t dt = (bQ-aQ);
-    TIMER2 final = (double)(dt * 1000.0L)/(double)fQ;
+    TIMER2 final = (double)(dt * 1000.0L)/(double)freq;
     return final < 0.0L ? 0.0L : final;
 }
 
@@ -204,7 +207,8 @@ int main(){
     getTests(INPUT_FILE, &t, &tests);
     printf("> Done.\n");
     
-    printf("> Initializing write variables...\n");
+    printf("> Initializing variables...\n");
+    _TIME_init();
     int o = 0;
     for (int t0 = 0; t0 < t; t0++){
         char** testLine = tests[t0];
