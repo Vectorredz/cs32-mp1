@@ -43,6 +43,7 @@ typedef struct _PTreeList {
 } PTreeList;
 
 
+// Init
 PTreeList* make(LENGTH n, DATA* seq);
 
 // Flags/List Info
