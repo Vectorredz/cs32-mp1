@@ -420,7 +420,7 @@ bool _pop_left_base(PTreeList* list){
     }
     list->head = head;
     DeforestPTreeListNode(oldHead);
-    
+
     _mergeNonDistinctPTrees(list, list->head, false);
     _peekABoo(list, true, true);
 
@@ -553,85 +553,6 @@ bool pop_left(PTreeList* list){
 bool pop_right(PTreeList* list){
     return list->reversed == false ? _pop_right_base(list) : _pop_left_base(list);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
