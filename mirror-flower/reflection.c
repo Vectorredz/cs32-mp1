@@ -191,14 +191,15 @@ char* boolToStr(bool b){
 }
 
 
-void VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT){
+bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT){
     if (strcmp(mRESULT, RESULT) != 0){
         printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("> !! Failed Operation !!\n");
         printf(":: line %d\n:: operation %s\n", lineNum+1, operation);
-        assert(0);
+        return false;
     }
     free(mRESULT);
+    return true;
 }
 
 typedef struct _WRITEDATA {
@@ -268,7 +269,7 @@ int main(){
                 list = make(n, seq);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
 
             } else if (strcmp(operation, "size") == 0){
@@ -276,7 +277,7 @@ int main(){
                 LENGTH listSize = size(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, lengthToStr(listSize));
+                    if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize))) return -1;
                 }
 
             } else if (strcmp(operation, "empty") == 0){
@@ -284,7 +285,7 @@ int main(){
                 bool listEmpty = empty(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, boolToStr(listEmpty));
+                    if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty))) return -1;
                 }
 
             } else if (strcmp(operation, "reverse") == 0){
@@ -292,7 +293,7 @@ int main(){
                 reverse(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
 
             } else if (strcmp(operation, "get") == 0){
@@ -302,7 +303,7 @@ int main(){
                 DATA data = get(list, i);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, dataToStr(data));
+                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
                 }
 
             } else if (strcmp(operation, "set") == 0){
@@ -313,7 +314,7 @@ int main(){
                 set(list, i, v);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)));
+                    if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)))) return -1;
                 }
 
             } else if (strcmp(operation, "peek_left") == 0){
@@ -321,7 +322,7 @@ int main(){
                 DATA data = peek_left(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, dataToStr(data));
+                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
                 }
 
             } else if (strcmp(operation, "peek_right") == 0){
@@ -329,7 +330,7 @@ int main(){
                 DATA data = peek_right(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, dataToStr(data));
+                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
                 }
 
             } else if (strcmp(operation, "push_left") == 0){
@@ -339,7 +340,7 @@ int main(){
                 push_left(list, v);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
 
             } else if (strcmp(operation, "push_right") == 0){
@@ -349,7 +350,7 @@ int main(){
                 push_right(list, v);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
 
             } else if (strcmp(operation, "pop_left") == 0){
@@ -357,7 +358,7 @@ int main(){
                 pop_left(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
 
             } else if (strcmp(operation, "pop_right") == 0){
@@ -365,7 +366,7 @@ int main(){
                 pop_right(list);
                 _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
-                    VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list));
+                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
                 }
             }
 
