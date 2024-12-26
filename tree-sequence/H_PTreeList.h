@@ -43,6 +43,24 @@ typedef struct _PTreeList {
 } PTreeList;
 
 
+PTreeList* make(LENGTH n, DATA* seq);
+
+// Flags/List Info
+void reverse(PTreeList* list);
+LENGTH size(PTreeList* list);
+bool empty(PTreeList* list);
+
+// Getters/Setters
+DATA get(PTreeList* list, LENGTH i);
+void set(PTreeList* list, LENGTH i, DATA v);
+DATA peek_left(PTreeList* list);
+DATA peek_right(PTreeList* list);
+
+// Insertions/Deletions
+void push_left(PTreeList* list, DATA v);
+void push_right(PTreeList* list, DATA v);
+bool pop_left(PTreeList* list);
+bool pop_right(PTreeList* list);
 
 
 #endif
