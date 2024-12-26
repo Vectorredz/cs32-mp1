@@ -21,7 +21,11 @@ LAYER 4:
 - (if LARGE_INPUTS setting is set to True):
     - Attempts to shatter the Reflection with PUSH_*, POP_*, GET, SET, PEEK for RANDOM_INTEGER(60000, 200000) times
 - (executes regardless of LARGE_INPUTS):
-    - Attempts to shatter the Reflection with every single OPERATION for RANDOM_INTEGER(100000, 200000) times
+    - Attempts to shatter the Reflection with:
+        - Every single OPERATION for RANDOM_INTEGER(50000, 100000) times
+        - Occassionally pops the list until 0 to test for UB
+    - Attempts to shatter the Reflection one last time with:
+        - Every single OPERATION for RANDOM_INTEGER(50000, 100000) times
 '''
 from MSettings import INPUT_FILE, LARGE_INPUTS
 # --------------------------------------------------------- >>
@@ -315,21 +319,28 @@ if LARGE_INPUTS == True:
         WRITE(False, mirror, "get", randomIndex(mirror))
         WRITE(False, mirror, "peek_left")
         WRITE(False, mirror, "peek_right")
+        
+for u in range(2):
+    if u == 0:
+        if random.randint(0, 8) == 0:
+            while (mirror.size() > 0):
+                WRITE(False, mirror, "pop_right")
+    else:
+        if LARGE_INPUTS:
+            for i in range(random.randint(60000, 200000)):
+                WRITE(False, mirror, "push_left", randomData())
 
-    for i in range(random.randint(60000, 200000)):
-        WRITE(False, mirror, "push_left", randomData())
-
-operations = list(OPERATIONS.keys())
-for i in range(random.randint(100000, 200000)):
-    chosen = operations[random.randint(0, len(operations)-1)]
-    args = ()
-    if chosen == "get":
-        args = tuple([randomIndex(mirror)])
-    elif chosen == "set":
-        args = tuple([randomIndex(mirror), randomData()])
-    elif chosen == "push_left" or chosen == "push_right":
-        args = tuple([randomData()])
-    WRITE(False, mirror, chosen, *args)
+    operations = list(OPERATIONS.keys())
+    for i in range(random.randint(50000, 100000)):
+        chosen = operations[random.randint(0, len(operations)-1)]
+        args = ()
+        if chosen == "get":
+            args = tuple([randomIndex(mirror)])
+        elif chosen == "set":
+            args = tuple([randomIndex(mirror), randomData()])
+        elif chosen == "push_left" or chosen == "push_right":
+            args = tuple([randomData()])
+        WRITE(False, mirror, chosen, *args)
             
 WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
 print("> Done.")
