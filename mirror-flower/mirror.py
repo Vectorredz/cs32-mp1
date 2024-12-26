@@ -3,18 +3,6 @@
 Will your Reflection be the same as mine?
 '''
 # --------------------------------------------------------- >>
-# File path to write the operations to
-INPUT_FILE = "test_input.csv"
-
-# If you want to test for large inputs (WARNING: takes a long time to test)
-LARGE_INPUTS = False
-
-# --------------------------------------------------------- >>
-# Do not edit past this point!
-# --------------------------------------------------------- >>
-# --------------------------------------------------------- >>
-# --------------------------------------------------------- >>
-
 # ----------------------------------------- <<
             #||-- LAYERS --||#
 # << -----------------------------------------
@@ -35,8 +23,14 @@ LAYER 4:
 - (executes regardless of LARGE_INPUTS):
     - Attempts to break the Reflection with every single OPERATION for RANDOM_INTEGER(100000, 200000) times
 '''
+from MSettings import INPUT_FILE, LARGE_INPUTS
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
+# Do not edit past this point!
+# --------------------------------------------------------- >>
+# --------------------------------------------------------- >>
+# --------------------------------------------------------- >>
+
 
 from collections.abc import Sequence, Callable
 from typing import TypeVar

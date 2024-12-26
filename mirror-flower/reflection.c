@@ -3,23 +3,6 @@
     Look into the Mirror...
 */
 // --------------------------------------------------------- >>
-// Modify both header and typedef to the list to test
-#include "../tree-sequence/PTreeList.c"
-typedef PTreeList Reflection;
-
-// Input File Path (contains operation, args, and correct result for cross-checks)
-// test_input_0.csv is for testing the tester itself
-#define INPUT_FILE "test_input.csv"
-
-// Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
-#define OUTPUT_FILE "test_output.csv"
-
-// --------------------------------------------------------- >>
-// Do not edit past this point!
-// --------------------------------------------------------- >>
-// --------------------------------------------------------- >>
-// --------------------------------------------------------- >>
-
 /* ----------------------------------------- <<
             #||-- OUTPUT --||#
 << ----------------------------------------- */
@@ -29,8 +12,14 @@ typedef PTreeList Reflection;
 It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
 constant, linear, or logarithmic in nature.
 */
+#include "RSettings.h"
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
+// Do not edit past this point!
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+
 
 // TODO: implement other os later
 #include <windows.h>
