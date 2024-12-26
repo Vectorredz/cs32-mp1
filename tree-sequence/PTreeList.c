@@ -199,17 +199,15 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
 
     PTreeListNode* currentListNode = startNode;
     PTreeListNode* nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
-    LENGTH currentK = currentListNode->ptree->k;
     while (currentListNode != NULL && nextListNode != NULL){
         
         PTree* leftPTree = currentListNode->ptree;
         PTree* rightPTree = nextListNode->ptree;
-
+        
         if (leftPTree->k != rightPTree->k){
-            if (currentK > rightPTree->k){
+            if (leftPTree->k > rightPTree->k){
                 break;
             }
-            currentK = rightPTree->k;
             currentListNode = nextListNode;
             nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
             continue;
