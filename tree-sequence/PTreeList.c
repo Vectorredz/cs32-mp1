@@ -1,12 +1,3 @@
-#include <stdio.h>
-
-#include "../H_global.h"
-#include "H_PTreeList.h"
-#include <stdlib.h>
-#include <inttypes.h>
-#include <stdbool.h>
-
-
 /*
 << ------ ||
 // --------------------------------------------------------- >>
@@ -26,6 +17,20 @@ Perfect Binary Tree / Phantom Segment Tree
     only revealed once the list and trees are traversed with get/set operations.
 
 */
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+// --------------------------------------------------------- >>
+
+
+#include <stdio.h>
+
+#include "../H_global.h"
+#include "H_PTreeList.h"
+#include <stdlib.h>
+#include <inttypes.h>
+#include <stdbool.h>
+
+#define DEFOREST(t) free(t);
 
 
 
@@ -48,21 +53,6 @@ void _printLeaves(PTreeNode* node){
     if (node->leaf == false){
         _printLeaves(node->right);
     }
-}
-void DeforestPTreeNode(PTreeNode* treeNode){
-    if (treeNode->leaf == false){
-        DeforestPTreeNode(treeNode->left);
-        DeforestPTreeNode(treeNode->right);
-    }
-    free(treeNode);
-}
-void DeforestPTree(PTree* ptree){
-    DeforestPTreeNode(ptree->root);
-    free(ptree);
-}
-void DeforestPTreeListNode(PTreeListNode* listNode){
-    DeforestPTree(listNode->ptree);
-    free(listNode);
 }
 
 void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
@@ -256,8 +246,10 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
         if (newListNode->next != NULL){
             newListNode->next->prev = newListNode;
         }
-        DeforestPTreeListNode(currentListNode);
-        DeforestPTreeListNode(nextListNode);
+        DEFOREST(currentListNode->ptree);
+        DEFOREST(currentListNode);
+        DEFOREST(nextListNode->ptree);
+        DEFOREST(nextListNode);
 
         currentListNode = newListNode;
         if (currentListNode != NULL){
@@ -275,6 +267,7 @@ void _cascadeRemoval(PTree* ptree, bool fromRight, PTreeListNode** headRef, PTre
     PTreeNode* currentTreeNode = ptree->root;
     while (currentTreeNode != NULL){
         if (currentTreeNode->leaf == true){
+            DEFOREST(currentTreeNode);
             currentTreeNode = NULL;
 
         } else {
@@ -306,12 +299,15 @@ void _cascadeRemoval(PTree* ptree, bool fromRight, PTreeListNode** headRef, PTre
                 newListNode->next = NULL;
                 tail = newListNode;
             }
-
+            
+            PTreeNode* leftover = currentTreeNode;
             currentL = currentL / 2;
             currentK--;
             currentTreeNode = fromRight == false ? currentTreeNode->left : currentTreeNode->right;
+            DEFOREST(leftover);
         }
     }
+    DEFOREST(ptree);
 
     *headRef = head;
     *tailRef = tail;
@@ -401,7 +397,9 @@ bool _pop_left_base(PTreeList* list){
             oldHead->next->prev = NULL;
         }
         list->head = oldHead->next;
-        DeforestPTreeListNode(oldHead);
+        DEFOREST(oldHead->ptree->root);
+        DEFOREST(oldHead->ptree);
+        DEFOREST(oldHead);
         return true;
     }
     
@@ -412,6 +410,7 @@ bool _pop_left_base(PTreeList* list){
     PTreeListNode* oldHead = list->head;
     if (oldHead == list->tail){
         list->tail = tail;
+        DEFOREST(oldHead);
     } else {
         tail->next = oldHead->next;
         if (oldHead->next != NULL){
@@ -419,7 +418,6 @@ bool _pop_left_base(PTreeList* list){
         }
     }
     list->head = head;
-    DeforestPTreeListNode(oldHead);
 
     _mergeNonDistinctPTrees(list, list->head, false);
     _peekABoo(list, true, true);
@@ -442,7 +440,9 @@ bool _pop_right_base(PTreeList* list){
             oldTail->prev->next = NULL;
         }
         list->tail = oldTail->prev;
-        DeforestPTreeListNode(oldTail);
+        DEFOREST(oldTail->ptree->root);
+        DEFOREST(oldTail->ptree);
+        DEFOREST(oldTail);
         return true;
     }
 
@@ -453,6 +453,7 @@ bool _pop_right_base(PTreeList* list){
     PTreeListNode* oldTail = list->tail;
     if (list->head == oldTail){
         list->head = head;
+        DEFOREST(oldTail);
     } else {
         head->prev = oldTail->prev;
         if (oldTail->prev != NULL){
@@ -460,7 +461,6 @@ bool _pop_right_base(PTreeList* list){
         }
     }
     list->tail = tail;
-    DeforestPTreeListNode(oldTail);
 
     _mergeNonDistinctPTrees(list, list->tail, true);
     _peekABoo(list, true, true);
