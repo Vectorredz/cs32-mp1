@@ -12,7 +12,7 @@ void expand_array(dynamic_array *d)
 
             // if the starting element is == size, it starts back at 0
             // takes into account if d->start > 0
-            if ((d->start) == (d->size)-1) d->start = 0;
+            if ((d->start) == (d->size)) d->start = 0;
         }
 
         d->array = (int64_t*)realloc(d->array, 2*(d->size));
@@ -37,8 +37,8 @@ void decrease_array(dynamic_array *d)
     {
         // makes the size 1
         d->array = (int64_t*)realloc(d->array, 1);
-        d->start = NULL;
-        d->last = NULL;
+        d->start = 0;
+        d->last = 0;
         d->size = 1;
         d->elements = 0;
         d->reverse = false;
@@ -55,7 +55,7 @@ void decrease_array(dynamic_array *d)
 
             // if the starting element is == size, it starts back at 0
             // takes into account if d->start > 0
-            if ((d->start) == (d->size)-1) d->start = 0;
+            if ((d->start) == (d->size)) d->start = 0;
         }
 
 
@@ -86,8 +86,8 @@ dynamic_array *make(int n, int64_t *seq)
     {
         // creates an empty array of size 20 (the critical point for expanding and sparsing)
         d->array = (int64_t*)malloc((1) * sizeof(int64_t)); // arbitrary number
-        d->start = NULL;
-        d->last = NULL;
+        d->start = 0;
+        d->last = 0;
         d->size = 1;
         d->elements = 0;
         d->reverse = false;
@@ -110,10 +110,6 @@ dynamic_array *make(int n, int64_t *seq)
         // copying the given sequence into the dynamic array
         for (int i=0; i<n; i++)
         {   
-            // saving the leftmost and the rightmost values in their separate pointers
-            if (i==0) d->left = seq[i];
-            if (i==n-1) d->right = seq[i];
-
             // setting the values of each index
             d->array[i] = seq[i];
         }
@@ -130,8 +126,6 @@ void push_left(dynamic_array *d, int64_t v)
         if (d->elements == 0)
         {
             d->array[d->start] = v;
-            d->left = v;
-            d->right = v;
 
             d->elements++;
         }
@@ -144,14 +138,10 @@ void push_left(dynamic_array *d, int64_t v)
 
             // pushing of the value and saving the "leftmost"
             d->array[d->start] = v;
-            d->left = v;
 
             // increase to the size
             d->elements++;
         }
-
-        // if number of elements exceeds the size, it expands
-        if(d->elements == d->size) expand_array(d);
     }
 
     else // d->reverse == true
@@ -161,6 +151,9 @@ void push_left(dynamic_array *d, int64_t v)
         push_right(d, v);
         d->reverse = !d->reverse; // undo the first reverse
     }
+
+    // if number of elements exceeds the size, it expands
+    if(d->elements == d->size) expand_array(d);
 }
 
 void push_right(dynamic_array *d, int64_t v)
@@ -171,8 +164,6 @@ void push_right(dynamic_array *d, int64_t v)
         {
             // adding the new element into an empty list
             d->array[d->start] = v;
-            d->left = v;
-            d->right = v;
             
             // increasing the variable that keeps track of how many elements there are in the list
             d->elements++;
@@ -188,12 +179,8 @@ void push_right(dynamic_array *d, int64_t v)
         
             //setting the variables as new ones
             d->array[d->last] = v;
-            d->right = v;
             d->elements++;
         }
-
-        // if number of elements exceeds the size, it expands
-        if(d->elements == d->size) expand_array(d);
     }
 
     else // d->reverse == true
@@ -203,6 +190,9 @@ void push_right(dynamic_array *d, int64_t v)
         push_left(d, v); 
         d->reverse = !d->reverse; // undo the first reverse
     }
+
+    // if number of elements exceeds the size, it expands
+    if(d->elements == d->size) expand_array(d);
 }
 
 bool pop_left(dynamic_array *d)
@@ -221,7 +211,6 @@ bool pop_left(dynamic_array *d)
 
         if(floor((d->elements)) <= floor((d->size)/4)) decrease_array(d); 
 
-        d->left = d->array[d->start];
         return true;
     }
 
@@ -250,8 +239,7 @@ bool pop_right(dynamic_array *d)
         
 
         if(floor((d->elements)) <= floor((d->size)/4)) decrease_array(d); 
-        
-        d->right = d->array[d->last];
+    
         return true;
     }
 
@@ -259,7 +247,7 @@ bool pop_right(dynamic_array *d)
     {
         // important so it will do the push_right operation
         d->reverse = !d->reverse;
-        pop_right(d);
+        pop_left(d);
         d->reverse = !d->reverse; // undo the first reverse
     }
 }
@@ -267,15 +255,15 @@ bool pop_right(dynamic_array *d)
 int64_t peek_left(dynamic_array *d)
 {
     //returns leftmost element, return rightmost if reversed
-    if (reverse == true) return d->right;
-    return d->left;
+    if (d->reverse) return d->array[d->last];
+    return d->array[d->start];
 }
 
 int64_t peek_right(dynamic_array *d)
 {
     // returns rightmost element, return leftmost if reversed 
-    if (reverse == true) return d->left;
-    return d->right;
+    if (d->reverse) return d->array[d->start];
+    return d->array[d->last];
 }
 
 int size(dynamic_array *d) 
@@ -344,14 +332,11 @@ void set(dynamic_array *d, int i, int64_t v)
 
     else // d->reverse == true
     {
-        // if its setting the leftmost or rightmost value
-        if (i==0) d->right = v;
-        if ((d->elements)-1) d->left =v;
 
         // reverses the index 
         int reverse_index = abs((d->last) - i);
         d->array[reverse_index] = v;
-    }
+    }   
 }
 
 void reverse(dynamic_array *d)

@@ -1,13 +1,13 @@
+#include "../H_global.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct dynamic_array 
 {
     int64_t *array; // array
-    dynamic_array *left; // leftmost element
-    dynamic_array *right; // rightmost element
     int last; // last  element's index
     int start; // first element's index 
     int elements; // number of elements (n)
