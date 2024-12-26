@@ -8,15 +8,15 @@ Will your Reflection be the same as mine?
 # << -----------------------------------------
 '''
 LAYER 0:
-- Tests MAKE
+- MAKE (length of RANDOM_INTEGER(0, 2000))
 LAYER 1:
-- Tests GET (Random Index)
-- Tests SET (Random Index and Random Data)
-- Tests PEEK_*, SIZE, EMPTY, REVERSE
+- Gazes at GET (Random Index)
+- Gazes at SET (Random Index and Random Data)
+- Gazes at PEEK_*, SIZE, EMPTY, REVERSE
 LAYER 2:
-- Tests PUSH_*, POP_*
+- Gazes at PUSH_*, POP_*
 LAYER 3:
-- Attempts to shatter the Reflection with PUSH_*, POP_* with occasional REVERSE and SET(Random Index, Random Data)
+- Attempts to shatter the Reflection with PUSH_*, POP_* with occasional REVERSE and SET (Random Index, Random Data)
 LAYER 4:
 - (if LARGE_INPUTS setting is set to True):
     - Attempts to shatter the Reflection with PUSH_*, POP_*, GET, SET, PEEK for RANDOM_INTEGER(60000, 200000) times
@@ -197,7 +197,7 @@ print("> Initializing tests...")
 # ------------------------ LAYER 0: Initialize
 print("> Layer 0...")
 WRITECUSTOM("LAYER", str(0))
-n = random.randint(0, 200)
+n = random.randint(0, 2000)
 seq = list[DATA]()
 for i in range(n):
     seq.append(randomData())
