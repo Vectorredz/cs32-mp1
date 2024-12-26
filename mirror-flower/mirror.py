@@ -49,7 +49,7 @@ class Mirror:
     _array: list[DATA]
     n: LENGTH
     def __init__(self, n: LENGTH, seq: Sequence[DATA]):
-        self._array = list[LENGTH]()
+        self._array = list[DATA]()
         for i in range(n):
             self._array.append(seq[i])
 
