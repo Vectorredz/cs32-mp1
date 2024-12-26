@@ -42,7 +42,7 @@ void _printLeaves(PTreeNode* node){
         _printLeaves(node->left);
     }
     if (node->leaf == true){
-        printf("%d\n", node->data);
+        printf("%" PRId64 "\n", node->data);
         return;
     }
     if (node->leaf == false){
@@ -203,7 +203,7 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
         
         PTree* leftPTree = currentListNode->ptree;
         PTree* rightPTree = nextListNode->ptree;
-        
+
         if (leftPTree->k != rightPTree->k){
             if (leftPTree->k > rightPTree->k){
                 break;
