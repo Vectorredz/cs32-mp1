@@ -25,7 +25,7 @@ typedef PTreeList Reflection;
 #include <sys/timeb.h>
 typedef LARGE_INTEGER TIMER1;
 typedef double TIMER2;
-#define TIME_FORMAT "Lf"
+#define TIME_FORMAT "lf"
 void _TIME(TIMER1* cRef){
     QueryPerformanceCounter(cRef);
 }
