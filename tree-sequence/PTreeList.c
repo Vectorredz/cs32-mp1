@@ -30,7 +30,9 @@ Perfect Binary Tree / Phantom Segment Tree
 #include <inttypes.h>
 #include <stdbool.h>
 
-#define DEFOREST(t) free(t);
+void DEFOREST(void* ptr){
+    free(ptr);
+}
 
 
 
