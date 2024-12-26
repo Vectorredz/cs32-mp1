@@ -20,7 +20,27 @@ typedef PTreeList Reflection;
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 
+// TODO: implement other os later
 #include <windows.h>
+#include <sys/timeb.h>
+typedef LARGE_INTEGER TIMER1;
+typedef double TIMER2;
+#define TIME_FORMAT "Lf"
+void _TIME(TIMER1* cRef){
+    QueryPerformanceCounter(cRef);
+}
+TIMER2 _PROCESSTIME(TIMER1 a, TIMER1 b){
+    LARGE_INTEGER f;
+    QueryPerformanceFrequency(&f);
+    uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
+    uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
+    uint64_t fQ = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
+    uint64_t dt = (bQ-aQ);
+    TIMER2 final = (double)(dt * 1000.0L)/(double)fQ;
+    return final < 0.0L ? 0.0L : final;
+}
+
+
 
 #include "../H_global.h"
 #include <stdio.h>
@@ -166,10 +186,10 @@ void VERIFY(int opNum, char* operation, char* RESULT, char* mRESULT){
 typedef struct _WRITEDATA {
     char* operation;
     LENGTH n;
-    long long c;
+    TIMER2 c;
 } WRITEDATA;
 void WRITE(FILE* f, WRITEDATA wd, bool newLine){
-    fprintf(f, "%s|%zu|%Ld", wd.operation, wd.n, wd.c);
+    fprintf(f, "%s|%zu|%" TIME_FORMAT, wd.operation, wd.n, wd.c);
     if (newLine == true){
         fprintf(f, "\n");
     }
@@ -212,7 +232,7 @@ int main(){
             printf("> !! LAYER %s Passed. !!\n", arg1);
         } else {
             LENGTH n = list != NULL ? size(list) : 0;
-            SYSTEMTIME _c, c;
+            TIMER1 c, _c;
 
             if (strcmp(operation, "make") == 0){
                 n = strToLength(arg1);
@@ -225,33 +245,33 @@ int main(){
                     token = strtok(NULL, ",");
                 }
 
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 list = make(n, seq);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "size") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 LENGTH listSize = size(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, lengthToStr(listSize));
                 }
 
             } else if (strcmp(operation, "empty") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 bool listEmpty = empty(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, boolToStr(listEmpty));
                 }
 
             } else if (strcmp(operation, "reverse") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 reverse(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
@@ -259,9 +279,9 @@ int main(){
             } else if (strcmp(operation, "get") == 0){
                 LENGTH i = strToLength(arg1);
 
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 DATA data = get(list, i);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
@@ -270,25 +290,25 @@ int main(){
                 LENGTH i = strToLength(arg1);
                 DATA v = strToData(arg2);
 
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 set(list, i, v);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, dataToStr(get(list, i)));
                 }
 
             } else if (strcmp(operation, "peek_left") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 DATA data = peek_left(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
 
             } else if (strcmp(operation, "peek_right") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 DATA data = peek_right(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, dataToStr(data));
                 }
@@ -296,9 +316,9 @@ int main(){
             } else if (strcmp(operation, "push_left") == 0){
                 DATA v = strToData(arg1);
 
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 push_left(list, v);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
@@ -306,25 +326,25 @@ int main(){
             } else if (strcmp(operation, "push_right") == 0){
                 DATA v = strToData(arg1);
 
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 push_right(list, v);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "pop_left") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 pop_left(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
 
             } else if (strcmp(operation, "pop_right") == 0){
-                GetSystemTime(&_c);
+                _TIME(&_c);
                 pop_right(list);
-                GetSystemTime(&c);
+                _TIME(&c);
                 if (strcmp("X", RESULT) != 0){
                     VERIFY(t0, operation, RESULT, getAllElementsAsResult(list));
                 }
@@ -334,7 +354,7 @@ int main(){
             char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
             wd.operation = strcpy(opCopy, operation);
             wd.n = n;
-            wd.c = c.wMilliseconds - _c.wMilliseconds;
+            wd.c = _PROCESSTIME(_c, c);
             writeDataLines[oCounter] = wd;
             oCounter++;
         }

@@ -8,6 +8,7 @@
         "array": "c",
         "string": "c",
         "random": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "time.h": "c"
     }
 }
