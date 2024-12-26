@@ -199,43 +199,43 @@ PTree* _constructZeroPTree(DATA v){
     return ptree;
 }
 
-void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool traverseLeft){
+void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
     if (list->n <= 1){
         return;
     }
 
     PTreeListNode* currentListNode = startNode;
-    PTreeListNode* nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
+    PTreeListNode* nextListNode = currentListNode->next;
     while (currentListNode != NULL && nextListNode != NULL){
         
-        PTree* leftPTree = currentListNode->ptree;
-        PTree* rightPTree = nextListNode->ptree;
+        PTree* currentPTree = currentListNode->ptree;
+        PTree* nextPTree = nextListNode->ptree;
 
-        if (leftPTree->k != rightPTree->k){
-            if (leftPTree->k > rightPTree->k){
+        if (currentPTree->k != nextPTree->k){
+            if (currentPTree->k > nextPTree->k){
                 break;
             }
             currentListNode = nextListNode;
-            nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
+            nextListNode = currentListNode->next;
             continue;
         }
 
         // Construct PTree with the two roots as children
         PTreeNode* root = (PTreeNode*) malloc(sizeof(PTreeNode));
         root->leaf = false;
-        root->left = traverseLeft == false ? leftPTree->root : rightPTree->root;
-        root->right = traverseLeft == false ? rightPTree->root : leftPTree->root;
+        root->left = currentPTree->root;
+        root->right = nextPTree->root;
 
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
-        ptree->l = leftPTree->l + rightPTree->l;
-        ptree->k = leftPTree->k + 1;
+        ptree->l = currentPTree->l + nextPTree->l;
+        ptree->k = currentPTree->k + 1;
         ptree->root = root;
 
         // Add to list and link neighbors
         PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
         newListNode->ptree = ptree;
-        newListNode->prev = traverseLeft == false ? currentListNode->prev : nextListNode->prev;
-        newListNode->next = traverseLeft == false ? nextListNode->next  : currentListNode->next;
+        newListNode->prev = currentListNode->prev;
+        newListNode->next = nextListNode->next;
         if (currentListNode == list->head || nextListNode == list->head){
             list->head = newListNode;
         }
@@ -254,15 +254,71 @@ void _mergeNonDistinctPTrees(PTreeList* list, PTreeListNode* startNode, bool tra
         DEFOREST(nextListNode);
 
         currentListNode = newListNode;
-        if (currentListNode != NULL){
-            nextListNode = traverseLeft == false ? currentListNode->next : currentListNode->prev;
+        nextListNode = currentListNode->next;
+    }
+}
+void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode){
+    if (list->n <= 1){
+        return;
+    }
+
+    PTreeListNode* currentListNode = startNode;
+    PTreeListNode* nextListNode = currentListNode->prev;
+    while (currentListNode != NULL && nextListNode != NULL){
+        
+        PTree* currentPTree = currentListNode->ptree;
+        PTree* nextPTree = nextListNode->ptree;
+
+        if (currentPTree->k != nextPTree->k){
+            if (currentPTree->k > nextPTree->k){
+                break;
+            }
+            currentListNode = nextListNode;
+            nextListNode = currentListNode->prev;
+            continue;
         }
+
+        // Construct PTree with the two roots as children
+        PTreeNode* root = (PTreeNode*) malloc(sizeof(PTreeNode));
+        root->leaf = false;
+        root->left = nextPTree->root;
+        root->right = currentPTree->root;
+
+        PTree* ptree = (PTree*) malloc(sizeof(PTree));
+        ptree->l = currentPTree->l + nextPTree->l;
+        ptree->k = currentPTree->k + 1;
+        ptree->root = root;
+
+        // Add to list and link neighbors
+        PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
+        newListNode->ptree = ptree;
+        newListNode->prev = nextListNode->prev;
+        newListNode->next = currentListNode->next;
+        if (currentListNode == list->head || nextListNode == list->head){
+            list->head = newListNode;
+        }
+        if (currentListNode == list->tail || nextListNode == list->tail){
+            list->tail = newListNode;
+        }
+        if (newListNode->prev != NULL){
+            newListNode->prev->next = newListNode;
+        }
+        if (newListNode->next != NULL){
+            newListNode->next->prev = newListNode;
+        }
+        DEFOREST(currentListNode->ptree);
+        DEFOREST(currentListNode);
+        DEFOREST(nextListNode->ptree);
+        DEFOREST(nextListNode);
+
+        currentListNode = newListNode;
+        nextListNode = currentListNode->prev;
     }
 }
 
-void _cascadeRemoval(PTree* ptree, bool fromRight, PTreeListNode** headRef, PTreeListNode** tailRef){
-    PTreeListNode* head = NULL;
-    PTreeListNode* tail = NULL;
+void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
+    PTreeListNode* subHead = NULL;
+    PTreeListNode* subTail = NULL;
 
     LENGTH currentL = ptree->l;
     LENGTH currentK = ptree->k;
@@ -273,46 +329,76 @@ void _cascadeRemoval(PTree* ptree, bool fromRight, PTreeListNode** headRef, PTre
             currentTreeNode = NULL;
 
         } else {
-            PTree* rightPTree = (PTree*) malloc(sizeof(PTree));
-            rightPTree->l = currentL/2;
-            rightPTree->k = currentK-1;
-            rightPTree->root = fromRight == false ? currentTreeNode->right : currentTreeNode->left;
+            PTree* keptPTree = (PTree*) malloc(sizeof(PTree));
+            keptPTree->l = currentL/2;
+            keptPTree->k = currentK-1;
+            keptPTree->root = currentTreeNode->right;
             
             PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
-            newListNode->ptree = rightPTree;
-            if (fromRight == false){
-                if (tail == NULL){
-                    tail = newListNode;
-                }
-                if (head != NULL){
-                    head->prev = newListNode;
-                }
-                newListNode->prev = NULL;
-                newListNode->next = head;
-                head = newListNode;
-            } else {
-                if (head == NULL){
-                    head = newListNode;
-                }
-                if (tail != NULL){
-                    tail->next = newListNode;
-                }
-                newListNode->prev = tail;
-                newListNode->next = NULL;
-                tail = newListNode;
+            newListNode->ptree = keptPTree;
+            if (subTail == NULL){
+                subTail = newListNode;
             }
+            if (subHead != NULL){
+                subHead->prev = newListNode;
+            }
+            newListNode->prev = NULL;
+            newListNode->next = subHead;
+            subHead = newListNode;
             
             PTreeNode* leftover = currentTreeNode;
             currentL = currentL / 2;
             currentK--;
-            currentTreeNode = fromRight == false ? currentTreeNode->left : currentTreeNode->right;
+            currentTreeNode = currentTreeNode->left;
             DEFOREST(leftover);
         }
     }
     DEFOREST(ptree);
 
-    *headRef = head;
-    *tailRef = tail;
+    *subHeadRef = subHead;
+    *subTailRef = subTail;
+}
+void _cascadeRemovalRight(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
+    PTreeListNode* subHead = NULL;
+    PTreeListNode* subTail = NULL;
+
+    LENGTH currentL = ptree->l;
+    LENGTH currentK = ptree->k;
+    PTreeNode* currentTreeNode = ptree->root;
+    while (currentTreeNode != NULL){
+        if (currentTreeNode->leaf == true){
+            DEFOREST(currentTreeNode);
+            currentTreeNode = NULL;
+
+        } else {
+            PTree* keptPTree = (PTree*) malloc(sizeof(PTree));
+            keptPTree->l = currentL/2;
+            keptPTree->k = currentK-1;
+            keptPTree->root = currentTreeNode->left;
+            
+            PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
+            newListNode->ptree = keptPTree;
+            if (subHead == NULL){
+                subHead = newListNode;
+            }
+            if (subTail != NULL){
+                subTail->next = newListNode;
+            }
+            newListNode->prev = subTail;
+            newListNode->next = NULL;
+            subTail = newListNode;
+            
+            PTreeNode* leftover = currentTreeNode;
+            currentL = currentL / 2;
+            currentK--;
+            currentTreeNode = currentTreeNode->right;
+            DEFOREST(leftover);
+        }
+    }
+    DEFOREST(ptree);
+
+    *subHeadRef = subHead;
+    *subTailRef = subTail;
 }
 
 void _peekABoo(PTreeList* list, bool updateLeft, bool updateRight){
@@ -356,7 +442,7 @@ void _push_left_base(PTreeList* list, DATA v){
     (list->n)++;
 
     // Fix non-distinct types
-    _mergeNonDistinctPTrees(list, list->head, false);
+    _mergeNonDistinctPTreesToRight(list, list->head);
 
     _peekABoo(list, true, false);
 }
@@ -379,7 +465,7 @@ void _push_right_base(PTreeList* list, DATA v){
     (list->n)++;
 
     // Fix non-distinct types
-    _mergeNonDistinctPTrees(list, list->tail, true);
+    _mergeNonDistinctPTreesToLeft(list, list->tail);
 
     _peekABoo(list, false, true);
 }
@@ -405,23 +491,23 @@ bool _pop_left_base(PTreeList* list){
         return true;
     }
     
-    PTreeListNode* head = NULL;
-    PTreeListNode* tail = NULL;
-    _cascadeRemoval(leftPTree, false, &head, &tail);
+    PTreeListNode* subHead = NULL;
+    PTreeListNode* subTail = NULL;
+    _cascadeRemovalLeft(leftPTree, &subHead, &subTail);
 
     PTreeListNode* oldHead = list->head;
     if (oldHead == list->tail){
-        list->tail = tail;
+        list->tail = subTail;
         DEFOREST(oldHead);
     } else {
-        tail->next = oldHead->next;
+        subTail->next = oldHead->next;
         if (oldHead->next != NULL){
-            oldHead->next->prev = tail;
+            oldHead->next->prev = subTail;
         }
     }
-    list->head = head;
+    list->head = subHead;
 
-    _mergeNonDistinctPTrees(list, list->head, false);
+    _mergeNonDistinctPTreesToRight(list, subTail);
     _peekABoo(list, true, true);
 
     return true;
@@ -448,23 +534,23 @@ bool _pop_right_base(PTreeList* list){
         return true;
     }
 
-    PTreeListNode* head = NULL;
-    PTreeListNode* tail = NULL;
-    _cascadeRemoval(rightPTree, true, &head, &tail);
+    PTreeListNode* subHead = NULL;
+    PTreeListNode* subTail = NULL;
+    _cascadeRemovalRight(rightPTree, &subHead, &subTail);
 
     PTreeListNode* oldTail = list->tail;
     if (list->head == oldTail){
-        list->head = head;
+        list->head = subHead;
         DEFOREST(oldTail);
     } else {
-        head->prev = oldTail->prev;
+        subHead->prev = oldTail->prev;
         if (oldTail->prev != NULL){
-            oldTail->prev->next = head;
+            oldTail->prev->next = subHead;
         }
     }
-    list->tail = tail;
+    list->tail = subTail;
 
-    _mergeNonDistinctPTrees(list, list->tail, true);
+    _mergeNonDistinctPTreesToLeft(list, subHead);
     _peekABoo(list, true, true);
 
     return true;
