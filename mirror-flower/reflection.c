@@ -390,5 +390,5 @@ int main(){
 
     printf("!! Time plot points can be found in ((" OUTPUT_FILE ")) !!\n\n");
     
-    printf("Will you look into the Mirror once more?\n");
+    printf("Look into the Mirror once more, will you?\n");
 }
