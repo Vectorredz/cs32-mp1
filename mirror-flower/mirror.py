@@ -355,7 +355,7 @@ for u in range(2):
             while (mirror.size() > 0):
                 WRITE(False, mirror, "pop_right")
     else:
-        if LARGE_INPUTS:
+        if LARGE_INPUTS == True:
             for i in range(random.randint(60000, 200000)):
                 WRITE(False, mirror, "push_left", randomData())
 
