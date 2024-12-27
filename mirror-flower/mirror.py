@@ -8,24 +8,49 @@ Will your Reflection be the same as mine?
 # << -----------------------------------------
 '''
 LAYER 0:
-- MAKE (length of RANDOM_INTEGER(0, 2000))
+    >> INITIALIZATION TEST
+        - MAKE (length of RANDOM_INTEGER(0, 2000))
+    
 LAYER 1:
-- Gazes at GET (Random Index)
-- Gazes at SET (Random Index and Random Data)
-- Gazes at PEEK_*, SIZE, EMPTY, REVERSE
+    >> BASIC OPERATIONS TEST
+        * Gazes at:
+            - GET (Random Index)
+            - SET (Random Index and Random Data)
+            - PEEK_*
+            - SIZE
+            - EMPTY
+            - REVERSE
+
 LAYER 2:
-- Gazes at PUSH_*, POP_*
+    >> INSERTIONS/DELETIONS TEST
+        * Gazes at:
+            - PUSH_* (Random Data)
+            - POP_*
+
 LAYER 3:
-- Attempts to shatter the Reflection with PUSH_*, POP_* with occasional REVERSE and SET (Random Index, Random Data)
+    * Attempts to shatter the Reflection with:
+        >> INSERTIONS/DELETIONS TEST [Harder]
+                - PUSH_* (Random Data)
+                - POP_*
+                - occasional REVERSE and SET (Random Index, Random Data)
+                
 LAYER 4:
-- (if LARGE_INPUTS setting is set to True):
-    - Attempts to shatter the Reflection with PUSH_*, POP_*, GET, SET, PEEK for RANDOM_INTEGER(60000, 200000) times
-- (executes regardless of LARGE_INPUTS):
-    - Attempts to shatter the Reflection with:
-        - Every single OPERATION for RANDOM_INTEGER(50000, 100000) times
-        - Occassionally pops the list until 0 to test for UB
-    - Attempts to shatter the Reflection one last time with:
-        - Every single OPERATION for RANDOM_INTEGER(50000, 100000) times
+    * Attempts to shatter the Reflection one last time:
+        >> TIME COMPLEXITY TEST:
+            * if (LARGE_INPUTS == true):
+                - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
+                - POP_* for RANDOM_INTEGER(60000, 200000) times
+                - With GET (Random Index), SET (Random Index, Random Data), PEEK throughout
+
+        >> UB TEST:
+            - Pops list until n == 0 first
+            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+            - Occassionally pops the list until 0 to test for UB
+
+        >> FINALE:
+            * if (LARGE_INPUTS == true):
+                Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
+            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 '''
 from MSettings import INPUT_FILE, LARGE_INPUTS
 # --------------------------------------------------------- >>
@@ -319,7 +344,10 @@ if LARGE_INPUTS == True:
         WRITE(False, mirror, "get", randomIndex(mirror))
         WRITE(False, mirror, "peek_left")
         WRITE(False, mirror, "peek_right")
-        
+
+while (mirror.size() > 0):
+        WRITE(False, mirror, "pop_right")
+
 for u in range(2):
     if u == 0:
         if random.randint(0, 8) == 0:
