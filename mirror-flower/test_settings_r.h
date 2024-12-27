@@ -1,8 +1,12 @@
+#ifndef TEST_SETTINGS_H
+#define TEST_SETTINGS_H
+
 /*
     << Water Moon. >>
     Look into the Mirror...
 */
 // --------------------------------------------------------- >>
+
 // Modify both header and typedef to the list to test
 #include "../tree-sequence/p_tree_list.c" //(yes this is a Sin :man_running:)
 typedef PTreeList Reflection;
@@ -13,3 +17,7 @@ typedef PTreeList Reflection;
 
 // Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.csv"
+
+
+
+#endif
