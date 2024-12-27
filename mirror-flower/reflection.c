@@ -190,7 +190,7 @@ char* boolToStr(bool b){
     return b == false ? "0" : "1";
 }
 
-
+// TODO: use function pointers instead for getting mRESULT? idk
 bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT){
     if (strcmp(mRESULT, RESULT) != 0){
         printf("> !! FAULTY OUTPUT:: %s\n", mRESULT);
