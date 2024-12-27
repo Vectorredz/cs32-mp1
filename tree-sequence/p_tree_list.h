@@ -66,4 +66,10 @@ bool pop_left(PTreeList* list);
 bool pop_right(PTreeList* list);
 
 
+// Test Operations
+void TEST_elements(PTreeList* list, LENGTH* nRef, DATA** seqRef);
+bool TEST_internal(PTreeList* list);
+
+
+
 #endif
