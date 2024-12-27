@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "dynamic_array.h": "c",
-        "stdlib.h": "c",
-        "stdbool.h": "c",
-        "stdint.h": "c"
-    }
-}

@@ -8,14 +8,14 @@ void expand_array(dynamic_array *d)
         // copying the array properly into a temporary one for easier copying
         for (int i=0; i<(d->elements); i++)
         {
-            temp_array[i] = d->array[(d->start)++];
-
             // if the starting element is == size, it starts back at 0
             // takes into account if d->start > 0
-            if ((d->start) == (d->size)) d->start = 0;
+            // this part also increments the start by 1 all in one operation
+            temp_array[i] = d->array[(d->start + i) % (d->size)];
         }
 
-        d->array = (int64_t*)realloc(d->array, 2*(d->size));
+        free(d->array);
+        d->array = (int64_t*)malloc((2*(d->size)) * sizeof(int64_t));
         
         // fixing the index situation to start at 0 again
         for (int i=0; i<(d->elements); i++)
@@ -25,18 +25,22 @@ void expand_array(dynamic_array *d)
 
         // refreshing the variables
         d->start = 0;
-        d->last = (d->elements)-1;
-        d->size *= 2; // size = size*2
+
+        if(d->elements==1) d->last = 0;
+        else d->last = d->elements-1;
+
+        d->size = 2*(d->size); 
 
         free(temp_array);
 }
 
 void decrease_array(dynamic_array *d)
 {
-    if (d->elements == 0)
+    if (d->elements == 0)   
     {
         // makes the size 1
-        d->array = (int64_t*)realloc(d->array, 1);
+        free(d->array);
+        d->array = (int64_t*)malloc(sizeof(int64_t));
         d->start = 0;
         d->last = 0;
         d->size = 1;
@@ -46,20 +50,19 @@ void decrease_array(dynamic_array *d)
 
     else
     {
-        int64_t *temp_array = (int64_t*)malloc((d->size) * sizeof(int64_t));
+        int64_t *temp_array = (int64_t*)malloc((d->elements) * sizeof(int64_t));
 
         // copying the array properly into a temporary one for easier copying
         for (int i=0; i<(d->elements); i++)
         {
-            temp_array[i] = d->array[(d->start)++];
-
             // if the starting element is == size, it starts back at 0
             // takes into account if d->start > 0
-            if ((d->start) == (d->size)) d->start = 0;
+            // this part also increments the start by 1 all in one operation
+            temp_array[i] = d->array[(d->start + i) % (d->size)];
         }
 
-
-        d->array = (int64_t*)realloc(d->array, floor((d->size)/2));
+        free(d->array);
+        d->array = (int64_t*)malloc(((d->size)/2) * sizeof(int64_t));
         for (int i=0; i<d->elements; i++)
         {
             d->array[i] = temp_array[i];
@@ -67,8 +70,9 @@ void decrease_array(dynamic_array *d)
 
         // refreshing the variables
         d->start = 0;
-        d->last = (d->elements)-1;
-        d->size = floor((d->size)/2);
+        if(d->elements == 1 || d->elements == 0) d->last = 0;
+        else d->last = d->elements-1;
+        d->size = (d->size)/2;
 
         free(temp_array);
     }
@@ -79,7 +83,7 @@ dynamic_array *make(int n, int64_t *seq)
     // undefined behavior
     if (n<0) return NULL;
 
-    dynamic_array *d = (dynamic_array *)malloc(sizeof(d));
+    dynamic_array *d = (dynamic_array *)malloc(sizeof(dynamic_array));
 
     // if given seq is empty, create an array with size 1
     if (n==0)
@@ -120,7 +124,7 @@ dynamic_array *make(int n, int64_t *seq)
 
 void push_left(dynamic_array *d, int64_t v)
 {
-    if (d->reverse == false)
+    if (!d->reverse)
     {
         // special case if empty list
         if (d->elements == 0)
@@ -128,6 +132,8 @@ void push_left(dynamic_array *d, int64_t v)
             d->array[d->start] = v;
 
             d->elements++;
+
+            expand_array(d);
         }
 
         else
@@ -136,11 +142,14 @@ void push_left(dynamic_array *d, int64_t v)
             if (d->start == 0) d->start = (d->size)-1;
             else d->start--; // takes into account if d->start > 0 
 
-            // pushing of the value and saving the "leftmost"
+            // appends the new value
             d->array[d->start] = v;
 
             // increase to the size
             d->elements++;
+
+            // if number of elements exceeds the size, it expands
+            if(d->elements == d->size) expand_array(d);
         }
     }
 
@@ -151,35 +160,36 @@ void push_left(dynamic_array *d, int64_t v)
         push_right(d, v);
         d->reverse = !d->reverse; // undo the first reverse
     }
-
-    // if number of elements exceeds the size, it expands
-    if(d->elements == d->size) expand_array(d);
 }
 
 void push_right(dynamic_array *d, int64_t v)
 {
-    if (d->reverse == false)
+    if (!d->reverse)
     {
         if (d->elements == 0)
         {
             // adding the new element into an empty list
-            d->array[d->start] = v;
+            d->array[d->last] = v;
             
             // increasing the variable that keeps track of how many elements there are in the list
             d->elements++;
+
+            expand_array(d);
         }
 
         else
         {
-            // increment first
-            d->last++;
             
             // case when the array isn't full but the index exceeds the size, it means there's no index at 0
-            if(d->last >= d->size && d->elements < d->size) d->last = 0;
+            // this part also increments by 1  in one operation 
+            d->last = (d->last+1) % d->size;
         
-            //setting the variables as new ones
+            //setting the variable and increasing the number of valid elements
             d->array[d->last] = v;
             d->elements++;
+
+            // if number of elements exceeds the size, it expands
+            if(d->elements == d->size) expand_array(d);
         }
     }
 
@@ -190,9 +200,6 @@ void push_right(dynamic_array *d, int64_t v)
         push_left(d, v); 
         d->reverse = !d->reverse; // undo the first reverse
     }
-
-    // if number of elements exceeds the size, it expands
-    if(d->elements == d->size) expand_array(d);
 }
 
 bool pop_left(dynamic_array *d)
@@ -204,12 +211,14 @@ bool pop_left(dynamic_array *d)
 
         // we aren't actually popping the element, we just change the index range
         d->elements--;
+        d->array[d->start] = 0;
         d->start++;
+        d->array[d->start] = 999;
 
         // if the start index is not 0
         if(d->start >= d->size) d->start = 0;
 
-        if(floor((d->elements)) <= floor((d->size)/4)) decrease_array(d); 
+        if((d->elements) <= (d->size)/4) decrease_array(d); 
 
         return true;
     }
@@ -232,13 +241,14 @@ bool pop_right(dynamic_array *d)
 
         // we aren't actually popping the element, we just change the index range
         d->elements--;
+        d->array[d->last] = 0;
         d->last--;
 
         // if last index is >= 0
         if ((d->last) < 0) d->last = (d->size)-1;
         
 
-        if(floor((d->elements)) <= floor((d->size)/4)) decrease_array(d); 
+        if((d->elements) <= (d->size)/4) decrease_array(d); 
     
         return true;
     }
@@ -282,7 +292,7 @@ bool empty(dynamic_array *d)
 int64_t get(dynamic_array *d, int i)
 {   
     // add indexing error
-    if (0 > i >= d->elements)
+    if (!(0 <= i && i < d->elements))
     {
         fprintf(stderr, "IndexError: list index out of range\n");\
         exit(1);\
@@ -312,7 +322,7 @@ int64_t get(dynamic_array *d, int i)
 void set(dynamic_array *d, int i, int64_t v)
 {
     // add indexing error
-    if (0 > i >= d->elements)
+    if (!(0 <= i && i < d->elements))
     {
         fprintf(stderr, "IndexError: list index out of range\n");\
         exit(1);\
