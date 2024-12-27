@@ -11,6 +11,7 @@
         "windows.h": "c",
         "time.h": "c",
         "ptreelist.c": "cpp",
-        "test_ptreelist.c": "cpp"
+        "test_ptreelist.c": "cpp",
+        "p_tree_list.h": "c"
     }
 }
