@@ -315,7 +315,7 @@ for i in range(random.randint(500, 1000)):
 WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
 
-# ------------------------ LAYER 4: [[ dlroW derorriM ]]
+# ------------------------ LAYER 4: << dlroW derorriM >>
 print("> Mirrored World...")
 WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
