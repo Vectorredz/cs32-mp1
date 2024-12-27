@@ -19,12 +19,20 @@ typedef struct skip_node {
 } node;
 
 typedef struct skip_list {
-    int length; // maximum horizontal size
-    int height; // maximum vertical size
-    node *header; // sentinel head value; initialized to INT_MIN
-    node *footer;// sentinel tail value; initialized to INT_MAX
+    node *sentinel;
+    node *leftmost;
+    node *rightmost;
+    int maxHeight;
     bool is_reversed;
 } list;
+
+
+typedef struct doubly_linked_list { // tailRecord
+    node **record;
+    struct doubly_linked_list *prev; 
+    struct doubly_linked_list *next;
+} dlist; 
+
 
 
 list *make(int n, int64_t *seq);

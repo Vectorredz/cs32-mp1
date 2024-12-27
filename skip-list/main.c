@@ -103,7 +103,7 @@ list *generateSkipList(list *l0){ // O(n)
     int currHeight = 1;
 
 
-    while (currHeight <=  maxHeight){
+    while (currHeight <=  maxHeight){ // O(h) = O(logn)
         list *newList = init();
 
         newList->header->below = sl->header;
@@ -112,7 +112,7 @@ list *generateSkipList(list *l0){ // O(n)
         node *prevHeader = newList->header;
         prevHeader->level = currHeight;
         node *curr = sl->header->below->right; // initally level 0
-        while (curr != sl->footer){
+        while (curr != sl->footer){ // O(n)
             if (rand() < RAND_MAX / 2){ 
                 node *newNode = makeNode(curr->key, curr->val);
                 newNode->below = curr;
@@ -145,10 +145,18 @@ list *generateSkipList(list *l0){ // O(n)
     return sl;
 }
 
-list *make(int n, int64_t *seq){
+list *make(int n, int64_t *seq){ // O(n log(n))
     list *sl0 = generateLevelZero(n, seq);
     list *sl = generateSkipList(sl0);
     return sl;
+}
+
+int64_t peek_left(list *l){
+    node *curr = l->is_reversed ? l->footer :l->header;
+    return l->header->right->val;
+}
+int64_t peek_right(list *l){
+    return l->footer->left->val;
 }
 
 void display(list *sl) {
@@ -175,4 +183,7 @@ int main() {
     }
     list *sl = make(n, array);
     display(sl);
+
+    int64_t val = peek_right(sl);
+    printf("%ld ", val);
 }
