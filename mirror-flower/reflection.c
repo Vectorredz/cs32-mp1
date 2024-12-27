@@ -196,7 +196,6 @@ char* boolToStr(bool b){
 // TODO: use function pointers instead for getting mRESULT? idk
 bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
     if (strcmp(mRESULT, RESULT) != 0){
-        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("!! Failed Operation !!\n");
         
         int i = 0;
@@ -205,6 +204,8 @@ bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT, char* ext
         }
         printf(":: line %d\n:: column %d (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
         printf(":: operation: %s -> %s\n", operation, extraOperation);
+        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
+        printf("!! SUPPOSED OUTPUT:: %s\n", RESULT);
         return false;
     }
     return true;
