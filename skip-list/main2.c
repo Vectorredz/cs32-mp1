@@ -212,13 +212,15 @@ void push_right(list *l, int64_t v){
 }
 
 bool pop_left(list *l){
-    // no elements to pop
+    // no elements to
     if (l->size) return false;
     // pop the leftmost node and then its corresponding levels
     list *sl = l;
     node *curr = sl->is_reversed ? sl->rightmost : sl->leftmost;  
     node *sentinel = curr->left;
     node *nextNode =  sl->is_reversed ? curr->left : curr->right;
+
+
 
     if (!(sl->is_reversed)){
         // unlink the current node
@@ -250,6 +252,11 @@ bool pop_left(list *l){
     }
     return true;
 }
+
+bool pop_right(list *l){
+
+}
+
 
 int main() {
     srand(time(NULL)); 
