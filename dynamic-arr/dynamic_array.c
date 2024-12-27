@@ -211,9 +211,7 @@ bool pop_left(dynamic_array *d)
 
         // we aren't actually popping the element, we just change the index range
         d->elements--;
-        d->array[d->start] = 0;
         d->start++;
-        d->array[d->start] = 999;
 
         // if the start index is not 0
         if(d->start >= d->size) d->start = 0;
@@ -294,18 +292,15 @@ int64_t get(dynamic_array *d, int i)
     // add indexing error
     if (!(0 <= i && i < d->elements))
     {
-        fprintf(stderr, "IndexError: list index out of range\n");\
-        exit(1);\
+        fprintf(stderr, "IndexError: list index out of range\n");
+        exit(1);
     }
 
     // the actual getting algorithm
     if (d->reverse == false)
     {
         // returns the i-th element in terms of d->start (fixing the indexing)
-        int new_i = d->start + i;
-        
-        // if d->start > d->last due to circular indexing
-        if (new_i >= d->size) new_i -= d->size;
+        int new_i = (d->start + i) % d->size;
 
         return d->array[new_i];
     } 
@@ -313,7 +308,7 @@ int64_t get(dynamic_array *d, int i)
     else // d->reverse == true
     {
         // reverses the index 
-        int reverse_index = abs((d->last) - i);
+        int reverse_index = abs((d->last) - i) % d->size;
         
         return d->array[reverse_index];
     }
@@ -355,6 +350,23 @@ void reverse(dynamic_array *d)
     d->reverse = !d->reverse;
 }
 
+// for the unit testing
+DATA* TEST_elements(dynamic_array* list, LENGTH* nRef, DATA* seqRef){
+  LENGTH n = list->elements;
+  DATA* seq = (DATA*) malloc(n * sizeof(DATA));
+
+  // --
+  // insert elements into seq in order
+  // --
+  
+  *nRef n;
+  *seqRef = n;
+}
+
+bool TEST_internal(dynamic_array* list){
+  // do stuff
+  return true;
+}
 
 /*
 
