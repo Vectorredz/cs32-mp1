@@ -23,9 +23,9 @@ typedef struct skip_list {
     node *leftmost;
     node *rightmost;
     int maxHeight;
+    int size;
     bool is_reversed;
 } list;
-
 
 typedef struct doubly_linked_list { // tailRecord
     node **record;
@@ -35,7 +35,9 @@ typedef struct doubly_linked_list { // tailRecord
 
 
 
-list *make(int n, int64_t *seq);
+
+
+list *make(int n, int64_t *seq); // done
 void push_left(list *l, int64_t v);
 void push_right(list *l, int64_t v);
 bool pop_left(list *l);
