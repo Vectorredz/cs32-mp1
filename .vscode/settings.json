@@ -9,6 +9,8 @@
         "string": "c",
         "random": "c",
         "windows.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "ptreelist.c": "cpp",
+        "test_ptreelist.c": "cpp"
     }
 }

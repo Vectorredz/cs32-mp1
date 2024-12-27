@@ -43,6 +43,8 @@ typedef struct _PTreeList {
 } PTreeList;
 
 
+void DEFOREST(void* ptr);
+
 // Init
 PTreeList* make(LENGTH n, DATA* seq);
 

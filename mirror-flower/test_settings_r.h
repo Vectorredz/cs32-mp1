@@ -3,7 +3,6 @@
     Look into the Mirror...
 */
 // --------------------------------------------------------- >>
-
 // Modify both header and typedef to the list to test
 #include "../tree-sequence/PTreeList.c"
 typedef PTreeList Reflection;

@@ -7,9 +7,6 @@
 --\\======================================================//--
 // --------------------------------------------------------- >>
 << ------ ||
-*/
-
-/*
 Perfect Binary Tree / Phantom Segment Tree
     The Perfect Binary Trees are represented by the struct PTree, which is a modified
     Segment Tree-esque data structure with a special property of having implicit bounds.
@@ -20,20 +17,11 @@ Perfect Binary Tree / Phantom Segment Tree
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
-
-
-#include <stdio.h>
-
-#include "../H_global.h"
 #include "H_PTreeList.h"
-#include <stdlib.h>
-#include <inttypes.h>
-#include <stdbool.h>
 
 void DEFOREST(void* ptr){
     free(ptr);
 }
-
 
 
 // --------------------------------------------------------- >>
@@ -43,19 +31,6 @@ void DEFOREST(void* ptr){
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
-
-void _printLeaves(PTreeNode* node){
-    if (node->leaf == false){
-        _printLeaves(node->left);
-    }
-    if (node->leaf == true){
-        printf("%" PRId64 "\n", node->data);
-        return;
-    }
-    if (node->leaf == false){
-        _printLeaves(node->right);
-    }
-}
 
 void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
     LENGTH k = 0;
@@ -71,7 +46,6 @@ void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
     *powRef = pow;
     *kRef = k;
 }
-
 PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
     
@@ -89,8 +63,6 @@ PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGT
     
     return newTreeNode;
 }
-
-
 void _constructPTreesFromRange(DATA* seq, LENGTH lowerBound, LENGTH upperBound, PTreeListNode** headRef, PTreeListNode** tailRef){
     PTreeListNode* head = NULL;
     PTreeListNode* tail = NULL;
@@ -123,7 +95,6 @@ void _constructPTreesFromRange(DATA* seq, LENGTH lowerBound, LENGTH upperBound, 
     *headRef = head;
     *tailRef = tail;
 }
-
 PTreeNode* _getPTreeNodeAtIndex(PTreeList* list, LENGTH i){
     if (list->n == 0){
         return NULL;
@@ -185,7 +156,6 @@ PTreeNode* _getPTreeNodeAtIndex(PTreeList* list, LENGTH i){
     }
     return NULL;
 }
-
 PTree* _constructZeroPTree(DATA v){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
     newTreeNode->leaf = true;
@@ -198,7 +168,6 @@ PTree* _constructZeroPTree(DATA v){
 
     return ptree;
 }
-
 void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
     if (list->n <= 1){
         return;
@@ -212,12 +181,7 @@ void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
         PTree* nextPTree = nextListNode->ptree;
 
         if (currentPTree->k != nextPTree->k){
-            if (currentPTree->k > nextPTree->k){
-                break;
-            }
-            currentListNode = nextListNode;
-            nextListNode = currentListNode->next;
-            continue;
+            break;
         }
 
         // Construct PTree with the two roots as children
@@ -270,12 +234,7 @@ void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode){
         PTree* nextPTree = nextListNode->ptree;
 
         if (currentPTree->k != nextPTree->k){
-            if (currentPTree->k > nextPTree->k){
-                break;
-            }
-            currentListNode = nextListNode;
-            nextListNode = currentListNode->prev;
-            continue;
+            break;
         }
 
         // Construct PTree with the two roots as children
@@ -315,7 +274,6 @@ void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode){
         nextListNode = currentListNode->prev;
     }
 }
-
 void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
@@ -400,7 +358,6 @@ void _cascadeRemovalRight(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNod
     *subHeadRef = subHead;
     *subTailRef = subTail;
 }
-
 void _peekABoo(PTreeList* list, bool updateLeft, bool updateRight){
     if (list->n == 0){
         return;
@@ -443,7 +400,6 @@ void _push_left_base(PTreeList* list, DATA v){
 
     // Fix non-distinct types
     _mergeNonDistinctPTreesToRight(list, list->head);
-
     _peekABoo(list, true, false);
 }
 void _push_right_base(PTreeList* list, DATA v){
@@ -466,7 +422,6 @@ void _push_right_base(PTreeList* list, DATA v){
 
     // Fix non-distinct types
     _mergeNonDistinctPTreesToLeft(list, list->tail);
-
     _peekABoo(list, false, true);
 }
 bool _pop_left_base(PTreeList* list){
@@ -509,7 +464,6 @@ bool _pop_left_base(PTreeList* list){
 
     _mergeNonDistinctPTreesToRight(list, subTail);
     _peekABoo(list, true, true);
-
     return true;
 }
 bool _pop_right_base(PTreeList* list){
@@ -552,7 +506,6 @@ bool _pop_right_base(PTreeList* list){
 
     _mergeNonDistinctPTreesToLeft(list, subHead);
     _peekABoo(list, true, true);
-
     return true;
 }
 
@@ -643,16 +596,63 @@ bool pop_right(PTreeList* list){
 }
 
 
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
 
+            ||-- TEST OPERATIONS --||
 
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
 
+void _getLeaves(PTreeNode* node, DATA* seq, LENGTH* iRef){
+    if (node->leaf == false){
+        _getLeaves(node->left, seq, iRef);
+    }
+    if (node->leaf == true){
+        seq[*iRef] = node->data;
+        (*iRef)++;
+        return;
+    }
+    if (node->leaf == false){
+        _getLeaves(node->right, seq, iRef);
+    }
+}
+void TEST_elements(PTreeList* list, LENGTH* nRef, DATA** seqRef){
+    DATA* seq = (DATA*) malloc((list->n)*sizeof(DATA));
+    LENGTH i = 0;
+    PTreeListNode* currentListNode = list->head;
+    while (currentListNode != NULL){
+        _getLeaves(currentListNode->ptree->root, seq, &i);
+        currentListNode = currentListNode->next;
+    }
+    *nRef = list->n;
+    *seqRef = seq;
+}
+bool TEST_internal(PTreeList* list){
+    PTreeListNode* currentListNode = list->head;
+    if (currentListNode == NULL){
+        return true;
+    }
 
-
-
-
-
-
-
+    LENGTH prevK = currentListNode->ptree->k;
+    bool decreasing = false;
+    currentListNode = currentListNode->next;
+    while (currentListNode != NULL){
+        LENGTH currentK = currentListNode->ptree->k;
+        if (decreasing == false){
+            if (prevK > currentK){
+                decreasing = true;
+            }
+        } else {
+            if (prevK < currentK){
+                return false;
+            }
+        }
+        prevK = currentK;
+        currentListNode = currentListNode->next;
+    }
+    return true;
+}
 
 
 

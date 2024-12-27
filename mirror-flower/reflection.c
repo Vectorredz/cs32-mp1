@@ -12,7 +12,7 @@
 It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
 constant, linear, or logarithmic in nature.
 */
-#include "RSettings.h"
+#include "test_settings_r.h"
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 // Do not edit past this point!
@@ -146,8 +146,10 @@ void getTests(char* inputFileName, int* tRef, char**** testsRef){
 
 
 
-char* getAllElementsAsResult(Reflection* list){
-    LENGTH n = size(list);
+char* listToResult(Reflection* list){
+    LENGTH n;
+    DATA* seq;
+    TEST_elements(list, &n, &seq);
     if (n == 0){
         return "EMPTY";
     }
@@ -155,9 +157,10 @@ char* getAllElementsAsResult(Reflection* list){
     LENGTH numberOfCommas = n-1;
     LENGTH m = numberOfCommas+(n*MAX_NUMBER_DIGITS)+1;
     char* mRESULT = (char*) malloc(m*sizeof(char));
+
     LENGTH m0 = 0;
     for (LENGTH i = 0; i < n; i++){
-        DATA data = get(list, i);
+        DATA data = seq[list->reversed == false ? i : n-1-i];
         m0 += sprintf(&mRESULT[m0], "%" PRId64, data);
         if (i < n-1){
             m0 += sprintf(&mRESULT[m0], ",");
@@ -191,14 +194,19 @@ char* boolToStr(bool b){
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
-bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT){
+bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
     if (strcmp(mRESULT, RESULT) != 0){
-        printf("> !! FAULTY OUTPUT:: %s\n", mRESULT);
-        printf("> !! Failed Operation !!\n");
-        printf(":: line %d\n:: operation %s\n", lineNum+1, operation);
+        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
+        printf("!! Failed Operation !!\n");
+        
+        int i = 0;
+        while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
+            i++;
+        }
+        printf(":: line %d\n:: column %d (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
+        printf(":: operation: %s -> %s\n", operation, extraOperation);
         return false;
     }
-    free(mRESULT);
     return true;
 }
 
@@ -247,11 +255,11 @@ int main(){
         char* RESULT = testLine[3];
         
         if (strcmp(operation, "LAYER") == 0){
-            printf("> !! LAYER %s !!\n", arg1);
+            printf("!! LAYER %s !!\n", arg1);
             continue;
         }
         if (strcmp(operation, "LAYERFIN") == 0){
-            printf("> !! LAYER %s Passed. !!\n", arg1);
+            printf("!! LAYER %s Passed. !!\n", arg1);
             continue;
         }
             
@@ -273,7 +281,7 @@ int main(){
             list = make(n, seq);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "size") == 0){
@@ -281,7 +289,7 @@ int main(){
             LENGTH listSize = size(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "empty") == 0){
@@ -289,7 +297,7 @@ int main(){
             bool listEmpty = empty(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "reverse") == 0){
@@ -297,7 +305,7 @@ int main(){
             reverse(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "get") == 0){
@@ -307,7 +315,7 @@ int main(){
             DATA data = get(list, i);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "set") == 0){
@@ -318,7 +326,7 @@ int main(){
             set(list, i, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "peek_left") == 0){
@@ -326,7 +334,7 @@ int main(){
             DATA data = peek_left(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "peek_right") == 0){
@@ -334,7 +342,7 @@ int main(){
             DATA data = peek_right(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "push_left") == 0){
@@ -344,7 +352,7 @@ int main(){
             push_left(list, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "push_right") == 0){
@@ -354,7 +362,7 @@ int main(){
             push_right(list, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "pop_left") == 0){
@@ -362,7 +370,7 @@ int main(){
             pop_left(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "pop_right") == 0){
@@ -370,8 +378,12 @@ int main(){
             pop_right(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
             }
+        }
+
+        if (strcmp("X", RESULT) != 0){
+            if (!VERIFY(testNum, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal")) return -1;
         }
 
         WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
@@ -391,22 +403,15 @@ int main(){
     printf("> Done.\n");
 
     printf("> Cleanup...\n");
-    for (int testNum = 0; testNum < totalTests; testNum++){
-        char** testLine = tests[testNum];
-        free(testLine);
-    }
-    free(tests);
-    for (int opNum = 0; opNum < totalOperations; opNum++){
-        free(writeDataLines[opNum].operation);
-    }
-    free(writeDataLines);
     fclose(f);
-    printf("> Done.\n");
-
-    printf("\n<<<< TESTING SUCCESSFUL >>>>\n");
-    printf("? Ah...\n? Despite everything, it's still you.\n\n...a mere illusion.\nA mere Reflection.\n\n");
-
-    printf("!! Time plot points can be found in ((" OUTPUT_FILE ")) !!\n\n");
+    printf("> Done.\n\n");
     
-    printf("Look into the Mirror once more, will you?\n");
+    printf("---------------------------------------------------------\n");
+    printf("<<<< TESTING SUCCESSFUL >>>>\n");
+    printf("!! Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
+    printf("? Ah...\n? Despite everything, it's still you.\n...a mere illusion.\nA mere Reflection.\n\n");
+
+    
+    
+    printf("Look into the Mirror once more, will you?\n\n");
 }

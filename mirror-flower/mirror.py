@@ -53,7 +53,7 @@ LAYER 4:
                 Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
             - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 '''
-from MSettings import INPUT_FILE, LARGE_INPUTS
+from test_settings_m import INPUT_FILE, LARGE_INPUTS
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
 # Do not edit past this point!
@@ -114,7 +114,7 @@ class Mirror:
         self.n -= 1
         return True
     
-    def SPECIAL_getAllElements(self): # dont modify using this lolo
+    def TEST_elements(self): # dont modify using this lolo
         return self._array
 
 # ----------------------------------------------------------------------
@@ -145,7 +145,7 @@ def RESULT_empty(mirror: Mirror):
     return "0" if mirror.empty() == False else "1"
 def RESULT_reverse(mirror: Mirror):
     mirror.reverse()
-    return listToResult(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.TEST_elements())
 
 def RESULT_get(mirror: Mirror, i: LENGTH):
     return str(mirror.get(i))
@@ -159,16 +159,16 @@ def RESULT_peek_right(mirror: Mirror):
 
 def RESULT_push_left(mirror: Mirror, v: DATA):
     mirror.push_left(v)
-    return listToResult(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.TEST_elements())
 def RESULT_push_right(mirror: Mirror, v: DATA):
     mirror.push_right(v)
-    return listToResult(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.TEST_elements())
 def RESULT_pop_left(mirror: Mirror):
     mirror.pop_left()
-    return listToResult(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.TEST_elements())
 def RESULT_pop_right(mirror: Mirror):
     mirror.pop_right()
-    return listToResult(mirror.SPECIAL_getAllElements())
+    return listToResult(mirror.TEST_elements())
 
 OPERATIONS = dict()
 OPERATIONS["size"] = RESULT_size
@@ -236,7 +236,7 @@ writer.writerow({
     "OPERATION": "make",
     "ARG1": n,
     "ARG2": listToResult(seq),
-    "RESULT": listToResult(mirror.SPECIAL_getAllElements())
+    "RESULT": listToResult(mirror.TEST_elements())
 })
 WRITECUSTOM("LAYERFIN", str(0))
 print("> Done.")
