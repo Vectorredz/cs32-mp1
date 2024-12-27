@@ -248,136 +248,138 @@ int main(){
         
         if (strcmp(operation, "LAYER") == 0){
             printf("> !! LAYER %s !!\n", arg1);
-        } else if (strcmp(operation, "LAYERFIN") == 0){
+            continue;
+        }
+        if (strcmp(operation, "LAYERFIN") == 0){
             printf("> !! LAYER %s Passed. !!\n", arg1);
-        } else {
-            LENGTH n = list != NULL ? size(list) : 0;
-            RECORDED_TIME c, _c;
+            continue;
+            
+        LENGTH n = list != NULL ? size(list) : 0;
+        RECORDED_TIME c, _c;
 
-            if (strcmp(operation, "make") == 0){
-                n = strToLength(arg1);
-                DATA* seq = (DATA*) malloc(n*sizeof(DATA));
-                char* token = strtok(arg2, ",");
-                int i = 0;
-                while (token != NULL){
-                    seq[i] = strToData(token);
-                    i++;
-                    token = strtok(NULL, ",");
-                }
-
-                _TIME(&_c);
-                list = make(n, seq);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
-
-            } else if (strcmp(operation, "size") == 0){
-                _TIME(&_c);
-                LENGTH listSize = size(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize))) return -1;
-                }
-
-            } else if (strcmp(operation, "empty") == 0){
-                _TIME(&_c);
-                bool listEmpty = empty(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty))) return -1;
-                }
-
-            } else if (strcmp(operation, "reverse") == 0){
-                _TIME(&_c);
-                reverse(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
-
-            } else if (strcmp(operation, "get") == 0){
-                LENGTH i = strToLength(arg1);
-
-                _TIME(&_c);
-                DATA data = get(list, i);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
-                }
-
-            } else if (strcmp(operation, "set") == 0){
-                LENGTH i = strToLength(arg1);
-                DATA v = strToData(arg2);
-
-                _TIME(&_c);
-                set(list, i, v);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)))) return -1;
-                }
-
-            } else if (strcmp(operation, "peek_left") == 0){
-                _TIME(&_c);
-                DATA data = peek_left(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
-                }
-
-            } else if (strcmp(operation, "peek_right") == 0){
-                _TIME(&_c);
-                DATA data = peek_right(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
-                }
-
-            } else if (strcmp(operation, "push_left") == 0){
-                DATA v = strToData(arg1);
-
-                _TIME(&_c);
-                push_left(list, v);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
-
-            } else if (strcmp(operation, "push_right") == 0){
-                DATA v = strToData(arg1);
-
-                _TIME(&_c);
-                push_right(list, v);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
-
-            } else if (strcmp(operation, "pop_left") == 0){
-                _TIME(&_c);
-                pop_left(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
-
-            } else if (strcmp(operation, "pop_right") == 0){
-                _TIME(&_c);
-                pop_right(list);
-                _TIME(&c);
-                if (strcmp("X", RESULT) != 0){
-                    if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
-                }
+        if (strcmp(operation, "make") == 0){
+            n = strToLength(arg1);
+            DATA* seq = (DATA*) malloc(n*sizeof(DATA));
+            char* token = strtok(arg2, ",");
+            int i = 0;
+            while (token != NULL){
+                seq[i] = strToData(token);
+                i++;
+                token = strtok(NULL, ",");
             }
 
-            WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
-            char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
-            wd.operation = strcpy(opCopy, operation);
-            wd.n = n;
-            wd.c = _PROCESSTIME(_c, c);
-            writeDataLines[opCounter] = wd;
-            opCounter++;
+            _TIME(&_c);
+            list = make(n, seq);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
+
+        } else if (strcmp(operation, "size") == 0){
+            _TIME(&_c);
+            LENGTH listSize = size(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize))) return -1;
+            }
+
+        } else if (strcmp(operation, "empty") == 0){
+            _TIME(&_c);
+            bool listEmpty = empty(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty))) return -1;
+            }
+
+        } else if (strcmp(operation, "reverse") == 0){
+            _TIME(&_c);
+            reverse(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
+
+        } else if (strcmp(operation, "get") == 0){
+            LENGTH i = strToLength(arg1);
+
+            _TIME(&_c);
+            DATA data = get(list, i);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+            }
+
+        } else if (strcmp(operation, "set") == 0){
+            LENGTH i = strToLength(arg1);
+            DATA v = strToData(arg2);
+
+            _TIME(&_c);
+            set(list, i, v);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)))) return -1;
+            }
+
+        } else if (strcmp(operation, "peek_left") == 0){
+            _TIME(&_c);
+            DATA data = peek_left(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+            }
+
+        } else if (strcmp(operation, "peek_right") == 0){
+            _TIME(&_c);
+            DATA data = peek_right(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(data))) return -1;
+            }
+
+        } else if (strcmp(operation, "push_left") == 0){
+            DATA v = strToData(arg1);
+
+            _TIME(&_c);
+            push_left(list, v);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
+
+        } else if (strcmp(operation, "push_right") == 0){
+            DATA v = strToData(arg1);
+
+            _TIME(&_c);
+            push_right(list, v);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
+
+        } else if (strcmp(operation, "pop_left") == 0){
+            _TIME(&_c);
+            pop_left(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
+
+        } else if (strcmp(operation, "pop_right") == 0){
+            _TIME(&_c);
+            pop_right(list);
+            _TIME(&c);
+            if (strcmp("X", RESULT) != 0){
+                if (!VERIFY(testNum, operation, RESULT, getAllElementsAsResult(list))) return -1;
+            }
         }
+
+        WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
+        char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
+        wd.operation = strcpy(opCopy, operation);
+        wd.n = n;
+        wd.c = _PROCESSTIME(_c, c);
+        writeDataLines[opCounter] = wd;
+        opCounter++;
     }
     printf("> Done.\n");
 
