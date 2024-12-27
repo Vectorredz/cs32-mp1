@@ -33,8 +33,9 @@ LAYER 3:
                 - PUSH_* (Random Data)
                 - POP_*
                 - occasional REVERSE and SET (Random Index, Random Data)
-                
+
 LAYER 4:
+    * (No checking for correctness)
     * Attempts to shatter the Reflection one last time:
         >> TIME COMPLEXITY TEST:
             * if (LARGE_INPUTS == true):
