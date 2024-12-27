@@ -253,6 +253,7 @@ int main(){
         if (strcmp(operation, "LAYERFIN") == 0){
             printf("> !! LAYER %s Passed. !!\n", arg1);
             continue;
+        }
             
         LENGTH n = list != NULL ? size(list) : 0;
         RECORDED_TIME c, _c;
