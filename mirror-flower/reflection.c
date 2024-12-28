@@ -236,7 +236,7 @@ bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, cha
     }
     if (checkForEfficiency == true){
         if (dt > 1){
-            printf("[+] [line %zu]: TLE [%lfms]\n", lineNum, dt);
+            printf("[+] [line %zu]: TLE [%lfms (> 1000.00 ms)]\n", lineNum, dt);
             DISPLAY_LOGS(list, operation, extraOperation);
             return false;
         }
