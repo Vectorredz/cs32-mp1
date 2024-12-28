@@ -19,10 +19,12 @@ $$T(1) = c$$
 If we simplify the recurrence further, we would get:
 
 $$T(\mathscr{l}) = T(1) + c \cdot (\mathscr{l} - 1)$$
+
 Since $T(1)$ can equal $c$, we can substitute and get the following:
 
 $$T(\mathscr{l}) = c + c \cdot \mathscr{l} - c \\ = c \cdot \mathscr{l}
 $$
+
 By definition of big O notation, we can conclude that the recurrence relation of the loop runs at $T_{\text{loop}} = O(\mathscr{l})$ because there exists a constant $C$ and a value $\mathscr{l}_0$ such that for all $\mathscr{l} \geq \mathscr{l}_0$, the following inequality holds:
 
 $$\mathscr{l} \leq C\mathscr{l}$$
