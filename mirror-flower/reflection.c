@@ -216,7 +216,7 @@ void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
         fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
     }
     fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
-    fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
+    fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n------\n", listToResult(list, false));
     fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
 }
 void VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
