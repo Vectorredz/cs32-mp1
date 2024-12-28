@@ -1,6 +1,6 @@
 /*
     << Water Moon. >>
-    Look into the Mirror...
+    Will your Reflection be the same as mine?
 */
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
@@ -21,6 +21,7 @@ constant, linear, or logarithmic in nature.
 // --------------------------------------------------------- >>
 
 
+// TIMER for outputting execution time plots
 // TODO: implement other os later
 #include <windows.h>
 #include <sys/timeb.h>
@@ -67,12 +68,15 @@ PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
 
 #define MAX_NUMBER_DIGITS 25
 
-void getTests(char* inputFileName, int* tRef, char**** testsRef){
+void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
     FILE *f = fopen(inputFileName, "r");
-    int lines = 0;
+    size_t lines = 0;
     bool newline = true;
 
+    // temporary buffer for getting each character one at a time
     char* testBuffer = (char*) malloc(2*sizeof(char));
+
+    // get the number of lines first, then go back to beginning of file
     while (true){
         while (fgets(testBuffer, 2, f) != NULL){
             if (testBuffer[0] == '\n'){
@@ -83,7 +87,6 @@ void getTests(char* inputFileName, int* tRef, char**** testsRef){
                 lines++;
             }
         }
-
         if (ferror(f)){
             return;
         } else {
@@ -91,14 +94,17 @@ void getTests(char* inputFileName, int* tRef, char**** testsRef){
         }
     }
     rewind(f);
-    char*** tests = (char***) malloc(lines*sizeof(char**));
 
-    int i = 0;
+
+    char*** tests = (char***) malloc(lines*sizeof(char**));
+    size_t i = 0;
     while (true){
         long seekBack = ftell(f);
-        int length = 0;
+        size_t length = 0;
         bool nlSkip = false;
         bool eof = false;
+
+        // get the length line first, then go back to beginning of line
         while (fgets(testBuffer, 2, f) != NULL){
             if (testBuffer[0] == '\n'){
                 nlSkip = true;
@@ -112,13 +118,15 @@ void getTests(char* inputFileName, int* tRef, char**** testsRef){
             eof = true;
         }
         fseek(f, seekBack, SEEK_SET);
-        
+
+
+        // split the line by "|" delimeter, and store in an array of strings of length 4 {OPERATION, ARG1, ARG2, RESULT}
         char* buffer = (char*) malloc((length+1)*sizeof(char));
         fgets(buffer, length+1, f);
         
         char** testLine = (char**) malloc(4*sizeof(char*));
         char* token = strtok(buffer, "|");
-        int j = 0;
+        size_t j = 0;
         while (token != NULL){
             char* testInfo = (char*) malloc((strlen(token)+1)*sizeof(char));
             strcpy(testInfo, token);
@@ -147,6 +155,7 @@ void getTests(char* inputFileName, int* tRef, char**** testsRef){
 
 
 char* listToResult(Reflection* list){
+    // Turns a sequence of DATA values into a string delimeted by ","
     LENGTH n;
     DATA* seq;
     TEST_elements(list, &n, &seq);
@@ -194,15 +203,15 @@ char* boolToStr(bool b){
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
-bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
+bool VERIFY(size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
     if (strcmp(mRESULT, RESULT) != 0){
         printf("!! Failed Operation !!\n");
         
-        int i = 0;
+        size_t i = 0;
         while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
             i++;
         }
-        printf(":: line %d\n:: column %d (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
+        printf(":: line %zu\n:: column %zu (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
         printf(":: operation: %s -> %s\n", operation, extraOperation);
         printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("!! SUPPOSED OUTPUT:: %s\n", RESULT);
@@ -211,6 +220,7 @@ bool VERIFY(int lineNum, char* operation, char* RESULT, char* mRESULT, char* ext
     return true;
 }
 
+// Used for time plots output
 typedef struct _WRITEDATA {
     char* operation;
     LENGTH n;
@@ -224,37 +234,47 @@ void WRITE(FILE* f, WRITEDATA wd, bool newLine){
 }
 
 int main(){
-    printf("<< Water Moon. >>\nLook into the Mirror...\n");
+    printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
+
+    // Get tests first
     printf("> Getting tests for ((" INPUT_FILE ")) ...\n");
-    int totalTests = 0;
+    size_t totalTests = 0;
     char*** tests = NULL;
     getTests(INPUT_FILE, &totalTests, &tests);
     printf("> Done.\n");
     
+    
     printf("> Initializing variables...\n");
+    // Initialize timer
     _TIME_init();
-    int totalOperations = 0;
-    for (int testNum = 0; testNum < totalTests; testNum++){
+
+    // Get the number of actual operations (since a line can contain the custom "LAYER"/"LAYERFIN" message which doesn't count as an operation)
+    size_t totalOperations = 0;
+    for (size_t testNum = 0; testNum < totalTests; testNum++){
         char** testLine = tests[testNum];
         char* operation = testLine[0];
         if (strcmp(operation, "LAYER") != 0 && strcmp(operation, "LAYERFIN") != 0){
             totalOperations++;
         }
     }
+
+    // Where the output values are stored
     WRITEDATA* writeDataLines = (WRITEDATA*) malloc(totalOperations*sizeof(WRITEDATA));
     printf("> Done.\n");
 
     printf("> Conducting test operations...\n");
     FILE* f = fopen(OUTPUT_FILE, "w+");
     Reflection* list = NULL;
-    int opCounter = 0;
-    for (int testNum = 0; testNum < totalTests; testNum++){
+    size_t opCounter = 0;
+    for (size_t testNum = 0; testNum < totalTests; testNum++){
+        // Get each one first
         char** testLine = tests[testNum];
         char* operation = testLine[0];
         char* arg1 = testLine[1];
         char* arg2 = testLine[2];
         char* RESULT = testLine[3];
         
+        // Custom LAYER messages
         if (strcmp(operation, "LAYER") == 0){
             printf("!! LAYER %s !!\n", arg1);
             continue;
@@ -263,15 +283,25 @@ int main(){
             printf("!! LAYER %s Passed. !!\n", arg1);
             continue;
         }
-            
+
+        // Clear current line of output and display new executing line
+        if (LINE_DISPLAY == true){
+            if (testNum > 0){
+                printf("\033[A\033[K");
+            }
+            printf("exec %zu ...\n", testNum+1);
+        }
+        
         LENGTH n = list != NULL ? size(list) : 0;
         RECORDED_TIME c, _c;
 
+        // Get appropriate variables for ARG1/ARG2, execute the desired operation while timing it, and (if checking for correctness) verify the output
         if (strcmp(operation, "make") == 0){
+            // Get n and seq args for make() function (seq is delimeted by ",")
             n = strToLength(arg1);
             DATA* seq = (DATA*) malloc(n*sizeof(DATA));
             char* token = strtok(arg2, ",");
-            int i = 0;
+            size_t i = 0;
             while (token != NULL){
                 seq[i] = strToData(token);
                 i++;
@@ -383,10 +413,12 @@ int main(){
             }
         }
 
+        // For internal tests
         if (strcmp("X", RESULT) != 0){
             if (!VERIFY(testNum, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal")) return -1;
         }
 
+        // Finally, write the new benchmark to output array
         WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
         char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
         wd.operation = strcpy(opCopy, operation);
@@ -398,7 +430,8 @@ int main(){
     printf("> Done.\n");
 
     printf("> Writing deltatime benchmarks to output...\n");
-    for (int opNum = 0; opNum < totalOperations; opNum++){
+    // Write all benchmarks to the file
+    for (size_t opNum = 0; opNum < totalOperations; opNum++){
         WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
     }
     printf("> Done.\n");
@@ -410,7 +443,7 @@ int main(){
     printf("---------------------------------------------------------\n");
     printf("<<<< TESTING SUCCESSFUL >>>>\n");
     printf("!! Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
-    printf("? Ah...\n? Despite everything, it's still you.\n...a mere illusion.\nA mere Reflection.\n\n");
+    printf("? Ah...\n? Despite everything, it's still you...\n...A mere Reflection.\n\n");
 
     
     
