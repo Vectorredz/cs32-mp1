@@ -252,7 +252,7 @@ sequence of k's, and overall preventing the degenerate representation of n PTree
 
 It is inspired by binomial heap's merge operation.
 Given a starting doubly-linked-list node, we proceed to the right (left),
-and if our current PTree is the same as the next PTree, then we construct a third PTree containing their two roots as children.
+and if our current PTree's type is the same as the next PTree, then we construct a third PTree containing their two roots as children.
 We know that this is of type k+1, and contains l*2 leaf nodes.
 */
 void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
@@ -374,7 +374,7 @@ These helper functions for pop operations.
 They are pretty much the opposite of the merge operations, split into two: one for cascading the right of the PTree, and one for cascading the left.
 We know that only the leftmost (rightmost) leaf of the target PTree is the one that needs to be removed.
 So, its purpose is to "wrap open" the PTree back into a sequence of PTrees.
-It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node.
+It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node sub-list.
 Then the other leftover left (right) child is deallocated and removed from the list entirely.
 Each successive right (left) subtree is of type k-1 and l/2.
 After everything, it gives the caller the appropriate sublist of right-child (left-child) PTrees.
@@ -593,7 +593,7 @@ bool _pop_left_base(PTreeList* list){
     list->head = subHead;
     DEFOREST(oldHead);
 
-    // Fix non-distinct types (start from furthest in the list, since we know the cascaded left sub-trees are distinct)
+    // Fix non-distinct types (start from furthest in the list, since we know all the cascaded right sub-trees are distinct)
     _mergeNonDistinctPTreesToRight(list, subTail);
 
     // Update both just in case
