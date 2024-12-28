@@ -4,8 +4,8 @@
 */
 // --------------------------------------------------------- >>
 // Modify both header and typedef to the list to test
-#include "../tree-sequence/p_tree_list.c" //(yes this is a Sin :man_running:)
-typedef PTreeList Reflection;
+#include "../doubly-linked-list/d_linked_list.c" //(yes this is a Sin :man_running:)
+typedef list Reflection;
 
 // Input File Path (contains operation, args, and correct result for cross-checks)
 // test_input_0.csv is for testing the tester itself

@@ -4,7 +4,7 @@
 /*                                                   */
 /*****************************************************/
 
-#include "dynamic_list.h"
+#include "d_linked_list.h"
 #include "main.c"
 #include <assert.h>
 #include <stdbool.h>

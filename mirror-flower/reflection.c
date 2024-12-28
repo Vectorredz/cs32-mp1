@@ -254,6 +254,7 @@ int main(){
         char* arg1 = testLine[1];
         char* arg2 = testLine[2];
         char* RESULT = testLine[3];
+        printf("%d\n", testNum+1);
         
         if (strcmp(operation, "LAYER") == 0){
             printf("!! LAYER %s !!\n", arg1);

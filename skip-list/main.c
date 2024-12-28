@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <time.h>
-#include "dynamic_list.h"
 
 node *makeNode(int key, int val){
     node *newNode = malloc(sizeof(node));
