@@ -1,6 +1,6 @@
 '''
 << Mirror Flower. >>
-Will your Reflection be the same as mine?
+Look into the Mirror...
 '''
 # --------------------------------------------------------- >>
 # ----------------------------------------- <<
@@ -66,11 +66,12 @@ from collections.abc import Sequence, Callable
 from typing import TypeVar
 import csv, random, os
 
+
+# Make the Mirror class first (representing a working list)
 DATA = TypeVar("DATA")
 LENGTH = TypeVar("LENGTH")
 type DATA = int
 type LENGTH = int
-
 class Mirror:
     _array: list[DATA]
     n: LENGTH
@@ -119,11 +120,11 @@ class Mirror:
 
 # ----------------------------------------------------------------------
 print("<< Mirror Flower. >>")
-print("Will your Reflection be the same as mine?")
+print("Look into the Mirror...?")
 
 print("> Initializing functions and file writing...")
 
-
+# Helper functions for easier writing of test inputs
 dataBound = 10**18
 def randomData() -> DATA:
     return random.randint(-dataBound, dataBound)
@@ -199,8 +200,12 @@ def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
             or operation == "pop_right":
             return
     result = ""
+
+    # If checking for correctness then write RESULT as usual
     if checkForCorrectness == True:
         result = OPERATIONS[operation](mirror, *args)
+    
+    # If not then RESULT is "X"
     else:
         result = "X"
         getattr(mirror, operation)(*args)
@@ -211,6 +216,7 @@ def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
         "RESULT": result
     })
 
+# Custom messages within the test_input itself as the tester goes through each line (currently there are "LAYER"/"LAYERFIN")
 def WRITECUSTOM(msg: int = "None", arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
     writer.writerow({
         "OPERATION": msg,
@@ -220,12 +226,13 @@ def WRITECUSTOM(msg: int = "None", arg1: str = "None", arg2: str = "None", RESUL
     })
 
 print("> Done.")
-# ------------------------------------------------
-
+# ------------------------------------------------------------------------------------------------
 print("> Initializing tests...")
+
 
 # ------------------------ LAYER 0: Initialize
 print("> Layer 0...")
+
 WRITECUSTOM("LAYER", str(0))
 n = random.randint(0, 2000)
 seq = list[DATA]()
@@ -240,8 +247,11 @@ writer.writerow({
 })
 WRITECUSTOM("LAYERFIN", str(0))
 print("> Done.")
+
+
 # ------------------------ LAYER 1: No Insertions/Deletions
 print("> Layer 1...")
+
 WRITECUSTOM("LAYER", str(1))
 # check initial indices
 for i in range(mirror.size()):
@@ -265,6 +275,7 @@ for i in range(random.randint(5000, 10000)):
     WRITE(True, mirror, "empty")
 WRITECUSTOM("LAYERFIN", str(1))
 print("> Done.")
+
 
 # ------------------------ LAYER 2: Consecutive
 print("> Layer 2...")
@@ -296,6 +307,7 @@ for i in range(random.randint(500, 1000)):
 WRITECUSTOM("LAYERFIN", str(2))
 print("> Done.")
 
+
 # ------------------------ LAYER 3: Killer Move: Serious Series
 print("> Layer 3...")
 WRITECUSTOM("LAYER", str(3))
@@ -314,6 +326,7 @@ for i in range(random.randint(500, 1000)):
         WRITE(True, mirror, "set", randomIndex(mirror), randomData())
 WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
+
 
 # ------------------------ LAYER 4: << dlroW derorriM >>
 print("> Mirrored World...")
@@ -374,7 +387,7 @@ for u in range(2):
 WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
 print("> Done.")
 
-
+# Remove extra line at end of file
 testFile.truncate(testFile.tell()-len(os.linesep))
 print("Tests successfully initialized.")
 print("Test operations can be found in (({INPUT_FILE:s}))\n".format(INPUT_FILE=INPUT_FILE))
