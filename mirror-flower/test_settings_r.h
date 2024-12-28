@@ -16,6 +16,12 @@ typedef list Reflection;
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown
 #define LINE_DISPLAY false
 
+
+// TYPE: boolean
+// Set to true if you want to check for efficiency (TLE)
+// NOTE: Timer only works for Windows as of now, please disable for other OS
+#define CHECK_FOR_EFFICIENCY true
+
 // TYPE: double
 // TLE efficiency boundary (in milliseconds)
 #define TLE_BOUND 1000.0
