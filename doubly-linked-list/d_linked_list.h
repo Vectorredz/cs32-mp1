@@ -22,7 +22,7 @@ typedef struct list{
 } list;
 
 // Init
-list init(void);
+list *init();
 list *make(LENGTH n, DATA *seq);
 
 // Flags/List Info
