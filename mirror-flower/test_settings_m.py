@@ -9,3 +9,6 @@ INPUT_FILE = "test_input.csv"
 
 # If you want to test for large inputs (WARNING: takes a long time to test)
 LARGE_INPUTS = False
+
+# Input a seed ("None" if random)
+SEED = None

@@ -169,7 +169,7 @@ char* listToResult(Reflection* list){
 
     LENGTH m0 = 0;
     for (LENGTH i = 0; i < n; i++){
-        DATA data = seq[list->reversed == false ? i : n-1-i];
+        DATA data = seq[TEST_reversed(list) == false ? i : n-1-i];
         m0 += sprintf(&mRESULT[m0], "%" PRId64, data);
         if (i < n-1){
             m0 += sprintf(&mRESULT[m0], ",");
@@ -212,7 +212,11 @@ bool VERIFY(size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* 
             i++;
         }
         printf(":: line %zu\n:: column %zu (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
-        printf(":: operation: %s -> %s\n", operation, extraOperation);
+        if (extraOperation == NULL){
+            printf(":: operation: %s\n", operation);
+        } else {
+            printf(":: operation: %s -> %s\n", operation, extraOperation);
+        }
         printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("!! SUPPOSED OUTPUT:: %s\n", RESULT);
         return false;
@@ -358,7 +362,10 @@ int main(){
             set(list, i, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(get(list, i)), NULL)) return -1;
+                LENGTH n;
+                DATA* seq;
+                TEST_elements(list, &n, &seq);
+                if (!VERIFY(testNum, operation, RESULT, dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "peek_left") == 0){
