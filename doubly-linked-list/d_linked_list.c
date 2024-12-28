@@ -13,7 +13,7 @@
 
 // Init 
 list *init(){
-    list *l = malloc(sizeof(list));
+    list *l = (list*)malloc(sizeof(list));
     l->head = l->tail =  NULL;
     l->reversed = false;
     l->size = 0;
@@ -49,12 +49,12 @@ list *make(LENGTH n, DATA *seq){
             curr->left = NULL;
         }
         else {
-            node *new = (node*)malloc(sizeof(node));
-            new->val = seq[i];
-            curr->right = new;
-            new->left = curr;
-            new->right = NULL;
-            curr = new;
+            node *newNode = (node*)malloc(sizeof(node));
+            newNode->val = seq[i];
+            curr->right = newNode;
+            newNode->left = curr;
+            newNode->right = NULL;
+            curr = newNode;
         }
     }
     curr->right = NULL;
@@ -290,7 +290,8 @@ void display(list *l){
 void TEST_elements(list* l, LENGTH* nRef, DATA** seqRef){   
     LENGTH i = 0;
     list *dl = l;
-    DATA *seq = malloc((dl->size) * sizeof(DATA*));
+    DATA *seq = (DATA*)malloc((dl->size) * sizeof(DATA));
+
     node *curr = dl->head;
     while (curr){
         seq[i] = curr->val;
