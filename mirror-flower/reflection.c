@@ -23,39 +23,42 @@ constant, linear, or logarithmic in nature.
 
 // TIMER for outputting execution time plots
 // TODO: implement other os later
-#include <windows.h>
-#include <sys/timeb.h>
-typedef LARGE_INTEGER RECORDED_TIME;
-typedef double PROCESSED_TIME;
-#define TIME_FORMAT "lf"
-uint64_t freq;
-void _TIME_init(){
-    LARGE_INTEGER f;
-    QueryPerformanceFrequency(&f);
-    freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
-}
-void _TIME(RECORDED_TIME* cRef){
-    QueryPerformanceCounter(cRef);
-}
-PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
-    uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
-    uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
-    uint64_t dt = (bQ-aQ);
-    PROCESSED_TIME final = (double)(dt)/(double)freq;
-    return final < 0.0L ? 0.0L : final;
-}
-// typedef int RECORDED_TIME;
-// typedef int PROCESSED_TIME;
-// #define TIME_FORMAT "d"
-// void _TIME_init(){
+#if CHECK_FOR_EFFICIENCY == true
+    #include <windows.h>
+    #include <sys/timeb.h>
+    typedef LARGE_INTEGER RECORDED_TIME;
+    typedef double PROCESSED_TIME;
+    #define TIME_FORMAT "lf"
+    uint64_t freq;
+    void _TIME_init(){
+        LARGE_INTEGER f;
+        QueryPerformanceFrequency(&f);
+        freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
+    }
+    void _TIME(RECORDED_TIME* cRef){
+        QueryPerformanceCounter(cRef);
+    }
+    PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
+        uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
+        uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
+        uint64_t dt = (bQ-aQ);
+        PROCESSED_TIME final = (double)(dt)/(double)freq;
+        return final < 0.0L ? 0.0L : final;
+    }
+#else
+    typedef int RECORDED_TIME;
+    typedef int PROCESSED_TIME;
+    #define TIME_FORMAT "d"
+    void _TIME_init(){
 
-// }
-// void _TIME(RECORDED_TIME* cRef){
-//     *cRef = 0;
-// }
-// PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
-//     return 0;
-// }
+    }
+    void _TIME(RECORDED_TIME* cRef){
+        *cRef = 0;
+    }
+    PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
+        return 0;
+    }
+#endif
 
 
 
