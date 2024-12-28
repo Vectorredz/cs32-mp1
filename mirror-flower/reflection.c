@@ -202,7 +202,10 @@ char* dataToStr(DATA data){
     return dataStr;
 }
 char* boolToStr(bool b){
-    return b == false ? "0" : "1";
+    char* boolStr = (char*) malloc(2*sizeof(char));
+    boolStr[0] = b == false ? '0' : '1';
+    boolStr[1] = '\0';
+    return boolStr;
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
@@ -497,13 +500,22 @@ int main(){
         }
 
         // Finally, write the new benchmark to output array
+        char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char));
+        strcpy(opCopy, operation);
+        
         WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
-        char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
-        wd.operation = strcpy(opCopy, operation);
+        wd.operation = opCopy;
         wd.n = n;
         wd.c = dt;
         writeDataLines[opCounter] = wd;
         opCounter++;
+        
+        free(mRESULT);
+        free(testLine[0]);
+        free(testLine[1]);
+        free(testLine[2]);
+        free(testLine[3]);
+        free(testLine);
     }
 
     _TIME(&timeGlobal);
@@ -520,10 +532,13 @@ int main(){
     // Write all benchmarks to the file
     for (size_t opNum = 0; opNum < totalOperations; opNum++){
         WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
+        free(writeDataLines[opNum].operation);
     }
     printf("> Done.\n");
 
     printf("> Cleanup...\n");
+    free(tests);
+    free(writeDataLines);
     fclose(f);
     printf("> Done.\n\n");
     
