@@ -120,7 +120,7 @@ class Mirror:
 
 # ----------------------------------------------------------------------
 print("<< Mirror Flower. >>")
-print("Look into the Mirror...?")
+print("Look into the Mirror...")
 
 print("> Initializing functions and file writing...")
 
@@ -332,35 +332,52 @@ print("> Done.")
 print("> Mirrored World...")
 WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
-if LARGE_INPUTS == True:
-    for i in range(random.randint(60000, 200000)):
-        WRITE(False, mirror, "push_left", randomData())
-        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(False, mirror, "get", randomIndex(mirror))
-        WRITE(False, mirror, "peek_left")
-        WRITE(False, mirror, "peek_right")
-    while (mirror.size() > 0):
-        WRITE(False, mirror, "pop_left")
-        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(False, mirror, "get", randomIndex(mirror))
-        WRITE(False, mirror, "peek_left")
-        WRITE(False, mirror, "peek_right")
+for u in range(2):
+    check = True
+    lower, upper = 500, 1000
+    if u == 1:
+        if LARGE_INPUTS == False:
+            break
+        check = False
+        lower = 60000
+        upper = 200000
 
-    for i in range(random.randint(60000, 200000)):
-        WRITE(False, mirror, "push_right", randomData())
-        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(False, mirror, "get", randomIndex(mirror))
-        WRITE(False, mirror, "peek_left")
-        WRITE(False, mirror, "peek_right")
+    for i in range(random.randint(lower, upper)):
+        WRITE(check, mirror, "push_left", randomData())
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(check, mirror, "get", randomIndex(mirror))
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
     while (mirror.size() > 0):
-        WRITE(False, mirror, "pop_right")
-        WRITE(False, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(False, mirror, "get", randomIndex(mirror))
-        WRITE(False, mirror, "peek_left")
-        WRITE(False, mirror, "peek_right")
+        WRITE(check, mirror, "pop_left")
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(check, mirror, "get", randomIndex(mirror))
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
 
-while (mirror.size() > 0):
-        WRITE(False, mirror, "pop_right")
+    for i in range(random.randint(lower, upper)):
+        WRITE(check, mirror, "push_right", randomData())
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(check, mirror, "get", randomIndex(mirror))
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+    while (mirror.size() > 0):
+        WRITE(check, mirror, "pop_right")
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(check, mirror, "get", randomIndex(mirror))
+        WRITE(check, mirror, "peek_left")
+        WRITE(check, mirror, "peek_right")
+
+    while (mirror.size() > 0):
+            WRITE(check, mirror, "pop_right")
 
 for u in range(2):
     if u == 0:

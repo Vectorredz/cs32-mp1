@@ -212,7 +212,11 @@ bool VERIFY(size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* 
             i++;
         }
         printf(":: line %zu\n:: column %zu (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
-        printf(":: operation: %s -> %s\n", operation, extraOperation);
+        if (extraOperation == NULL){
+            printf(":: operation: %s\n", operation);
+        } else {
+            printf(":: operation: %s -> %s\n", operation, extraOperation);
+        }
         printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
         printf("!! SUPPOSED OUTPUT:: %s\n", RESULT);
         return false;
