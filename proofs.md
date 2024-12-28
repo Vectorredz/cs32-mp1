@@ -8,7 +8,7 @@
 - variable assignment
 - malloc
 - if-else statement
-- return
+- return statement
 
 Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the for-loop.
 
