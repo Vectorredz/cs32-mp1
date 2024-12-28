@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "TESTproofs.md.md",
-                "mode": "source",
+                "file": "proofs.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TESTproofs.md"
+              "title": "proofs"
             }
           }
         ]
@@ -164,6 +164,7 @@
   },
   "active": "af531bd02ff1015b",
   "lastOpenFiles": [
+    "TESTproofs.md.md",
     "proofs.md"
   ]
 }

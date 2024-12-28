@@ -35,6 +35,7 @@ C \geq c
 $$
 
 Finally, combining all the solved recurrence relations, we get:
+
 $$
 \begin{aligned}
 T(n) &= T_{\text{outer}} + T_{\text{loop}} \\ 
