@@ -521,11 +521,10 @@ void _push_left_base(PTreeList* list, DATA v){
         list->rightmost = v;
     }
 }
+// Exactly the same as _push_right_base, but operations are mirrored.
 void _push_right_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (which is also a leaf)
     PTree* ptree = _constructZeroPTree(v);
-
-    // Add to right of list
     PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
     newListNode->ptree = ptree;
     newListNode->next = NULL;
@@ -539,10 +538,7 @@ void _push_right_base(PTreeList* list, DATA v){
     }
     (list->n)++;
 
-    // Fix non-distinct types
     _mergeNonDistinctPTreesToLeft(list, list->tail);
-
-    // Update right (update left too if new head)
     list->rightmost = v;
     if (list->n == 1){
         list->leftmost = v;
@@ -600,15 +596,13 @@ bool _pop_left_base(PTreeList* list){
     _peekABoo(list);
     return true;
 }
+// Exactly the same as _pop_left_base, but operations are mirrored.
 bool _pop_right_base(PTreeList* list){
     if (list->n == 0){
         return false;
     }
     (list->n)--;
-
     PTree* rightPTree = list->tail->ptree;
-
-    // Base case: rightmost PTree is of type 0, so we can just remove it immediately without cascading
     if (rightPTree->k == 0){
         PTreeListNode* oldTail = list->tail;
         if (list->head == oldTail){
@@ -622,17 +616,13 @@ bool _pop_right_base(PTreeList* list){
         DEFOREST(oldTail->ptree);
         DEFOREST(oldTail);
 
-        // Update both just in case
         _peekABoo(list);
         return true;
     }
 
-    // If its of type k > 0, then we must cascade
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
     _cascadeRemovalRight(rightPTree, &subHead, &subTail);
-
-    // Update the list appropriately with the new sublist
     PTreeListNode* oldTail = list->tail;
     if (list->head == oldTail){
         list->head = subHead;
@@ -646,10 +636,7 @@ bool _pop_right_base(PTreeList* list){
     list->tail = subTail;
     DEFOREST(oldTail);
 
-    // Fix non-distinct types (start from furthest in the list, since we know the cascaded left sub-trees are distinct)
     _mergeNonDistinctPTreesToLeft(list, subHead);
-
-    // Update both just in case
     _peekABoo(list);
     return true;
 }
@@ -799,6 +786,19 @@ bool TEST_internal(PTreeList* list){
     }
     return true;
 }
+bool TEST_reversed(PTreeList* list){
+    return list->reversed;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

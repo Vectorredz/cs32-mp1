@@ -53,7 +53,7 @@ LAYER 4:
                 Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
             - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 '''
-from test_settings_m import INPUT_FILE, LARGE_INPUTS
+from test_settings_m import INPUT_FILE, LARGE_INPUTS, SEED
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
 # Do not edit past this point!
@@ -66,6 +66,7 @@ from collections.abc import Sequence, Callable
 from typing import TypeVar
 import csv, random, os
 
+random.seed(SEED)
 
 # Make the Mirror class first (representing a working list)
 DATA = TypeVar("DATA")
@@ -256,6 +257,38 @@ WRITECUSTOM("LAYER", str(1))
 # check initial indices
 for i in range(mirror.size()):
     WRITE(True, mirror, "get", i)
+for i in range(mirror.size()):
+    WRITE(True, mirror, "set", i, randomData())
+
+# check other operations
+WRITE(True, mirror, "set", 0, randomData())
+WRITE(True, mirror, "peek_left")
+WRITE(True, mirror, "peek_right")
+
+WRITE(True, mirror, "set", mirror.size()-1, randomData())
+WRITE(True, mirror, "peek_left")
+WRITE(True, mirror, "peek_right")
+
+WRITE(True, mirror, "reverse")
+
+WRITE(True, mirror, "get", 0)
+WRITE(True, mirror, "get", mirror.size()-1)
+WRITE(True, mirror, "set", 0, randomData())
+WRITE(True, mirror, "get", 0)
+WRITE(True, mirror, "get", mirror.size()-1)
+WRITE(True, mirror, "peek_left")
+WRITE(True, mirror, "peek_right")
+
+WRITE(True, mirror, "get", 0)
+WRITE(True, mirror, "get", mirror.size()-1)
+WRITE(True, mirror, "set", mirror.size()-1, randomData())
+WRITE(True, mirror, "get", 0)
+WRITE(True, mirror, "get", mirror.size()-1)
+WRITE(True, mirror, "peek_left")
+WRITE(True, mirror, "peek_right")
+
+WRITE(True, mirror, "reverse")
+
 
 # random
 for i in range(random.randint(5000, 10000)):
@@ -314,7 +347,7 @@ WRITECUSTOM("LAYER", str(3))
 
 # Serious Punch
 operations = ["push_left", "push_right", "pop_left", "pop_right"]
-for i in range(random.randint(500, 1000)):
+for i in range(random.randint(5000, 10000)):
     chosen = operations[random.randint(0, len(operations)-1)]
     if chosen.find("pop") != -1:
         WRITE(True, mirror, chosen)
@@ -334,7 +367,7 @@ WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
 for u in range(2):
     check = True
-    lower, upper = 500, 1000
+    lower, upper = 5000, 10000
     if u == 1:
         if LARGE_INPUTS == False:
             break
