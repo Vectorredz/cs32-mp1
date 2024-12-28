@@ -142,7 +142,11 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
         PTree* ptree = currentListNode->ptree;
         PTreeNode* currentTreeNode = ptree->root;
 
-        // Get the appropriate bounds for our current PTree
+        /*
+        Get the appropriate bounds for our current PTree
+        We base it off of our corrent offset for lower bound,
+        and use the PTree's "l" property (the number of leaf nodes it has) for the upper bound.
+        */
         LENGTH lowerBound = offset;
         LENGTH upperBound = offset + ptree->l - 1;
 
@@ -178,7 +182,7 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
 
         /*
         This while loop's expression is actually useless because in the loop, it already checks
-        if the children are nodes and immediately returns,
+        if the children are leaf nodes and immediately returns,
         but I put it here just in case.
         */
         while (currentTreeNode->leaf == false){
@@ -191,7 +195,7 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
             */
             if (leftChild->leaf == true){
                 /*
-                These two children are adjacent indices, and since we know the index is either one of these two,
+                These two children are adjacent indices, and since we know the index is within either one of these two,
                 then it's either one or the other.
                 And voila, we have found the correct leaf.
                 */
