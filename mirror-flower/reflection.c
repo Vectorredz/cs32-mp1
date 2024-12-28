@@ -41,7 +41,7 @@ PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
     uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
     uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
     uint64_t dt = (bQ-aQ);
-    PROCESSED_TIME final = (double)(dt * 1000.0L)/(double)freq;
+    PROCESSED_TIME final = (double)(dt)/(double)freq;
     return final < 0.0L ? 0.0L : final;
 }
 // typedef int RECORDED_TIME;
@@ -64,7 +64,6 @@ PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
 #include "../H_global.h"
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
 #define MAX_NUMBER_DIGITS 25
 
@@ -207,26 +206,40 @@ char* boolToStr(bool b){
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
-bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
+void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
+    if (extraOperation == NULL){
+        printf(":: operation: %s\n", operation);
+    } else {
+        printf(":: operation: %s -> %s\n", operation, extraOperation);
+    }
+    printf(":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+    printf(":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
+    printf(":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
+}
+bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
+    if (checkForCorrectness == false){
+        return true;
+    }
     if (strcmp(mRESULT, RESULT) != 0){
+        printf("[/] [line %zu]: WA [%lfms]\n", lineNum, dt);
         printf("!! Failed Operation !!\n");
         
         size_t i = 0;
         while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
             i++;
         }
-        printf(":: line %zu\n:: column %zu (char CORRECT: %c, FAULT: %c)\n", lineNum+1, i, RESULT[i], mRESULT[i]);
-        if (extraOperation == NULL){
-            printf(":: operation: %s\n", operation);
-        } else {
-            printf(":: operation: %s -> %s\n", operation, extraOperation);
-        }
+        DISPLAY_LOGS(list, operation, extraOperation);
+        printf(":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", lineNum, i, RESULT[i], mRESULT[i]);
         printf(":: FAULTY OUTPUT -> %s\n", mRESULT);
         printf(":: SUPPOSED OUTPUT -> %s\n", RESULT);
-        printf(":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
-        printf(":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
-        printf(":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
         return false;
+    }
+    if (checkForEfficiency == true){
+        if (dt > 1){
+            printf("[+] [line %zu]: TLE [%lfms]\n", lineNum, dt);
+            DISPLAY_LOGS(list, operation, extraOperation);
+            return false;
+        }
     }
     return true;
 }
@@ -276,7 +289,13 @@ int main(){
     printf("> Conducting test operations...\n");
     FILE* f = fopen(OUTPUT_FILE, "w+");
     Reflection* list = NULL;
+
     size_t opCounter = 0;
+    bool prevWasMsg = false;
+
+    RECORDED_TIME _timeGlobal, timeGlobal;
+    _TIME(&_timeGlobal);
+
     for (size_t testNum = 0; testNum < totalTests; testNum++){
         // Get each one first
         char** testLine = tests[testNum];
@@ -284,27 +303,38 @@ int main(){
         char* arg1 = testLine[1];
         char* arg2 = testLine[2];
         char* RESULT = testLine[3];
+        char* mRESULT;
+        char* extraOperation;
+        bool checkForCorrectness = strcmp("X", RESULT) != 0;
         
+
+        // Clear past 2 lines of output and display new executing line
+        if (LINE_DISPLAY == true){
+            if (opCounter > 0 && prevWasMsg == false){
+                printf("\033[A\033[K\033[A\033[K");
+            }
+        }
+
         // Custom LAYER messages
         if (strcmp(operation, "LAYER") == 0){
+            prevWasMsg = true;
             printf("!! LAYER %s !!\n", arg1);
             continue;
         }
         if (strcmp(operation, "LAYERFIN") == 0){
+            prevWasMsg = true;
             printf("!! LAYER %s Passed. !!\n", arg1);
             continue;
         }
 
-        // Clear current line of output and display new executing line
+        // Display new executing line
         if (LINE_DISPLAY == true){
-            if (testNum > 0){
-                printf("\033[A\033[K");
-            }
             printf("exec %zu ...\n", testNum+1);
         }
+        prevWasMsg = false;
         
         LENGTH n = list != NULL ? size(list) : 0;
-        RECORDED_TIME c, _c;
+        RECORDED_TIME _time, time;
 
         // Get appropriate variables for ARG1/ARG2, execute the desired operation while timing it, and (if checking for correctness) verify the output
         if (strcmp(operation, "make") == 0){
@@ -319,117 +349,152 @@ int main(){
                 token = strtok(NULL, ",");
             }
 
-            _TIME(&_c);
+            _TIME(&_time);
             list = make(n, seq);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
 
         } else if (strcmp(operation, "size") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             LENGTH listSize = size(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, lengthToStr(listSize), NULL)) return -1;
+            _TIME(&time);
+
+            extraOperation = NULL;
+            if (checkForCorrectness == true){
+                mRESULT = lengthToStr(listSize);
             }
 
         } else if (strcmp(operation, "empty") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             bool listEmpty = empty(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, boolToStr(listEmpty), NULL)) return -1;
+            _TIME(&time);
+
+            extraOperation = NULL;
+            if (checkForCorrectness == true){
+                mRESULT = boolToStr(listEmpty);
             }
 
         } else if (strcmp(operation, "reverse") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             reverse(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
 
         } else if (strcmp(operation, "get") == 0){
             LENGTH i = strToLength(arg1);
 
-            _TIME(&_c);
+            _TIME(&_time);
             DATA data = get(list, i);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+            _TIME(&time);
+
+            extraOperation = NULL;
+            if (checkForCorrectness == true){
+                mRESULT = dataToStr(data);
             }
 
         } else if (strcmp(operation, "set") == 0){
             LENGTH i = strToLength(arg1);
             DATA v = strToData(arg2);
 
-            _TIME(&_c);
+            _TIME(&_time);
             set(list, i, v);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
+            _TIME(&time);
+
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
                 LENGTH n;
                 DATA* seq;
                 TEST_elements(list, &n, &seq);
-                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]), "TEST_elements")) return -1;
+                mRESULT = dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]);
             }
 
         } else if (strcmp(operation, "peek_left") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             DATA data = peek_left(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+            _TIME(&time);
+
+            extraOperation = NULL;
+            if (checkForCorrectness == true){
+                mRESULT = dataToStr(data);
             }
 
         } else if (strcmp(operation, "peek_right") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             DATA data = peek_right(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+            _TIME(&time);
+
+            extraOperation = NULL;
+            if (checkForCorrectness == true){
+                mRESULT = dataToStr(data);
             }
 
         } else if (strcmp(operation, "push_left") == 0){
             DATA v = strToData(arg1);
 
-            _TIME(&_c);
+            _TIME(&_time);
             push_left(list, v);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
 
         } else if (strcmp(operation, "push_right") == 0){
             DATA v = strToData(arg1);
 
-            _TIME(&_c);
+            _TIME(&_time);
             push_right(list, v);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
 
         } else if (strcmp(operation, "pop_left") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             pop_left(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+            
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
 
         } else if (strcmp(operation, "pop_right") == 0){
-            _TIME(&_c);
+            _TIME(&_time);
             pop_right(list);
-            _TIME(&c);
-            if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
+            _TIME(&time);
+            
+            extraOperation = "TEST_elements";
+            if (checkForCorrectness == true){
+                mRESULT = listToResult(list, true);
             }
+
         }
 
+        PROCESSED_TIME dt = _PROCESSTIME(_time, time);
+
         // For internal tests
-        if (strcmp("X", RESULT) != 0){
-            if (!VERIFY(list, testNum, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal")) return -1;
+        if (checkForCorrectness == true){
+        if (!VERIFY(list, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false)) return -1;
+        }
+
+        // Verify the output
+        if (!VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true)) return -1;
+
+        PROCESSED_TIME dtMillis = dt * 1000.0;
+        if (LINE_DISPLAY == true){
+            printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dtMillis);
         }
 
         // Finally, write the new benchmark to output array
@@ -437,10 +502,19 @@ int main(){
         char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
         wd.operation = strcpy(opCopy, operation);
         wd.n = n;
-        wd.c = _PROCESSTIME(_c, c);
+        wd.c = dtMillis;
         writeDataLines[opCounter] = wd;
         opCounter++;
     }
+
+    _TIME(&timeGlobal);
+    if (LINE_DISPLAY == true){
+        if (opCounter > 0 && prevWasMsg == false){
+            printf("\033[A\033[K\033[A\033[K");
+        }
+    }
+    printf("[O] [GLOBAL]: AC [%lfs]\n", _PROCESSTIME(_timeGlobal, timeGlobal));
+    
     printf("> Done.\n");
 
     printf("> Writing deltatime benchmarks to output...\n");
