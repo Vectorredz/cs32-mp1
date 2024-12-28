@@ -211,37 +211,36 @@ char* boolToStr(bool b){
 // TODO: use function pointers instead for getting mRESULT? idk
 void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
     if (extraOperation == NULL){
-        printf(":: operation: %s\n", operation);
+        fprintf(stderr, ":: operation: %s\n", operation);
     } else {
-        printf(":: operation: %s -> %s\n", operation, extraOperation);
+        fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
     }
-    printf(":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
-    printf(":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
-    printf(":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
+    fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+    fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
+    fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
 }
-bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
-    if (checkForCorrectness == false){
-        return true;
-    }
-    if (strcmp(mRESULT, RESULT) != 0){
-        printf("[/] [line %zu]: WA [%lfms]\n", lineNum, dt);
-        printf("!! Failed Operation !!\n");
-        
-        size_t i = 0;
-        while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
-            i++;
+void VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
+    if (checkForCorrectness == true){
+        if (strcmp(mRESULT, RESULT) != 0){
+            fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", lineNum, dt);
+            fprintf(stderr, "!! Failed Operation !!\n");
+            
+            size_t i = 0;
+            while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
+                i++;
+            }
+            DISPLAY_LOGS(list, operation, extraOperation);
+            fprintf(stderr, ":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", lineNum, i, RESULT[i], mRESULT[i]);
+            fprintf(stderr, ":: FAULTY OUTPUT -> %s\n", mRESULT);
+            fprintf(stderr, ":: SUPPOSED OUTPUT -> %s\n", RESULT);
+            exit(1);
         }
-        DISPLAY_LOGS(list, operation, extraOperation);
-        printf(":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", lineNum, i, RESULT[i], mRESULT[i]);
-        printf(":: FAULTY OUTPUT -> %s\n", mRESULT);
-        printf(":: SUPPOSED OUTPUT -> %s\n", RESULT);
-        return false;
     }
     if (checkForEfficiency == true){
         if (dt > TLE_BOUND){
-            printf("[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, TLE_BOUND);
+            fprintf(stderr, "[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, TLE_BOUND);
             DISPLAY_LOGS(list, operation, extraOperation);
-            return false;
+            exit(1);
         }
     }
     return true;
@@ -489,11 +488,11 @@ int main(){
 
         // For internal tests
         if (checkForCorrectness == true){
-        if (!VERIFY(list, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false)) return -1;
+            VERIFY(list, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false);
         }
 
         // Verify the output
-        if (!VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true)) return -1;
+        VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true);
 
         if (LINE_DISPLAY == true){
             printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dt);
