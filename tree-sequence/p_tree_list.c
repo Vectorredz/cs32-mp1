@@ -142,7 +142,11 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
         PTree* ptree = currentListNode->ptree;
         PTreeNode* currentTreeNode = ptree->root;
 
-        // Get the appropriate bounds for our current PTree
+        /*
+        Get the appropriate bounds for our current PTree
+        We base it off of our corrent offset for lower bound,
+        and use the PTree's "l" property (the number of leaf nodes it has) for the upper bound.
+        */
         LENGTH lowerBound = offset;
         LENGTH upperBound = offset + ptree->l - 1;
 
@@ -178,7 +182,7 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
 
         /*
         This while loop's expression is actually useless because in the loop, it already checks
-        if the children are nodes and immediately returns,
+        if the children are leaf nodes and immediately returns,
         but I put it here just in case.
         */
         while (currentTreeNode->leaf == false){
@@ -191,7 +195,7 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
             */
             if (leftChild->leaf == true){
                 /*
-                These two children are adjacent indices, and since we know the index is either one of these two,
+                These two children are adjacent indices, and since we know the index is within either one of these two,
                 then it's either one or the other.
                 And voila, we have found the correct leaf.
                 */
@@ -248,7 +252,7 @@ sequence of k's, and overall preventing the degenerate representation of n PTree
 
 It is inspired by binomial heap's merge operation.
 Given a starting doubly-linked-list node, we proceed to the right (left),
-and if our current PTree is the same as the next PTree, then we construct a third PTree containing their two roots as children.
+and if our current PTree's type is the same as the next PTree, then we construct a third PTree containing their two roots as children.
 We know that this is of type k+1, and contains l*2 leaf nodes.
 */
 void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
@@ -370,7 +374,7 @@ These helper functions for pop operations.
 They are pretty much the opposite of the merge operations, split into two: one for cascading the right of the PTree, and one for cascading the left.
 We know that only the leftmost (rightmost) leaf of the target PTree is the one that needs to be removed.
 So, its purpose is to "wrap open" the PTree back into a sequence of PTrees.
-It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node.
+It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node sub-list.
 Then the other leftover left (right) child is deallocated and removed from the list entirely.
 Each successive right (left) subtree is of type k-1 and l/2.
 After everything, it gives the caller the appropriate sublist of right-child (left-child) PTrees.
@@ -589,7 +593,7 @@ bool _pop_left_base(PTreeList* list){
     list->head = subHead;
     DEFOREST(oldHead);
 
-    // Fix non-distinct types (start from furthest in the list, since we know the cascaded left sub-trees are distinct)
+    // Fix non-distinct types (start from furthest in the list, since we know all the cascaded right sub-trees are distinct)
     _mergeNonDistinctPTreesToRight(list, subTail);
 
     // Update both just in case
@@ -789,10 +793,6 @@ bool TEST_internal(PTreeList* list){
 bool TEST_reversed(PTreeList* list){
     return list->reversed;
 }
-
-
-
-
 
 
 

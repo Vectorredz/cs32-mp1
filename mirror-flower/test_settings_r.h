@@ -11,9 +11,14 @@
 #include "../doubly-linked-list/d_linked_list.c" //(yes this is a Sin :man_running:)
 typedef list Reflection;
 
-// Boolean, set to true if you would like the current line being executed to be displayed
+// TYPE: boolean
+// Set to true if you would like the current line being executed to be displayed
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown
 #define LINE_DISPLAY false
+
+// TYPE: double
+// TLE efficiency boundary (in milliseconds)
+#define TLE_BOUND 1000.0
 
 // Input File Path (contains operation, args, and correct result for cross-checks)
 // ((test_input_0.csv)) is for testing the tester itself
