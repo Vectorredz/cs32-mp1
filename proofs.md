@@ -14,12 +14,13 @@ Each of the operations involved that were done outside of the for-loop run at co
 
 Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where &#8467 is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
 $$
+\begin{align*}
 T(\mathscr{l}) &= T(\mathscr{l}-1) + c \\ 
 T(\mathscr{l}-1) &= T(\mathscr{l}-2) + c\\
 &\vdots\\
 T(1) &= c
-$$
-If we were to simplify the recurrence further, we would get,
+\end{align*}$$
+If we waere to simplify the recurrence further, we would get,
 $$
 \begin{aligned}
 T(\mathscr{l}) &= T(1) + c \cdot (\mathscr{l} - 1)
