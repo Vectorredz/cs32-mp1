@@ -235,9 +235,8 @@ bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, cha
         return false;
     }
     if (checkForEfficiency == true){
-        double bound = 1;
-        if (dt > bound){
-            printf("[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, (double) bound / 1000.0);
+        if (dt > TLE_BOUND){
+            printf("[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, TLE_BOUND);
             DISPLAY_LOGS(list, operation, extraOperation);
             return false;
         }
@@ -483,7 +482,7 @@ int main(){
 
         }
 
-        PROCESSED_TIME dt = _PROCESSTIME(_time, time);
+        PROCESSED_TIME dt = _PROCESSTIME(_time, time) * 1000.0;
 
         // For internal tests
         if (checkForCorrectness == true){
@@ -493,9 +492,8 @@ int main(){
         // Verify the output
         if (!VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true)) return -1;
 
-        PROCESSED_TIME dtMillis = dt * 1000.0;
         if (LINE_DISPLAY == true){
-            printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dtMillis);
+            printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dt);
         }
 
         // Finally, write the new benchmark to output array
@@ -503,7 +501,7 @@ int main(){
         char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
         wd.operation = strcpy(opCopy, operation);
         wd.n = n;
-        wd.c = dtMillis;
+        wd.c = dt;
         writeDataLines[opCounter] = wd;
         opCounter++;
     }

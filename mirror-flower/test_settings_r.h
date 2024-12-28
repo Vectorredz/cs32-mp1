@@ -15,6 +15,9 @@ typedef list Reflection;
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown
 #define LINE_DISPLAY false
 
+// TLE efficiency boundary (in milliseconds)
+#define TLE_BOUND 1000.0
+
 // Input File Path (contains operation, args, and correct result for cross-checks)
 // ((test_input_0.csv)) is for testing the tester itself
 #define INPUT_FILE "test_input.csv"
