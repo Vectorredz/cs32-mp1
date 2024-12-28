@@ -1,8 +1,8 @@
-
+`
 
 ### Doubly Linked Lists
 
-###### Function: `make`
+#### Function: `make`
 **Time Complexity: $O(\mathscr{l})$ worst case**<br>
 <b>Proof:</b> Notice the code contains only 1 for-loop. Now, if we look at the lines outside the for-loop, we can see that the operation involves a series of the following constant-time operations:
 - variable assignment
@@ -50,7 +50,7 @@ T(n) &= T_{outer}+T_{loop} \\
 \end{aligned}$$
 Thus proving that `make` runs at $O(\mathscr{l})$ worst case. 
 
-###### Function: `push_left` \& `push_right`
+#### Function: `push_left` \& `push_right`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b> Notice the operations involve a series of the following constant-time operations:
 - variable assignment
@@ -65,7 +65,7 @@ As observed, the operations involved run in constant time $O(1)$. Therefore, we 
 
 Thus, we have proven that `push_left & push_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
 
-###### Function: `pop_left` \& `pop_right`
+#### Function: `pop_left` \& `pop_right`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice the operations involve a series of the following constant-time operations:
 - fprintf statement
@@ -81,7 +81,7 @@ As observed, the operations involved run in constant time, $O(1)$. Therefore, we
 Thus, we have proven that `pop_left & pop_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
 
 
-###### Function: `size`
+#### Function: `size`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - return statement
@@ -92,7 +92,7 @@ As observed, because the return statement runs at constant time, $O(1)$, and is 
 
 Thus, we have proven that `size` runs at $O(1)$ worst case.
 
-###### Function: `get`\& `set` 
+#### Function: `get`\& `set` 
 
 **Time Complexity: $O(n)$ worst case**  
   
@@ -137,7 +137,7 @@ T(n)&=T_{outer}+T_{loop}\\
 \end{align*}$$
 Which is, by definition of Big O, $O(n)$.
 Thus, we have proven that both `get` and `set` runs at $O(n)$ worst case.
-###### Function: `reverse`
+#### Function: `reverse`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - negation statement: `reversed = !reversed`
