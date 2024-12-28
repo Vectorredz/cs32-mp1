@@ -243,7 +243,6 @@ void VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, cha
             exit(1);
         }
     }
-    return true;
 }
 
 // Used for time plots output
