@@ -154,7 +154,7 @@ void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
 
 
 
-char* listToResult(Reflection* list){
+char* listToResult(Reflection* list, bool includeReversal){
     // Turns a sequence of DATA values into a string delimeted by ","
     LENGTH n;
     DATA* seq;
@@ -169,7 +169,11 @@ char* listToResult(Reflection* list){
 
     LENGTH m0 = 0;
     for (LENGTH i = 0; i < n; i++){
-        DATA data = seq[TEST_reversed(list) == false ? i : n-1-i];
+        LENGTH trueIndex = i;
+        if (includeReversal == true){
+            trueIndex = TEST_reversed(list) == false ? i : n-1-i;
+        }
+        DATA data = seq[trueIndex];
         m0 += sprintf(&mRESULT[m0], "%" PRId64, data);
         if (i < n-1){
             m0 += sprintf(&mRESULT[m0], ",");
@@ -203,7 +207,7 @@ char* boolToStr(bool b){
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
-bool VERIFY(size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
+bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation){
     if (strcmp(mRESULT, RESULT) != 0){
         printf("!! Failed Operation !!\n");
         
@@ -217,8 +221,11 @@ bool VERIFY(size_t lineNum, char* operation, char* RESULT, char* mRESULT, char* 
         } else {
             printf(":: operation: %s -> %s\n", operation, extraOperation);
         }
-        printf("!! FAULTY OUTPUT:: %s\n", mRESULT);
-        printf("!! SUPPOSED OUTPUT:: %s\n", RESULT);
+        printf(":: FAULTY OUTPUT -> %s\n", mRESULT);
+        printf(":: SUPPOSED OUTPUT -> %s\n", RESULT);
+        printf(":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+        printf(":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
+        printf(":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
         return false;
     }
     return true;
@@ -316,7 +323,7 @@ int main(){
             list = make(n, seq);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "size") == 0){
@@ -324,7 +331,7 @@ int main(){
             LENGTH listSize = size(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, lengthToStr(listSize), NULL)) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, lengthToStr(listSize), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "empty") == 0){
@@ -332,7 +339,7 @@ int main(){
             bool listEmpty = empty(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, boolToStr(listEmpty), NULL)) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, boolToStr(listEmpty), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "reverse") == 0){
@@ -340,7 +347,7 @@ int main(){
             reverse(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "get") == 0){
@@ -350,7 +357,7 @@ int main(){
             DATA data = get(list, i);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "set") == 0){
@@ -364,7 +371,7 @@ int main(){
                 LENGTH n;
                 DATA* seq;
                 TEST_elements(list, &n, &seq);
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "peek_left") == 0){
@@ -372,7 +379,7 @@ int main(){
             DATA data = peek_left(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "peek_right") == 0){
@@ -380,7 +387,7 @@ int main(){
             DATA data = peek_right(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, dataToStr(data), NULL)) return -1;
             }
 
         } else if (strcmp(operation, "push_left") == 0){
@@ -390,7 +397,7 @@ int main(){
             push_left(list, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "push_right") == 0){
@@ -400,7 +407,7 @@ int main(){
             push_right(list, v);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "pop_left") == 0){
@@ -408,7 +415,7 @@ int main(){
             pop_left(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
 
         } else if (strcmp(operation, "pop_right") == 0){
@@ -416,13 +423,13 @@ int main(){
             pop_right(list);
             _TIME(&c);
             if (strcmp("X", RESULT) != 0){
-                if (!VERIFY(testNum, operation, RESULT, listToResult(list), "TEST_elements")) return -1;
+                if (!VERIFY(list, testNum, operation, RESULT, listToResult(list, true), "TEST_elements")) return -1;
             }
         }
 
         // For internal tests
         if (strcmp("X", RESULT) != 0){
-            if (!VERIFY(testNum, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal")) return -1;
+            if (!VERIFY(list, testNum, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal")) return -1;
         }
 
         // Finally, write the new benchmark to output array
