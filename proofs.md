@@ -12,14 +12,13 @@
 
 Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the for-loop.
 
-Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of &#8467 times, where &#8467 is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
+Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where &#8467 is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
 $$
-\begin{align*}
 T(\mathscr{l}) &= T(\mathscr{l}-1) + c \\ 
 T(\mathscr{l}-1) &= T(\mathscr{l}-2) + c\\
 &\vdots\\
 T(1) &= c
-\end{align*}$$
+$$
 If we were to simplify the recurrence further, we would get,
 $$
 \begin{aligned}
