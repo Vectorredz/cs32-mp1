@@ -11,31 +11,18 @@
 Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{\text{outer}} = c$, where $c$ is the constant representing the total time taken by the combination of operations outside the for-loop.
 
 Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where $\mathscr{l}$ is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{\text{loop}}$.
-$$
-\begin{aligned}
-T(\mathscr{l}) &= T(\mathscr{l}-1) + c \\ 
-T(\mathscr{l}-1) &= T(\mathscr{l}-2) + c\\
-&\vdots\\
-T(1) &= c
-\end{aligned}
-$$
+
+$$T(\mathscr{l}) = T(\mathscr{l}-1) + c  $$
+$$T(\mathscr{l}-1) = T(\mathscr{l}-2) + c$$$$\vdots$$
+$$T(1) = c$$
 
 If we simplify the recurrence further, we would get:
-$$
-\begin{aligned}
-T(\mathscr{l}) &= T(1) + c \cdot (\mathscr{l} - 1)
-\end{aligned}
-$$
+$$T(\mathscr{l}) = T(1) + c \cdot (\mathscr{l} - 1)$$
 Since $T(1)$ can equal $c$, we can substitute and get the following:
-$$
-\begin{aligned}
-T(\mathscr{l}) &= c + c \cdot \mathscr{l} - c \\ &= c \cdot \mathscr{l}
-\end{aligned}
+$$T(\mathscr{l}) = c + c \cdot \mathscr{l} - c \\ = c \cdot \mathscr{l}
 $$
 By definition of big O notation, we can conclude that the recurrence relation of the loop runs at $T_{\text{loop}} = O(\mathscr{l})$ because there exists a constant $C$ and a value $\mathscr{l}_0$ such that for all $\mathscr{l} \geq \mathscr{l}_0$, the following inequality holds:
-$$
-c\mathscr{l} \leq C\mathscr{l}
-$$
+$$\mathscr{l} \leq C\mathscr{l}$$
 That is, 
 $$
 C \geq c
