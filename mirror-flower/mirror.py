@@ -49,7 +49,7 @@ LAYER 4:
             * if (LARGE_INPUTS == true):
                 - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
                 - POP_* for RANDOM_INTEGER(60000, 200000) times
-                - With GET (Random Index), SET (Random Index, Random Data), PEEK throughout
+                - Along with all other OPERATIONS throughout
 
         >> UB TEST:
             - Pops list until n == 0 first
