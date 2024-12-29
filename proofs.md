@@ -156,6 +156,7 @@ As observed, because there is a singular statement, that is the negation. The ti
 
 Thus, we have proven that `reverse` runs at $O(1)$ worst case.
 
+***
 ### Dynamic Array
 ***
 #### Function: `make`
@@ -339,3 +340,7 @@ The implementation lies on the boolean `l->reversed`, where $l$ is the list pass
 As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$.
 
 Thus, we have proven that `reverse` runs at $O(1)$ worst case.
+
+***
+### Sequence of Trees
+***
