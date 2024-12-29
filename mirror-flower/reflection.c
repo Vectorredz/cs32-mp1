@@ -20,6 +20,22 @@ constant, linear, or logarithmic in nature.
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 
+#include "../H_global.h"
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_NUMBER_DIGITS 25
+
+
+
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
+
+            ||-- TIMER --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
+
 
 // TIMER for outputting execution time plots
 // TODO: implement other os later
@@ -63,12 +79,13 @@ constant, linear, or logarithmic in nature.
 
 
 
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
 
-#include "../H_global.h"
-#include <stdio.h>
-#include <string.h>
+            ||-- HELPERS --||
 
-#define MAX_NUMBER_DIGITS 25
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
 
 void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
     FILE *f = fopen(inputFileName, "r");
@@ -260,6 +277,15 @@ void WRITE(FILE* f, WRITEDATA wd, bool newLine){
         fprintf(f, "\n");
     }
 }
+
+
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
+
+            ||-- MAIN TESTER --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
 
 int main(){
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");

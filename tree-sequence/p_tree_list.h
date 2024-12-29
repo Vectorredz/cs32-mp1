@@ -6,6 +6,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+// PTree Node
 typedef struct _PTreeNode {
     bool leaf;
     union {
@@ -14,24 +15,29 @@ typedef struct _PTreeNode {
             DATA data;
         };
 
-        // Non-Leaf Node (Contains Index Segment)
+        // Non-Leaf Node (Contains Index Segment (phantom/implicit))
         struct {
             struct _PTreeNode* left;
             struct _PTreeNode* right;
         };
     };
 } PTreeNode;
+
+// PTree
 typedef struct _PTree {
     LENGTH l; // number of leaf nodes
     LENGTH k; // power of two
     PTreeNode* root;
 } PTree;
 
+// Doubly-Linked-List Node of PTrees
 typedef struct _PTreeListNode {
     PTree* ptree;
     struct _PTreeListNode* next;
     struct _PTreeListNode* prev;
 } PTreeListNode;
+
+// Main List
 typedef struct _PTreeList {
     LENGTH n; // number of leaf nodes across all trees
     PTreeListNode* head;
@@ -43,7 +49,26 @@ typedef struct _PTreeList {
 } PTreeList;
 
 
+// Helpers
 void DEFOREST(void* ptr);
+
+void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef);
+PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound);
+void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef);
+PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i);
+
+PTree* _constructZeroPTree(DATA v);
+void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode);
+void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode);
+void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
+void _cascadeRemovalRight(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
+void _peekABoo(PTreeList* list);
+
+void _push_left_base(PTreeList* list, DATA v);
+void _push_right_base(PTreeList* list, DATA v);
+bool _pop_left_base(PTreeList* list);
+bool _pop_right_base(PTreeList* list);
+
 
 // Init
 PTreeList* make(LENGTH n, DATA* seq);

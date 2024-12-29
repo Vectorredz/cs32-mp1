@@ -9,6 +9,7 @@ Look into the Mirror...
 '''
 LAYER 0:
     >> INITIALIZATION TEST
+        - MAKE (0 -> 2000)
         - MAKE (length of RANDOM_INTEGER(0, 2000))
     
 LAYER 1:
@@ -24,15 +25,22 @@ LAYER 1:
 LAYER 2:
     >> INSERTIONS/DELETIONS TEST
         * Gazes at:
-            - PUSH_* (Random Data)
-            - POP_*
+            - PUSH_* (Random Data) (in sequence)
+            - POP_* (in sequence)
 
 LAYER 3:
     * Attempts to shatter the Reflection with:
+        >> BASIC OPERATIONS TEST [Harder]
+            - GET (Random Index)
+            - SET (Random Index and Random Data)
+            - PEEK_*
+            - occasional REVERSE
+            - SIZE, EMPTY
         >> INSERTIONS/DELETIONS TEST [Harder]
-                - PUSH_* (Random Data)
-                - POP_*
-                - occasional REVERSE and SET (Random Index, Random Data)
+            - PUSH_* (Random Data)
+            - POP_*
+            - occasional REVERSE and SET (Random Index, Random Data)
+            - SIZE, EMPTY
 
 LAYER 4:
     * (No checking for correctness)
@@ -41,7 +49,7 @@ LAYER 4:
             * if (LARGE_INPUTS == true):
                 - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
                 - POP_* for RANDOM_INTEGER(60000, 200000) times
-                - With GET (Random Index), SET (Random Index, Random Data), PEEK throughout
+                - Along with all other OPERATIONS throughout
 
         >> UB TEST:
             - Pops list until n == 0 first
@@ -67,6 +75,15 @@ from typing import TypeVar
 import csv, random, os
 
 random.seed(SEED)
+
+
+# --------------------------------------------------------- >>
+# ----------------------------------------- <<
+
+            #||-- MIRROR LIST --||#
+
+# ----------------------------------------- #
+# --------------------------------------------------------- >>
 
 # Make the Mirror class first (representing a working list)
 DATA = TypeVar("DATA")
@@ -119,7 +136,16 @@ class Mirror:
     def TEST_elements(self): # dont modify using this lolo
         return self._array
 
-# ----------------------------------------------------------------------
+
+
+# --------------------------------------------------------- >>
+# ----------------------------------------- <<
+
+        #||-- VARIABLES/HELPERS --||#
+
+# ----------------------------------------- #
+# --------------------------------------------------------- >>
+
 print("<< Mirror Flower. >>")
 print("Look into the Mirror...")
 
@@ -227,14 +253,38 @@ def WRITECUSTOM(msg: int = "None", arg1: str = "None", arg2: str = "None", RESUL
     })
 
 print("> Done.")
-# ------------------------------------------------------------------------------------------------
+
+
+
+# --------------------------------------------------------- >>
+# ----------------------------------------- <<
+
+        #||-- LAYERED TESTS --||#
+
+# ----------------------------------------- #
+# --------------------------------------------------------- >>
+
 print("> Initializing tests...")
 
 
 # ------------------------ LAYER 0: Initialize
 print("> Layer 0...")
-
 WRITECUSTOM("LAYER", str(0))
+
+# test make (0 -> 2000)
+for n in range(2000+1):
+    seq = list[DATA]()
+    for i in range(n):
+        seq.append(randomData())
+    mirror = Mirror(n, seq)
+    writer.writerow({
+        "OPERATION": "make",
+        "ARG1": n,
+        "ARG2": listToResult(seq),
+        "RESULT": listToResult(mirror.TEST_elements())
+    })
+
+# test make (RANDOM_INTEGER(0, 2000))
 n = random.randint(0, 2000)
 seq = list[DATA]()
 for i in range(n):
@@ -246,6 +296,7 @@ writer.writerow({
     "ARG2": listToResult(seq),
     "RESULT": listToResult(mirror.TEST_elements())
 })
+
 WRITECUSTOM("LAYERFIN", str(0))
 print("> Done.")
 
