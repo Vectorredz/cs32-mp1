@@ -17,7 +17,8 @@ This type is used for values that represent the data that the list holds.
 
 
 #### Function: `TEST_elements(list) -> n, seq`
-This is used by the Unit Tester to check for correctness against the true raw sequence of `DATA` values of the list (unaffected by reversal flags.) For this reason, the implementer must absolutely make sure that it works correctly for any `n` and `seq`, so that there is no confusion on if it's the executed operation that failed, or if it's `TEST_elements` that's the culprit.
+This is used by the Unit Tester to check for correctness against the true raw sequence of `DATA` values of the list (unaffected by reversal flags), WITHOUT using `get` or any other operation.\
+For this reason, the implementer must absolutely make sure that it works correctly for any `n` and `seq`, so that there is no confusion on if it's the executed operation that failed, or if it's `TEST_elements` that's the culprit.
 
 #### Function: `TEST_internal(list) -> bool`
 This is used by the Unit Tester to check if any internal testing was successful. The implementer of the list can put any test within this function, as long as it returns either `true` or `false` to determine if the test was successful or not.\
