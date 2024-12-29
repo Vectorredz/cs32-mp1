@@ -92,19 +92,20 @@ Their text can be of the following:
 
 | OPERATION | ARG1 | ARG2 | RESULT (can be "**X**" to disable correctness) |
 | :-------- | :--- | :--- | :----- |
-| make | `LENGTH n` <br> number | `DATA *seq` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
 | size | "None" | "None" | `returned LENGTH` <br> number |
 | empty | "None" | "None" | `returned bool` <br> "0" / "1" |
-| reverse | "None" | "None" | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| reverse | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
 | get | `LENGTH i` <br> number | "None" | `returned DATA` <br> number |
 | set | `LENGTH i` <br> number | `DATA v` <br> number | "None" |
 | peek_left | "None" | "None" | `returned DATA` <br> number |
 | peek_right | "None" | "None" | `returned DATA` <br> number |
-| push_left | `DATA v` <br> number | "None" | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| push_right | `DATA v` <br> number | "None" | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| pop_left | "None" | "None" | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| pop_right | "None" | "None" | `raw list sequence` <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| push_left | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| push_right | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| pop_left | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| pop_right | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
 
+Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.
 
@@ -190,7 +191,7 @@ It features more detailed basic operation tests, as well as more insertion/delet
             Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
         - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 ```
-Attempts to shatter the reflection with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
+Attempts to shatter the Reflection with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
 Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
 This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
 
@@ -237,14 +238,18 @@ If all tests pass, it notifies the user that they have passed all **Layers**.
 <br>
 
 ### Skip List
-
+- [Wikipedia: Skip list](https://en.wikipedia.org/wiki/Skip_list)
 
 <br>
 
 ### Sequence of Trees
-- [Wikipedia: Binomial heap](https://en.wikipedia.org/wiki/Binomial_heap)
+- [Wikipedia - Binomial heap](https://en.wikipedia.org/wiki/Binomial_heap)
 - [NOI.PH DS 3 Section 6.2.2](https://drive.google.com/file/d/17zd_VzBMJ0tfHue1tGAh5Qo4jpXNPPQJ/view)
 - [Data Structures in Typescript #17 - Binomial Heap Introduction by j4orz](https://www.youtube.com/watch?v=m8rsw3KfDKs&t=1394s&pp=ygUNYmlub21pYWwgaGVhcA%3D%3D)
+
+
+### Tester
+- [(stackoverflow.com) QueryPerformanceCounter - LowPart and HighPart](https://stackoverflow.com/questions/40584547/how-to-convert-an-integer-to-large-integer)
 
 
 <hr>

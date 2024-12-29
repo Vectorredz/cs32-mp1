@@ -166,6 +166,7 @@ $$\text{RightChild} = [mid+1, upperBound]$$
 
 So we check if the index is in either one, and update the bounds appropriately.\
 Note that this will always either result in a leaf node holding the `DATA` value, or `NULL`.\
+And voila, we have found the correct leaf.\
 With this helper function, we can now make:
 
 #### Main: `get(list, i) -> DATA`
