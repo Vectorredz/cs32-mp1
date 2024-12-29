@@ -72,7 +72,7 @@ It is divided into the **Python-side**, and the **C-side**.
 [mirror.py](mirror-flower/mirror.py) - Generator
 
 [test_settings_r.h](mirror-flower/test_settings_r.h) - Tester (settings)\
-[reflection.c](mirror-flower/reflection.c) - Tester\
+[reflection.c](mirror-flower/reflection.c) - Tester
 
 [test_input.csv](mirror-flower/test_input.py) - Test inputs\
 [test_input_0.csv](mirror-flower/test_input_0.csv) - Test inputs (for testing the tester itself)\
