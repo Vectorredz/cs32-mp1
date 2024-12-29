@@ -245,14 +245,14 @@ Finally, it updates `rightmost` to the new value (and `leftmost` if the new `PTr
 #### Helper: `_pop_left_base(list)`
 This is the "true" `pop_left` operation, unaffected by the `reversed` flag.\
 It first checks if the leftmost `PTree` is of type $0$. If it is, then it simply removes that doubly-linked-list node from the list.\
-If not, then it calls `_cascadeRemovalLeft` and pushes the new sublist to the head (left), and then finally calls `_mergeNonDistinctPTreesToRight` to fix any non-distinct types.\
+If not, then it calls `_cascadeRemovalLeft` on the leftmost `PTree`, then pushes the new sublist to the head (left), and then finally calls `_mergeNonDistinctPTreesToRight` to fix any non-distinct types.\
 In both cases, it calls `_peekABoo(list)` to update `leftmost` and `rightmost` appropriately.
 
 #### Helper: `_pop_right_base(list)`
 A mirror of `_pop_left_base`.\
 This is the "true" `pop_right` operation, unaffected by the `reversed` flag.\
 It first checks if the rightmost `PTree` is of type $0$. If it is, then it simply removes that doubly-linked-list node from the list.\
-If not, then it calls `_cascadeRemovalRight` and pushes the new sublist to the tail (right), and then finally calls `_mergeNonDistinctPTreesToLeft` to fix any non-distinct types.\
+If not, then it calls `_cascadeRemovalRight` on the rightmost `PTree`, then pushes the new sublist to the tail (right), and then finally calls `_mergeNonDistinctPTreesToLeft` to fix any non-distinct types.\
 In both cases, it calls `_peekABoo(list)` to update `leftmost` and `rightmost` appropriately.
 
 
