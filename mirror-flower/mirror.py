@@ -30,10 +30,17 @@ LAYER 2:
 
 LAYER 3:
     * Attempts to shatter the Reflection with:
+        >> BASIC OPERATIONS TEST [Harder]
+            - GET (Random Index)
+            - SET (Random Index and Random Data)
+            - PEEK_*
+            - occasional REVERSE
+            - SIZE, EMPTY
         >> INSERTIONS/DELETIONS TEST [Harder]
-                - PUSH_* (Random Data)
-                - POP_*
-                - occasional REVERSE and SET (Random Index, Random Data)
+            - PUSH_* (Random Data)
+            - POP_*
+            - occasional REVERSE and SET (Random Index, Random Data)
+            - SIZE, EMPTY
 
 LAYER 4:
     * (No checking for correctness)
