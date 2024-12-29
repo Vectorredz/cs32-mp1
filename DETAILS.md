@@ -256,6 +256,20 @@ If not, then it calls `_cascadeRemovalRight` and pushes the new sublist to the t
 In both cases, it calls `_peekABoo(list)` to update `leftmost` and `rightmost` appropriately.
 
 
+#### Main: `push_left(list, v)`
+Calls `_push_left_base` (or `_push_right_base` if `reversed` flag is enabled.)
+
+#### Main: `push_right(list, v)`
+Calls `_push_right_base` (or `_push_left_base` if `reversed` flag is enabled.)
+
+#### Main: `pop_left(list)`
+Calls `_pop_left_base` (or `_pop_right_base` if `reversed` flag is enabled.)
+
+#### Main: `pop_right(list)`
+Calls `_pop_right_base` (or `_pop_left_base` if `reversed` flag is enabled.)
+
+
+
 <hr>
 </details>
 
