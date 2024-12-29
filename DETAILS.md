@@ -10,7 +10,7 @@
 Global types and functions were used to make certain conventions consistent across all the list types.
 
 #### Type: `LENGTH` (`size_t`)
-This type is used for values that represent the length of something, whether it be the size of the list, an index, or a counter based on the index.
+This type is used for values that represent the length of something, whether it be the size of the list, an index, or a counter based on the size/index.
 
 #### Type: `DATA` (`int64_t`)
 This type is used for values that represent the data that the list holds.
