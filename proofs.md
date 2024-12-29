@@ -1,10 +1,10 @@
 
 
 ### Doubly Linked Lists
-
+***
 #### Function: `make`
 **Time Complexity: $O(\mathscr{l})$ worst case**<br>
-<b>Proof:</b> Notice the code contains only 1 for-loop. Now, if we look at the lines outside the for-loop, we can see that the operation involves a series of the following constant-time operations:
+<b>Proof:</b> Notice the implementation contains a singular for-loop. Now, if we look at the lines outside the for-loop, we can see that the operation involves a series of the following constant-time operations:
 - variable assignment
 - malloc
 - if-else statement
@@ -50,7 +50,7 @@ Thus proving that `make` runs at $O(\mathscr{l})$ worst case.
 
 #### Function: `push_left` \& `push_right`
 **Time Complexity: $O(1)$ worst case**<br>
-<b>Proof:</b> Notice the operations involve a series of the following constant-time operations:
+<b>Proof:</b> Notice the implementation involve a series of the following constant-time operations:
 - variable assignment
 - malloc operation
 - if-else statement
@@ -61,7 +61,7 @@ For example, both push operations create a new node and link it either to the he
 
 As observed, the operations involved run in constant time $O(1)$. Therefore, we can derive the recurrence relation for the push operations to be $T_{push}=c$, where $c$ is the constant time it takes to run the combination of operations within either of the two functions.
 
-Thus, we have proven that `push_left & push_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
+Thus, we have proven that `push_left` and `push_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
 
 #### Function: `pop_left` \& `pop_right`
 **Time Complexity: $O(1)$ worst case**<br>
@@ -72,23 +72,25 @@ Thus, we have proven that `push_left & push_right` runs at $O(1)$ worst case reg
 - return statement
 - arithmetic operations
 
-For example, both operations operations free the existing tail or head node and set the node before or after the node as the new tail or head . Which side is popped depends on the specified pop operation and whether the list is reversed or not.
+For example, both operations free the existing tail or head node and set the node before or after the node as the new tail or head . Which side is popped depends on the specified pop operation and whether the list is reversed or not.
 
 As observed, the operations involved run in constant time, $O(1)$. Therefore, we can derive the recurrence relation for the pop operations as $T_{pop}=c$, where $c$ is the constant time it takes to run the combination of operations within either of the two functions.
 
 Thus, we have proven that `pop_left & pop_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
 
 
-#### Function: `size`
+#### Function: `size` \& `empty`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - return statement
 
-The code returns a variable of the doubly linked list data structure, `l->size`. Where $l$ is the doubly linked list passed to the `size` operation.
+The implementation returns a variable of the doubly linked list data structure, `l->size`. Where $l$ is the doubly linked list passed to the `size` operation.
 
 As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
 
-Thus, we have proven that `size` runs at $O(1)$ worst case.
+Now, `empty` is similar to `size` except that it adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+
+Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
 
 #### Function: `get`\& `set` 
 
@@ -148,7 +150,191 @@ Thus, we have proven that both `get` and `set` runs at $O(n)$ worst case.
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - negation statement: `reversed = !reversed`
 
-The code lies on the boolean `l->reversed`, where $l$ is the list passed to the `reverse` function. The only thing it does is negates the current value of the boolean.
+The implementation lies on the boolean `l->reversed`, where $l$ is the list passed to the `reverse` function. The only thing it does is negates the current value of the boolean. This is possible because all the other operations adjust to the current state of `reversed`, that is, it will do the exact opposite if reversed.
+
+As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$. 
+
+Thus, we have proven that `reverse` runs at $O(1)$ worst case.
+
+### Dynamic Array
+***
+#### Function: `make`
+**Time Complexity: $O(\mathscr{l})$ worst case**<br>
+<b>Proof:</b> Notice the implementation contains only 1 for-loop. Now, if we look at the lines outside the for-loop, we can see that the operation involves a series of the following constant-time operations:
+- variable assignment
+- malloc
+- if-else statement
+- return statement
+
+Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the for-loop.
+
+Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where $\mathscr{l}$ is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
+
+$$T(\mathscr{l}) = T(\mathscr{l}-1) + c $$
+$$T(\mathscr{l}-1) = T(\mathscr{l}-2) + c$$$$ \vdots$$
+$$T(1) = c$$
+
+
+If we were to simplify the recurrence further, we would get,
+
+$$T(\mathscr{l}) = T(1) + c \cdot (\mathscr{l} - 1)$$
+
+Since $T(1)$ can equal to $c$, we can substitute and get the following,
+
+$$T(\mathscr{l}) = c + c \cdot \mathscr{l} - c $$
+$$ = c \cdot \mathscr{l}$$
+
+By definition of big O notation, we can conclude that the recurrence relation of the loop runs at $T_{loop} = O(\mathscr{l})$ because there exists a constant $C$ and a value $l_0$ such that for all $l\ge l_0$ , the following inequality holds:
+
+$$
+c\mathscr{l}\le C\mathscr{l}
+$$
+
+That is, 
+
+$$
+C\ge c
+$$
+
+
+Finally, combining all the solved recurrence relations, we get, 
+
+$$T(n) = T_{outer}+T_{loop} $$
+$$= O(1) + O(\mathscr{l}) $$$$= O(\mathscr{l})$$
+
+Thus proving that `make` runs at $O(\mathscr{l})$ worst case. 
+
+
+#### Function: `push_left` \& `push_right`
+**Time Complexity: $O(1)$ amortized**<br>
+<b>Proof:</b> Notice the major part of the implementation involve a series of the following constant-time operations:
+- variable assignment
+- if-else statement
+- arithmetic operations
+
+For example, both push operations append a value to the leftmost or the rightmost, increasing the size of the list by one. Which side the node is added to depends on the specified push operation and whether the list is reversed or not. Moreover, the list used circular indexing to be able to push elements at $O(1)$.
+
+However, it is $O(1)$ *amortized* and not *worst case* because of the nature of the dynamic array. Given that the list increases in size when the list is *too full*, we implemented a helper function called `expand_array` to aid in the expansion of the array which also sets the irregular indexes back to a zero-based numbering. To derive the recurrence relation we get the following.
+
+$$T(n) = T_{push} + T_{expand}$$
+
+
+As observed, the major part of the implementation's operations involved run in constant time, $O(1)$. Therefore, we can derive the recurrence relation for the push operations to be $T_{push}=c$, where $c$ is the constant time it takes to run the combination of operations within either of the two functions.
+
+Now for $T_{expand}$ ,  notice that the implementation consists of exactly two for-loops and a series of constant time operations. For this, we can derive the recurrence relation to be:
+
+$$
+T_{expand} = T_{1} +T_{2}
+$$
+
+Where $T_1$ represents the first for-loop and $T_2$ represents the second for-loop. Notice that $T_1$ consists of a series of constant time operations, which run in $O(1)$, to copy the old list into a temporary one. However, because the for-loop iterates through these constant time operations for a series of $n$ times, the time complexity results in $T_1 = O(n)$. Here, $n$ represents the variable `d->elements` that takes into account the current number of elements the list has.
+
+Similarly, $T_2$ also contains a series of constant time operations iterated for a series of $n$ times. We similarly get $T_2 = O(n)$.
+
+From this, we can get the following:
+
+
+$$
+T_{decrease} = T_1 + T_2 
+$$
+$$O(n) + O(n) = O(2n)$$
+
+
+
+
+Simplifying this further, By definition of the big O notation, $T_{expand}=O(n)$ because there exists a constant $C$ and a value $n_0$ such that for all $n\ge n_0$ the following inequality holds:
+
+$$2n \le C\cdot n$$
+
+That is, 
+
+$$C \ge 2$$
+
+
+From this, we simplify it to be $T_{expand} = O(n)$. However, it is important to note that $T_{expand}$ only runs when the list is *too full*. This is important to note because over a large number of `push` operations, most run at $T_{push} = O(1)$ and will only run $T_{expand} = O(n)$ when the list is *too full*. Since resizing happens infrequently, `push` runs at $O(1)$ amortized. 
+
+Thus, we have proven that `push_left`  and `push_right` runs at $O(1)$ amortized regardless of whether the list is reversed or not, because the operations done remain constant.
+
+#### Function: `pop_left` \& `pop_right`
+**Time Complexity: $O(1)$ amortized**<br>
+<b>Proof:</b> Notice the major part of the implementation involve a series of the following constant-time operations:
+- variable assignment
+- if-else statement
+- arithmetic operations
+
+For example, both push operations append a value to the leftmost or the rightmost, increasing the size of the list by one. Which side the node is added to depends on the specified push operation and whether the list is reversed or not. Moreover, the list used circular indexing to be able to push elements at $O(1)$.
+
+However, it is $O(1)$ *amortized* and not *worst case* because of the nature of the dynamic array. Given that the list increases in size when the list is *too little*, we implemented a helper function called `decrease_array` to aid in the expansion of the array which also sets the irregular indexes back to a zero-based numbering. To derive the recurrence relation we get the following.
+
+$$T(n) = T_{push} + T_{decrease}$$
+
+
+As observed, the major part of the implementation's operations involved run in constant time, $O(1)$. Therefore, we can derive the recurrence relation for the push operations to be $T_{push}=c$, where $c$ is the constant time it takes to run the combination of operations within either of the two functions.
+
+Now for $T_{decrease}$ ,  notice that the implementation consists of exactly two for-loops and a series of constant time operations. For this, we can derive the recurrence relation to be:
+
+$$
+T_{decrease} = T_{1} +T_{2}
+$$
+
+Where $T_1$ represents the first for-loop and $T_2$ represents the second for-loop. Notice that $T_1$ consists of a series of constant time operations, which run in $O(1)$, to copy the old list into a temporary one. However, because the for-loop iterates through these constant time operations for a series of $n$ times, the time complexity results in $T_1 = O(n)$. Here, $n$ represents the variable `d->elements` that takes into account the current number of elements the list has.
+
+Similarly, $T_2$ also contains a series of constant time operations iterated for a series of $n$ times. We similarly get $T_2 = O(n)$.
+
+From this, we can get the following:
+
+$$
+T_{decrease} = T_1 + T_2 
+$$
+$$O(n) + O(n) = O(2n)$$
+
+
+Simplifying this further, By definition of the big O notation, $T_{expand}=O(n)$ because there exists a constant $C$ and a value $n_0$ such that for all $n\ge n_0$ the following inequality holds:
+
+$$2n \le C\cdot n$$
+
+That is, 
+
+$$C \ge 2$$
+
+
+From this, we simplify it to be $T_{decrease} = O(n)$. However, it is important to note that $T_{decrease}$ only runs when the list is *too little*. This is important to note because over a large number of `push` operations, most run at $T_{push} = O(1)$ and will only run $T_{decrease} = O(n)$ when the list is *too little*. Since resizing happens infrequently, `push` runs at $O(1)$ amortized. 
+
+Thus, we have proven that `push_left`  and `push_right` runs at $O(1)$ amortized regardless of whether the list is reversed or not, because the operations done remain constant.
+
+#### Function: `size` \& `empty`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- return statement
+
+The implementation returns a variable of the doubly linked list data structure, `d->elements`. Where $d$ is the dynamic array passed to the `size` operation.
+
+As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
+
+Now, `empty` is similar to `size` except that it adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `d->size == 0` or not. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+
+Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
+
+#### Function: `get` \& `set`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice the operations does not have any loops present and involve a series of the following constant-time operations:
+- fprintf statement
+- if-else statement
+- return statement
+- arithmetic operations
+
+For example, both operations operations free find the index that is passed to the function relative to the current indexing of the list. That is because the starting index of the list may be a $-4$ or a $5$, so it is important to find the relative index of the list. For the `get` operation, the value at `d->array[relative_index]` is returned. In the case of the `set` operation, a new value $v$ is assigned to the element at the specified index, such that, `d->array[relative_index] = v`, where $v$ is the value passed to the `set` function.
+
+As observed, all the operations involved run in constant time, $O(1)$. Therefore, we can derive the recurrence relation for the pop operations as $T_{get/set}=c$, where $c$ is the constant time it takes to run the combination of operations within either of the two functions.
+
+Thus, we have proven that `get` and `set` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
+
+#### Function: `reverse`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- negation statement: `reversed = !reversed`
+
+The implementation lies on the boolean `l->reversed`, where $l$ is the list passed to the `reverse` function. The only thing it does is negates the current value of the boolean. This is possible because all the other operations adjust to the current state of `reversed`, that is, it will do the exact opposite if reversed.
 
 As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$.
 
