@@ -109,14 +109,26 @@ It utilizes bitshifting for quick exponents.
 #### Helper: `_constructPTreeNodesFromRange(sequence, offset, lowerBound, upperBound) -> PTreeNode`
 A recursive function that constructs a Perfect Binary Tree from the root, with the leaves accurately representing a subsequence of the given sequence.
 Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).\
-For example, we have a sequence of $$ \{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\} $$ which is of length $12$.
+For example, we have a sequence of
+```math
+\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}
+```
+which is of length $12$.
 If we want to get a `PTree` of type $3$ with the leaves from indices $4$ to $11$, then we call the helper function with:
-$$ \text{lowerBound} = 0 $$
-$$ \text{upperBound} = 7 $$
+```math
+\text{lowerBound} = 0
+```
+```math
+\text{upperBound} = 7
+```
 (since the length is $2^3 = 8$). We also specify
-$$ \text{offset} = 4 $$
+```math
+\text{offset} = 4
+```
 since the subsequence starts from index $4$.
-Then after the recursive calls, the resulting leaves would be $$ \{4, 5, 6, 7, 8, 9, 10, 11\} $$
+Then after the recursive calls, the resulting leaves would be ```math
+\{4, 5, 6, 7, 8, 9, 10, 11\}
+```
 Then, the caller receives the root node.\
 The reason this is by design is that there's no need to have a separate driver code for this recursive function to call the appropriate bounds. Simply always provide $lowerBound = 0$, and then specify $upperBound = 2^k$, and it will immediately start shifting indices and constructing its children without more helper function bloat.
 
@@ -162,8 +174,12 @@ Because the nodes themselves don't store their index, the function must calculat
 The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to O(logn).\
 It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
-$$ \text{LeftChild} = [lowerBound, mid] $$
-$$ \text{RightChild} = [mid+1, upperBound] $$
+```math
+\text{LeftChild} = [lowerBound, mid]
+```
+```math
+\text{RightChild} = [mid+1, upperBound]
+```
 
 So we check if the index is in either one, and update the bounds appropriately.\
 Note that this will always either result in a leaf node holding the `DATA` value, or `NULL`.\
