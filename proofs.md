@@ -92,7 +92,7 @@ Now, `empty` is similar to `size` except that it adds an if-else statement depen
 
 Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
 
-#### Function: `get`\& `set` 
+#### Function: `get` \& `set` 
 
 **Time Complexity: $O(n)$ worst case**  
   
