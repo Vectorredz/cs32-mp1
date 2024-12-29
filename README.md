@@ -31,11 +31,12 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 
 
 **[mirror-flower](mirror-flower)**\
-[mirror.py](mirror-flower/mirror.py)\
+[test_settings_m.py](mirror-flower/test_settings_m.py)\
+[mirror.py](mirror-flower/mirror.py)
+
+[test_settings_r.h](mirror-flower/test_settings_r.h)\
 [reflection.c](mirror-flower/reflection.c)
 
-[test_settings_m.py](mirror-flower/test_settings_m.py)\
-[test_settings_r.h](mirror-flower/test_settings_r.h)
 
 [test_input_0.csv](mirror-flower/test_input_0.csv)\
 [test_input.csv](mirror-flower/test_input.py)\
@@ -62,9 +63,20 @@ We also have the global types `LENGTH` (`size_t`) and `DATA` (`int64_t`) to repr
 
 ## Unit Test
 
-*\* All relevant tester files are located in **[mirror-flower](mirror-flower)***\
 For unit testing, we primarily used a controlled, randomized test generator for testing edge cases and determining efficiency.\
 It is divided into the **Python-side**, and the **C-side**.
+
+### Summary
+*\* All relevant tester files are located in **[mirror-flower](mirror-flower)***\
+[test_settings_m.py](mirror-flower/test_settings_m.py) - Generator (settings)\
+[mirror.py](mirror-flower/mirror.py) - Generator
+
+[test_settings_r.h](mirror-flower/test_settings_r.h) - Tester (settings)\
+[reflection.c](mirror-flower/reflection.c) - Tester\
+
+[test_input.csv](mirror-flower/test_input.py) - Test inputs\
+[test_input_0.csv](mirror-flower/test_input_0.csv) - Test inputs (for testing the tester itself)\
+[test_output.py](mirror-flower/test_output.py) - Test outputs (graph plotting)
 
 <br>
 
@@ -74,8 +86,8 @@ The settings for the test generator.\
 Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
-| INPUT_FILE | `string` <br> The input directory. | `test_input_csv` |
-| LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (Warning: takes way longer to generate) | False |
+| INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
+| LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (Warning: takes way longer to generate) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | None |
 
 <br>
@@ -83,7 +95,7 @@ Imported as a Python module by the generator.
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
-It implements a working list in Python, and outputs it to the corresponding `INPUT_FILE`. This file is a CSV delimeted by a bar `|`, with its fields as follows:
+It implements a working list in Python, and outputs it to the corresponding **INPUT_FILE** directory. This file is a CSV delimeted by a bar `|`, with its fields as follows:
 
 > OPERATION | ARG1 | ARG2 | RESULT
 
@@ -92,22 +104,23 @@ Their text can be of the following:
 
 | OPERATION | ARG1 | ARG2 | RESULT (can be "**X**" to disable correctness) |
 | :-------- | :--- | :--- | :----- |
-| make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | size | "None" | "None" | `returned LENGTH` <br> number |
 | empty | "None" | "None" | `returned bool` <br> "0" / "1" |
-| reverse | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| reverse | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | get | `LENGTH i` <br> number | "None" | `returned DATA` <br> number |
 | set | `LENGTH i` <br> number | `DATA v` <br> number | "None" |
 | peek_left | "None" | "None" | `returned DATA` <br> number |
 | peek_right | "None" | "None" | `returned DATA` <br> number |
-| push_left | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| push_right | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| pop_left | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
-| pop_right | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. 100,200,300) |
+| push_left | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| push_right | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| pop_left | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| pop_right | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
-Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.
+Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
+Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.
 
 
 <br>
@@ -207,9 +220,12 @@ Included as a C header by the tester.
 | :------ | :------- | :------ |
 | (list header) | `header (.h)` <br> The target list's header file. | N/A |
 | (list source) | `source (.c)` <br> The target list's source file. | N/A |
-| LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | true |
-| CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | true |
-| TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | 1000.0 |
+| LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
+| CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
+| TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
+| INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
+| OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.csv` |
+| TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 
 <br>
 
@@ -219,7 +235,16 @@ The automatic tester for all the generated test cases.\
 It first obtains each line of the CSV and stores it in an array.\
 Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.\
 It also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)\
-If all tests pass, it notifies the user that they have passed all **Layers**.
+If all tests pass, it notifies the user that they have passed all **Layers**.\
+
+Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file, with its fields as follows:
+
+> OPERATION | N | TIME
+
+Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **TIME** being the execution time (in milliseconds) of the operation.
+
+This output file can then be used for plotting on a graph. It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
+constant, linear, or logarithmic in nature.
 
 
 <br>
