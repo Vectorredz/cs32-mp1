@@ -105,17 +105,17 @@ Their text can be of the following:
 | OPERATION | ARG1 | ARG2 | RESULT (can be "**X**" to disable correctness) |
 | :-------- | :--- | :--- | :----- |
 | make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| size | "None" | "None" | `returned LENGTH` <br> number |
-| empty | "None" | "None" | `returned bool` <br> "0" / "1" |
-| reverse | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| get | `LENGTH i` <br> number | "None" | `returned DATA` <br> number |
-| set | `LENGTH i` <br> number | `DATA v` <br> number | "None" |
-| peek_left | "None" | "None" | `returned DATA` <br> number |
-| peek_right | "None" | "None" | `returned DATA` <br> number |
-| push_left | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| push_right | `DATA v` <br> number | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| pop_left | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| pop_right | "None" | "None" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| size | "**None**" | "**None**" | `returned LENGTH` <br> number |
+| empty | "**None**" | "**None**" | `returned bool` <br> "0" / "1" |
+| reverse | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| get | `LENGTH i` <br> number | "**None**" | `returned DATA` <br> number |
+| set | `LENGTH i` <br> number | `DATA v` <br> number | "**None**" |
+| peek_left | "**None**" | "**None**" | `returned DATA` <br> number |
+| peek_right | "**None**" | "**None**" | `returned DATA` <br> number |
+| push_left | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| push_right | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| pop_left | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| pop_right | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
