@@ -71,7 +71,7 @@ It is divided into the **Python-side**, and the **C-side**.
 ### [PYTHON] Mirror (settings): *[test_settings_m.py](mirror-flower/test_settings_m.py)*
 **[Python-side.]**\
 The settings for the test generator.\
-Imported as a Python module by the generator.\
+Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
 | INPUT_FILE | `string` <br> The input directory. | `test_input_csv` |
