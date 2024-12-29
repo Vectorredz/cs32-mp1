@@ -9,6 +9,7 @@ Look into the Mirror...
 '''
 LAYER 0:
     >> INITIALIZATION TEST
+        - MAKE (0 -> 2000)
         - MAKE (length of RANDOM_INTEGER(0, 2000))
     
 LAYER 1:
@@ -233,8 +234,22 @@ print("> Initializing tests...")
 
 # ------------------------ LAYER 0: Initialize
 print("> Layer 0...")
-
 WRITECUSTOM("LAYER", str(0))
+
+# test make (0 -> 2000)
+for n in range(2000+1):
+    seq = list[DATA]()
+    for i in range(n):
+        seq.append(randomData())
+    mirror = Mirror(n, seq)
+    writer.writerow({
+        "OPERATION": "make",
+        "ARG1": n,
+        "ARG2": listToResult(seq),
+        "RESULT": listToResult(mirror.TEST_elements())
+    })
+
+# test make (RANDOM_INTEGER(0, 2000))
 n = random.randint(0, 2000)
 seq = list[DATA]()
 for i in range(n):
@@ -246,6 +261,7 @@ writer.writerow({
     "ARG2": listToResult(seq),
     "RESULT": listToResult(mirror.TEST_elements())
 })
+
 WRITECUSTOM("LAYERFIN", str(0))
 print("> Done.")
 
