@@ -630,7 +630,6 @@ bool _pop_right_base(PTreeList* list){
     PTreeListNode* oldTail = list->tail;
     if (list->head == oldTail){
         list->head = subHead;
-        DEFOREST(oldTail);
     } else {
         subHead->prev = oldTail->prev;
         if (oldTail->prev != NULL){
