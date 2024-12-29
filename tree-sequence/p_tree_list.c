@@ -10,8 +10,9 @@
 Perfect Binary Tree / Phantom Segment Tree
     The Perfect Binary Trees are represented by the struct PTree, which is a modified
     Segment Tree-esque data structure with a special property of having implicit bounds.
-    For this reason, I also like to call it a Phantom Segment Tree, as the bounds are
-    only revealed once the list and trees are traversed with get/set operations.
+    For this reason, I also like to call it a Phantom Segment Tree (Phantom Index-Segment Tree),
+    or PTree for short, as the bounds are only revealed once the list and trees are traversed
+    with get/set operations.
 
 */
 // --------------------------------------------------------- >>
