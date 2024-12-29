@@ -25,8 +25,8 @@ LAYER 1:
 LAYER 2:
     >> INSERTIONS/DELETIONS TEST
         * Gazes at:
-            - PUSH_* (Random Data)
-            - POP_*
+            - PUSH_* (Random Data) (in sequence)
+            - POP_* (in sequence)
 
 LAYER 3:
     * Attempts to shatter the Reflection with:

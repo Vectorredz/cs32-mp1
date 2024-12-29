@@ -51,13 +51,15 @@ void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
 }
 
 /*
-This constructs a perfect binary tree from the root, with the leaves accurately representing a subsequence of the given sequence.
+This is a recursive function that constructs a Perfect Binary Tree from the root, with the leaves accurately representing a subsequence of the given sequence.
 Once it reaches the leaves, it gets the appropriate value from the sequence, along with seqIndexOffset (if it's in a different part of the sequence).
 
 For example, we have a sequence of {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} (length 12)
 If we want to get a PTree of type 3 with the leaves from indices 4-11, then we call the helper function with:
 lowerBound=0, upperBound=7 (since 2^3 = length 8), seqIndexOffset=4 (since it starts from 4)
 Then after the recursive calls, the resulting leaves would be {4, 5, 6, 7, 8, 9, 10, 11}
+
+Then, the caller receives the root node.
 */
 PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
@@ -80,7 +82,7 @@ PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGT
 /*
 This helper function is used exclusively for make().
 The point is to represent n as distinct powers of two, from highest to lowest.
-It achieves this by repetitively using _getGreatestPowerOfTwo and constructing a PTree for each one, until it exhausts the entire sequence.
+It achieves this by repetitively using _getGreatestPowerOfTwo and constructing a PTree for each remaining subsequence, until it exhausts the entire sequence.
 After everything, it gives the caller the appropriate doubly-linked-list from head to tail.
 */
 void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef){
