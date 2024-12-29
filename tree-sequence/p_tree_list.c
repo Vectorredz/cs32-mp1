@@ -525,7 +525,7 @@ void _push_left_base(PTreeList* list, DATA v){
         list->rightmost = v;
     }
 }
-// Exactly the same as _push_right_base, but operations are mirrored.
+// Exactly the same as _push_left_base, but operations are mirrored.
 void _push_right_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (which is also a leaf)
     PTree* ptree = _constructZeroPTree(v);
