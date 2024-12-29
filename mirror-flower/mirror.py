@@ -289,23 +289,9 @@ WRITE(True, mirror, "peek_right")
 
 WRITE(True, mirror, "reverse")
 
+WRITE(True, mirror, "size")
+WRITE(True, mirror, "empty")
 
-# random
-for i in range(random.randint(5000, 10000)):
-    r = random.randint(1, 4)
-    if r == 1:
-        WRITE(True, mirror, "get", randomIndex(mirror))
-    elif r == 2:
-        WRITE(True, mirror, "set", randomIndex(mirror), randomData())
-    elif r == 3:
-        WRITE(True, mirror, "peek_left")
-    elif r == 4:
-        WRITE(True, mirror, "peek_right")
-        
-    if random.randint(1, 10) == 1:
-        WRITE(True, mirror, "reverse")
-    WRITE(True, mirror, "size")
-    WRITE(True, mirror, "empty")
 WRITECUSTOM("LAYERFIN", str(1))
 print("> Done.")
 
@@ -346,6 +332,22 @@ print("> Layer 3...")
 WRITECUSTOM("LAYER", str(3))
 
 # Serious Punch
+for i in range(random.randint(5000, 10000)):
+    r = random.randint(1, 4)
+    if r == 1:
+        WRITE(True, mirror, "get", randomIndex(mirror))
+    elif r == 2:
+        WRITE(True, mirror, "set", randomIndex(mirror), randomData())
+    elif r == 3:
+        WRITE(True, mirror, "peek_left")
+    elif r == 4:
+        WRITE(True, mirror, "peek_right")
+        
+    if random.randint(1, 10) == 1:
+        WRITE(True, mirror, "reverse")
+    WRITE(True, mirror, "size")
+    WRITE(True, mirror, "empty")
+
 operations = ["push_left", "push_right", "pop_left", "pop_right"]
 for i in range(random.randint(5000, 10000)):
     chosen = operations[random.randint(0, len(operations)-1)]
@@ -357,6 +359,8 @@ for i in range(random.randint(5000, 10000)):
         WRITE(True, mirror, "reverse")
     if (random.randint(1, 5) == 1):
         WRITE(True, mirror, "set", randomIndex(mirror), randomData())
+    WRITE(True, mirror, "size")
+    WRITE(True, mirror, "empty")
 WRITECUSTOM("LAYERFIN", str(3))
 print("> Done.")
 
@@ -367,7 +371,7 @@ WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
 for u in range(2):
     check = True
-    lower, upper = 5000, 10000
+    lower, upper = 500, 1000
     if u == 1:
         if LARGE_INPUTS == False:
             break
@@ -383,6 +387,8 @@ for u in range(2):
         WRITE(check, mirror, "get", randomIndex(mirror))
         WRITE(check, mirror, "peek_left")
         WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "size")
+        WRITE(check, mirror, "empty")
     while (mirror.size() > 0):
         WRITE(check, mirror, "pop_left")
         WRITE(check, mirror, "peek_left")
@@ -391,6 +397,8 @@ for u in range(2):
         WRITE(check, mirror, "get", randomIndex(mirror))
         WRITE(check, mirror, "peek_left")
         WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "size")
+        WRITE(check, mirror, "empty")
 
     for i in range(random.randint(lower, upper)):
         WRITE(check, mirror, "push_right", randomData())
@@ -400,6 +408,8 @@ for u in range(2):
         WRITE(check, mirror, "get", randomIndex(mirror))
         WRITE(check, mirror, "peek_left")
         WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "size")
+        WRITE(check, mirror, "empty")
     while (mirror.size() > 0):
         WRITE(check, mirror, "pop_right")
         WRITE(check, mirror, "peek_left")
@@ -408,6 +418,8 @@ for u in range(2):
         WRITE(check, mirror, "get", randomIndex(mirror))
         WRITE(check, mirror, "peek_left")
         WRITE(check, mirror, "peek_right")
+        WRITE(check, mirror, "size")
+        WRITE(check, mirror, "empty")
 
     while (mirror.size() > 0):
             WRITE(check, mirror, "pop_right")

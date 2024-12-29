@@ -23,39 +23,42 @@ constant, linear, or logarithmic in nature.
 
 // TIMER for outputting execution time plots
 // TODO: implement other os later
-#include <windows.h>
-#include <sys/timeb.h>
-typedef LARGE_INTEGER RECORDED_TIME;
-typedef double PROCESSED_TIME;
-#define TIME_FORMAT "lf"
-uint64_t freq;
-void _TIME_init(){
-    LARGE_INTEGER f;
-    QueryPerformanceFrequency(&f);
-    freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
-}
-void _TIME(RECORDED_TIME* cRef){
-    QueryPerformanceCounter(cRef);
-}
-PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
-    uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
-    uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
-    uint64_t dt = (bQ-aQ);
-    PROCESSED_TIME final = (double)(dt)/(double)freq;
-    return final < 0.0L ? 0.0L : final;
-}
-// typedef int RECORDED_TIME;
-// typedef int PROCESSED_TIME;
-// #define TIME_FORMAT "d"
-// void _TIME_init(){
+#if CHECK_FOR_EFFICIENCY == true
+    #include <windows.h>
+    #include <sys/timeb.h>
+    typedef LARGE_INTEGER RECORDED_TIME;
+    typedef double PROCESSED_TIME;
+    #define TIME_FORMAT "lf"
+    uint64_t freq;
+    void _TIME_init(){
+        LARGE_INTEGER f;
+        QueryPerformanceFrequency(&f);
+        freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
+    }
+    void _TIME(RECORDED_TIME* cRef){
+        QueryPerformanceCounter(cRef);
+    }
+    PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
+        uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
+        uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
+        uint64_t dt = (bQ-aQ);
+        PROCESSED_TIME final = (double)(dt)/(double)freq;
+        return final < 0.0L ? 0.0L : final;
+    }
+#else
+    typedef int RECORDED_TIME;
+    typedef int PROCESSED_TIME;
+    #define TIME_FORMAT "d"
+    void _TIME_init(){
 
-// }
-// void _TIME(RECORDED_TIME* cRef){
-//     *cRef = 0;
-// }
-// PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
-//     return 0;
-// }
+    }
+    void _TIME(RECORDED_TIME* cRef){
+        *cRef = 0;
+    }
+    PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
+        return 0;
+    }
+#endif
 
 
 
@@ -202,46 +205,47 @@ char* dataToStr(DATA data){
     return dataStr;
 }
 char* boolToStr(bool b){
-    return b == false ? "0" : "1";
+    char* boolStr = (char*) malloc(2*sizeof(char));
+    boolStr[0] = b == false ? '0' : '1';
+    boolStr[1] = '\0';
+    return boolStr;
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
 void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
     if (extraOperation == NULL){
-        printf(":: operation: %s\n", operation);
+        fprintf(stderr, ":: operation: %s\n", operation);
     } else {
-        printf(":: operation: %s -> %s\n", operation, extraOperation);
+        fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
     }
-    printf(":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
-    printf(":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
-    printf(":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
+    fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+    fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n------\n", listToResult(list, false));
+    fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
 }
-bool VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
-    if (checkForCorrectness == false){
-        return true;
-    }
-    if (strcmp(mRESULT, RESULT) != 0){
-        printf("[/] [line %zu]: WA [%lfms]\n", lineNum, dt);
-        printf("!! Failed Operation !!\n");
-        
-        size_t i = 0;
-        while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
-            i++;
+void VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
+    if (checkForCorrectness == true){
+        if (strcmp(mRESULT, RESULT) != 0){
+            fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", lineNum, dt);
+            fprintf(stderr, "!! Failed Operation !!\n");
+            
+            size_t i = 0;
+            while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
+                i++;
+            }
+            DISPLAY_LOGS(list, operation, extraOperation);
+            fprintf(stderr, ":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", lineNum, i, RESULT[i], mRESULT[i]);
+            fprintf(stderr, ":: FAULTY OUTPUT -> %s\n", mRESULT);
+            fprintf(stderr, ":: SUPPOSED OUTPUT -> %s\n", RESULT);
+            exit(1);
         }
-        DISPLAY_LOGS(list, operation, extraOperation);
-        printf(":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", lineNum, i, RESULT[i], mRESULT[i]);
-        printf(":: FAULTY OUTPUT -> %s\n", mRESULT);
-        printf(":: SUPPOSED OUTPUT -> %s\n", RESULT);
-        return false;
     }
     if (checkForEfficiency == true){
         if (dt > TLE_BOUND){
-            printf("[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, TLE_BOUND);
+            fprintf(stderr, "[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", lineNum, dt, TLE_BOUND);
             DISPLAY_LOGS(list, operation, extraOperation);
-            return false;
+            exit(1);
         }
     }
-    return true;
 }
 
 // Used for time plots output
@@ -486,24 +490,33 @@ int main(){
 
         // For internal tests
         if (checkForCorrectness == true){
-        if (!VERIFY(list, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false)) return -1;
+            VERIFY(list, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false);
         }
 
         // Verify the output
-        if (!VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true)) return -1;
+        VERIFY(list, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true);
 
         if (LINE_DISPLAY == true){
             printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dt);
         }
 
         // Finally, write the new benchmark to output array
+        char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char));
+        strcpy(opCopy, operation);
+        
         WRITEDATA wd = *((WRITEDATA*) malloc(sizeof(WRITEDATA)));
-        char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char)); //wtf
-        wd.operation = strcpy(opCopy, operation);
+        wd.operation = opCopy;
         wd.n = n;
         wd.c = dt;
         writeDataLines[opCounter] = wd;
         opCounter++;
+        
+        free(mRESULT);
+        free(testLine[0]);
+        free(testLine[1]);
+        free(testLine[2]);
+        free(testLine[3]);
+        free(testLine);
     }
 
     _TIME(&timeGlobal);
@@ -520,10 +533,13 @@ int main(){
     // Write all benchmarks to the file
     for (size_t opNum = 0; opNum < totalOperations; opNum++){
         WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
+        free(writeDataLines[opNum].operation);
     }
     printf("> Done.\n");
 
     printf("> Cleanup...\n");
+    free(tests);
+    free(writeDataLines);
     fclose(f);
     printf("> Done.\n\n");
     

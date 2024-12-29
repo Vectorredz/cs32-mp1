@@ -69,6 +69,7 @@ bool pop_right(PTreeList* list);
 // Test Operations
 void TEST_elements(PTreeList* list, LENGTH* nRef, DATA** seqRef);
 bool TEST_internal(PTreeList* list);
+bool TEST_reversed(PTreeList* list);
 
 
 
