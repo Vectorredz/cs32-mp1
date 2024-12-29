@@ -88,7 +88,7 @@ Imported as a Python module by the generator.
 | :------ | :------- | :------ |
 | INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
 | LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (Warning: takes way longer to generate) | `False` |
-| SEED | `any supported by random.seed` <br> The randomizer seed. | None |
+| SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
 
