@@ -205,7 +205,7 @@ It features more detailed basic operation tests, as well as more insertion/delet
             Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
         - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 ```
-Attempts to shatter the Reflection with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
+Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
 Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
 This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
 
@@ -236,7 +236,9 @@ The automatic tester for all the generated test cases.\
 It first obtains each line of the CSV and stores it in an array.\
 Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.\
 It also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)\
-If all tests pass, it notifies the user that they have passed all **Layers**.\
+If all tests pass, it notifies the user that they have passed all **Layers**.
+
+The tseter's including of a source file may be an unorthodox way of testing, however I believe that it heled us simplify things in the meantime.
 
 Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file, with its fields as follows:
 
