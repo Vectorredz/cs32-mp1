@@ -500,12 +500,6 @@ SkipNode *_getNode(SkipList *l, LENGTH i){
 
     // can go down as long as header->below != NULL
     while (header != NULL){
-        if (header->right == NULL){
-            header = header->below;
-            sumOffset = header->right->width;
-            sumRight = header->right->right ? header->right->right->width : 0;
-            continue;
-        }
         if (sumOffset == target){ //if matching index
             header = header->below;
             continue;
@@ -516,9 +510,8 @@ SkipNode *_getNode(SkipList *l, LENGTH i){
         }
         else {
             header = header->below; // exhaust go down until the same offset is found
-            sumOffset = header->right->width;
-            sumRight = header->right->right ? header->right->right->width : 0;
         }
+        sumRight = header->right->right ? header->right->right->width : 0;
     }
 
     return header; 
