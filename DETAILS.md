@@ -195,7 +195,7 @@ The index is affected by the `reversed` flag to correct for reversal.
 If $0 \leq i < n$ is not satisfied, then it simply returns.\
 It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.\
 The index is affected by the `reversed` flag to correct for reversal.\
-It also updates `leftmost` or `rightmost`, depending on whether the inex rests on $0$ or $n-1$.
+It also updates `leftmost` or `rightmost`, depending on whether the index rests on $0$ or $n-1$.
 
 #### Main: `peek_left(list) -> DATA`
 Returns `leftmost`, or `rightmost` if `reversed` flag is enabled.
