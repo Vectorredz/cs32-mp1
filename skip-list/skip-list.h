@@ -13,17 +13,20 @@ typedef struct _SkipNode {
     LENGTH width;
 } SkipNode;
 
+// Level that references to the left sentinel and right sentinel
 typedef struct _Level {
     struct _Level *up;
     struct _Level *down;
-    SkipNode *sentinel; // head
-    SkipNode *tail; // tail
+    SkipNode *headSentinel; // head
+    SkipNode *tailSentinel; // tail
 } Level;
 
+// Vertical doubly-linked List to store the levels
 typedef struct _LevelList {
-    Level *top; // header
-    Level *bottom; // level 0 zero
+    Level *top; // Top Header
+    Level *bottom; // Level 0 Header
 } LevelList;
+
 
 typedef struct _SkipList {
     LevelList *levels;
