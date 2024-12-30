@@ -193,7 +193,7 @@ It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and returns its `
 The index is affected by the `reversed` flag to correct for reversal.
 #### Main: `set(list, i, v)`
 If $0 \leq i < n$ is not satisfied, then it simply returns.\
-It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.
+It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.\
 The index is affected by the `reversed` flag to correct for reversal.\
 It also updates `leftmost` or `rightmost`, depending on whether the inex rests on $0$ or $n-1$.
 
