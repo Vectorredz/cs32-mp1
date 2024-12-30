@@ -92,6 +92,8 @@ Imported as a Python module by the generator.
 
 <br>
 
+<hr>
+
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
@@ -124,6 +126,8 @@ Note also that **RESULT** can be set to "**X**" to disable checking for correctn
 
 
 <br>
+
+<hr>
 
 ### Layers
 For the actual tests themselves, to test for each ADT's correctness and efficiency, we have a **Layered Testing** system. The tests are divided into **Layers**.\
@@ -230,6 +234,12 @@ Included as a C header by the tester.
 
 <br>
 
+*The tester's including of a source file may be an unorthodox way of testing, however I believe that it helped us simplify things in the meantime.*
+
+<br>
+
+<hr>
+
 ### [C] Reflection: *[reflection.c](mirror-flower/reflection.c)*
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
@@ -237,8 +247,6 @@ It first obtains each line of the CSV and stores it in an array.\
 Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.\
 It also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)\
 If all tests pass, it notifies the user that they have passed all **Layers**.
-
-The tseter's including of a source file may be an unorthodox way of testing, however I believe that it heled us simplify things in the meantime.
 
 Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file, with its fields as follows:
 
