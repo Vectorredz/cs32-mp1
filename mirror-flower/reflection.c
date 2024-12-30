@@ -179,7 +179,15 @@ char* listToResult(Reflection* list, bool includeReversal){
     DATA* seq;
     TEST_elements(list, &n, &seq);
     if (n == 0){
-        return "EMPTY";
+        // dynamically allocate result for free() consistency
+        char* mRESULT = (char*) malloc(6*sizeof(char));
+        mRESULT[0] = 'E';
+        mRESULT[1] = 'M';
+        mRESULT[2] = 'P';
+        mRESULT[3] = 'T';
+        mRESULT[4] = 'Y';
+        mRESULT[5] = '\0';
+        return mRESULT;
     }
 
     LENGTH numberOfCommas = n-1;
@@ -371,12 +379,14 @@ int main(){
             // Get n and seq args for make() function (seq is delimeted by ",")
             n = strToLength(arg1);
             DATA* seq = (DATA*) malloc(n*sizeof(DATA));
-            char* token = strtok(arg2, ",");
-            size_t i = 0;
-            while (token != NULL){
-                seq[i] = strToData(token);
-                i++;
-                token = strtok(NULL, ",");
+            if (n > 0){
+                char* token = strtok(arg2, ",");
+                size_t i = 0;
+                while (token != NULL){
+                    seq[i] = strToData(token);
+                    i++;
+                    token = strtok(NULL, ",");
+                }
             }
 
             _TIME(&_time);
