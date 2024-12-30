@@ -75,52 +75,6 @@ SkipList *_initSkipList(LENGTH n){
     return skip_list;
 }
 
-SkipNode *_getNode(SkipList *l, LENGTH i){
-    SkipList *skipList = l;
-    SkipNode *header = skipList->levels->top->headSentinel; // Topmost headSentinel; Header
-    LENGTH sumOffset = header->right->width; // initialize the offset for the topmost
-    LENGTH target = i;
-    // bounds check
-    if (i >= l->size) return NULL;
-
-    // headSentinel search
-    while (header->isSentinel == true){
-        if (header->right == NULL){
-            header = header->below;
-            continue;
-        }
-        if (sumOffset <= target){ // if the leftmost SkipNode width is 
-            header = header->right;
-            sumOffset = header->right->width; // update the current offset
-        }
-        else { // if the leftmost SkipNode width >= target go down the headSentinel
-            header = header->below;
-        }
-    }
-
-    // non-headSentinel search
-    // can go down as long as header->below != NULL
-    while (header != NULL){
-        if (header->right == NULL){
-            header = header->below;
-            continue;
-        }
-        if (sumOffset == target){ //if matching index
-            header = header->below;
-            continue;
-        }
-        if (sumOffset + header->right->width <= target){
-            header = header->right;
-            sumOffset += header->right->width; // update the current offset
-        }
-        else {
-            header = header->below; // exhaust go down until the same offset is found
-        }
-    }
-    return header; 
-
-}
-
 void _promoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v){
     
     while (l->currHeight < l->maxHeight && _flipCoin() == true){ // promote the level
@@ -522,6 +476,55 @@ bool pop_right(SkipList *l){
     return l->is_reversed ? _leftDemoteLevel(l, currLevel, popNode) : _rightDemoteLevel(l, currLevel, popNode);
 }
 
+SkipNode *_getNode(SkipList *l, LENGTH i){
+    SkipList *skipList = l;
+    SkipNode *header = skipList->levels->top->headSentinel; // Topmost headSentinel; Header
+    LENGTH sumOffset = header->right->width; // initialize the offset for the topmost
+    LENGTH target = i;   
+    LENGTH sumRight = header->right->right ? header->right->right->width : 0;
+    if (i >= l->size) return NULL;  // bounds chec
+    
+    while (header->isSentinel == true){
+        if (header->right == NULL){
+            header = header->below; // still a sentinel
+            continue;
+        }
+        if (sumOffset <= target){ // if the leftmost SkipNode width is 
+            header = header->right; // not sentinel anymore
+            break;
+        }
+        else { // if the leftmost SkipNode width >= target go down the headSentinel
+            header = header->below;
+        }
+    }
+
+    // can go down as long as header->below != NULL
+    while (header != NULL){
+        if (header->right == NULL){
+            header = header->below;
+            sumOffset = header->right->width;
+            sumRight = header->right->right ? header->right->right->width : 0;
+            continue;
+        }
+        if (sumOffset == target){ //if matching index
+            header = header->below;
+            continue;
+        }
+        if (sumOffset + sumRight <= target){
+            header = header->right;
+            sumOffset += sumRight; // update the current offset
+        }
+        else {
+            header = header->below; // exhaust go down until the same offset is found
+            sumOffset = header->right->width;
+            sumRight = header->right->right ? header->right->right->width : 0;
+        }
+    }
+
+    return header; 
+
+}
+
 DATA get(SkipList *l, LENGTH i){ 
     SkipNode *retNode = _getNode(l, i);
     if (retNode == NULL){
@@ -560,13 +563,13 @@ void display(SkipList *sl) {
         bool first = true;
         while (curr != NULL){
             printf("%d <-> ", curr->val);
-            // if (curr->right != NULL){
-            //     int o = 0;
-            //     while (o < curr->right->width){
-            //         printf("| -> ");
-            //         o++;
-            //     }
-            // }
+            if (curr->right != NULL){
+                int o = 0;
+                while (o < curr->right->width){
+                    printf("| -> ");
+                    o++;
+                }
+            }
             curr = curr->right;
         }
         currLevel = currLevel->down;
@@ -589,7 +592,7 @@ int main(){
     }
     SkipList *skip_list = make(n, array);
     display(skip_list);
-    // get(skip_list, 2);
-    printf("%d ", get(skip_list, 1));
+    _getNode(skip_list, 1);
+    // printf("%d ", get(skip_list, 2));
 
 }
