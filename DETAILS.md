@@ -221,9 +221,7 @@ This is useful for pushing a new value into the list.
 **`_mergeNonDistinctPTreesToLeft(list, start)`**
 
 Here we have helper functions for merging non-distinct `PTrees` together, split into two: one for merging to the left, and one for merging to the right.\
-`PTrees` are non-distinct if their type `k` is the same, which means they can be combined into one greater power of two,
-improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing
-sequence of $k$'s, and overall preventing the degenerate representation of $n$ trees of type $0$.\
+`PTrees` are non-distinct if their type `k` is the same, which means they can be combined into one greater power of two, improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing sequence of $k$'s, and overall preventing the degenerate representation of $n$ trees of type $0$.\
 It is inspired by binomial heap's merge operation.
 Given a starting doubly-linked-list node, we proceed to the right (left),
 and if our current `PTree`'s type is the same as the next `PTree`, then we construct a third `PTree` containing their two roots as children.
