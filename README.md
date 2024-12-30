@@ -92,12 +92,14 @@ Imported as a Python module by the generator.
 
 <br>
 
+<hr>
+
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
 It implements a working list in Python, and outputs it to the corresponding **INPUT_FILE** directory. This file is a CSV delimeted by a bar `|`, with its fields as follows:
 
-> OPERATION | ARG1 | ARG2 | RESULT
+> OPERATION|ARG1|ARG2|RESULT
 
 Where **OPERATION** is the name of the operation function, **ARG1**/**ARG2** as the arguments for the function call, and **RESULT** being the correct resulting output that the target list needs to match to be considered correct.\
 Their text can be of the following:
@@ -120,14 +122,17 @@ Their text can be of the following:
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
-Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.
+*\*Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.*
 
 
 <br>
 
+<hr>
+
 ### Layers
 For the actual tests themselves, to test for each ADT's correctness and efficiency, we have a **Layered Testing** system. The tests are divided into **Layers**.\
-Each **Layer** tests a particular set of operations, edge cases, and concepts, with later layers potentially being harder to pass.
+Each **Layer** tests a particular set of operations, edge cases, and concepts, with later layers potentially being harder to pass.\
+This is so that it's easier to catch bugs in the earlier layers that test a set of operations instead of everything all at once, as the later layers throw eveything they can at the list to absolutely make sure nothing is broken and no lists pass even if they have broken edge cases, while being a bit more confusing to debug for the implementer.
 
 > LAYER 0
 ```
@@ -204,7 +209,7 @@ It features more detailed basic operation tests, as well as more insertion/delet
             Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
         - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
 ```
-Attempts to shatter the Reflection with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
+Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
 Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
 This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
 
@@ -229,22 +234,44 @@ Included as a C header by the tester.
 
 <br>
 
+*The tester's including of a source file may be an unorthodox way of testing, however I believe that it helped us simplify things in the meantime.*
+
+<br>
+
+<hr>
+
 ### [C] Reflection: *[reflection.c](mirror-flower/reflection.c)*
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
 It first obtains each line of the CSV and stores it in an array.\
 Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.\
 It also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)\
-If all tests pass, it notifies the user that they have passed all **Layers**.\
+If all tests pass, it notifies the user that they have passed all **Layers**.
 
-Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file, with its fields as follows:
+Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file delimeted by a bar `|`, with its fields as follows:
 
-> OPERATION | N | TIME
+> OPERATION|N|DELTATIME
 
-Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **TIME** being the execution time (in milliseconds) of the operation.
+Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **DELTATIME** being the execution time (in milliseconds) of the operation.
 
-This output file can then be used for plotting on a graph. It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
-constant, linear, or logarithmic in nature.
+This output file can then be used for plotting on a graph. It is used to graph **N** (current size when **OPERATION** was done) against **TIME** (in milliseconds) to judge whether the graph of OPERATION is constant, linear, or logarithmic in nature.
+
+
+<br>
+
+<hr>
+
+### Steps
+With that, the steps are as follows:
+1. **GENERATE NEW TESET CASES** (Optional)
+    - Update [test_settings_m.py](mirror-flower/test_settings_m.py) settings to desired values
+    - Run [mirror.py](mirror-flower/mirror.py)
+2. **TEST THE LIST**
+    - Update [test_settings_r.h](mirror-flower/test_settings_r.h) settings to desired values
+    - Run [reflection.c](mirror-flower/reflection.c)
+    - If any bugs are caught, debug with given error info and look at the line the operation failed in the **INPUT_FILE**
+3. **GRAPHS**
+    - Analyze the graph generated by the tester in **OUTPUT_FILE** for each operation, and judge whether it is constant, linear, or logarithmic in nature.
 
 
 <br>

@@ -110,25 +110,26 @@ It utilizes bitshifting for quick exponents.
 A recursive function that constructs a Perfect Binary Tree from the root, with the leaves accurately representing a subsequence of the given sequence.
 Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).\
 For example, we have a sequence of
-```math
-\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}
-```
+
+$$\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}$$
+
 which is of length $12$.
 If we want to get a `PTree` of type $3$ with the leaves from indices $4$ to $11$, then we call the helper function with:
-```math
-\text{lowerBound} = 0
-```
-```math
-\text{upperBound} = 7
-```
+
+$$\text{lowerBound} = 0$$
+
+
+$$\text{upperBound} = 7$$
+
 (since the length is $2^3 = 8$). We also specify
-```math
-\text{offset} = 4
-```
+
+$$\text{offset} = 4$$
+
 since the subsequence starts from index $4$.
-Then after the recursive calls, the resulting leaves would be ```math
-\{4, 5, 6, 7, 8, 9, 10, 11\}
-```
+Then after the recursive calls, the resulting leaves would be
+
+$$\{4, 5, 6, 7, 8, 9, 10, 11\}$$
+
 Then, the caller receives the root node.\
 The reason this is by design is that there's no need to have a separate driver code for this recursive function to call the appropriate bounds. Simply always provide $lowerBound = 0$, and then specify $upperBound = 2^k$, and it will immediately start shifting indices and constructing its children without more helper function bloat.
 
@@ -171,15 +172,15 @@ It simply flips the `reversed` flag for the other operations to appropriately us
 #### Helper: `_getLeafNodeAtIndex(i) -> node`
 The star of the show -- this helper function's goal is to return the appropriate leaf node for a given index `i`.\
 Because the nodes themselves don't store their index, the function must calculate for the **"phantom"** index. That is, the function has to manually calculate the "offsets" and bounds themselves. In particular, it keeps track for `lowerBound` and `upperBound`.\
-The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to O(logn).\
+The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to $O(logn)$.\
 It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
-```math
-\text{LeftChild} = [lowerBound, mid]
-```
-```math
-\text{RightChild} = [mid+1, upperBound]
-```
+
+$$\text{LeftChild} = [lowerBound, mid]$$
+
+
+$$\text{RightChild} = [mid+1, upperBound]$$
+
 
 So we check if the index is in either one, and update the bounds appropriately.\
 Note that this will always either result in a leaf node holding the `DATA` value, or `NULL`.\
@@ -190,11 +191,12 @@ With this helper function, we can now make:
 If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
 It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and returns its `DATA` value.\
 The index is affected by the `reversed` flag to correct for reversal.
+
 #### Main: `set(list, i, v)`
 If $0 \leq i < n$ is not satisfied, then it simply returns.\
-It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.
+It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.\
 The index is affected by the `reversed` flag to correct for reversal.\
-It also updates `leftmost` or `rightmost`, depending on whether the inex rests on $0$ or $n-1$.
+It also updates `leftmost` or `rightmost`, depending on whether the index rests on $0$ or $n-1$.
 
 #### Main: `peek_left(list) -> DATA`
 Returns `leftmost`, or `rightmost` if `reversed` flag is enabled.
@@ -215,8 +217,9 @@ The purpose of this helper function is to construct a `PTree` of type $0$, with 
 This is useful for pushing a new value into the list.
 
 #### Helpers:
-`_mergeNonDistinctPTreesToRight(list, start)`\
-`_mergeNonDistinctPTreesToLeft(list, start)`\
+**`_mergeNonDistinctPTreesToRight(list, start)`**\
+**`_mergeNonDistinctPTreesToLeft(list, start)`**
+
 Here we have helper functions for merging non-distinct `PTrees` together, split into two: one for merging to the left, and one for merging to the right.\
 `PTrees` are non-distinct if their type `k` is the same, which means they can be combined into one greater power of two,
 improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing
@@ -229,8 +232,9 @@ We immediately stop if the next tree's type is distinct from the current tree, a
 This helper function directly modifies the doubly-linked-list of the main list.
 
 #### Helpers:
-`_cascadeRemovalLeft(list, start) -> subHead, subTail`\
-`_cascadeRemovalRight(list, start) -> subHead, subTail`\
+**`_cascadeRemovalLeft(list, start) -> subHead, subTail`**\
+**`_cascadeRemovalRight(list, start) -> subHead, subTail`**
+
 These are helper functions used by the `pop_*` operations.\
 They are pretty much the opposite of the merge operations, split into two: one for cascading the right of the `PTree`, and one for cascading the left.\
 We know that only the leftmost (rightmost) leaf of the target `PTree` is the one that needs to be removed.
