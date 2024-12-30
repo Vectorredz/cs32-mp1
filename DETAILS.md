@@ -111,24 +111,24 @@ A recursive function that constructs a Perfect Binary Tree from the root, with t
 Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).\
 For example, we have a sequence of
 ```math
-\begin{align*}\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}
+\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}
 ```
 which is of length $12$.
 If we want to get a `PTree` of type $3$ with the leaves from indices $4$ to $11$, then we call the helper function with:
 ```math
-\begin{align*}\text{lowerBound} = 0\end{align*}
+\text{lowerBound} = 0
 ```
 ```math
-\begin{align*}\text{upperBound} = 7\end{align*}
+\text{upperBound} = 7
 ```
 (since the length is $2^3 = 8$). We also specify
 ```math
-\begin{align*}\text{offset} = 4\end{align*}
+\text{offset} = 4
 ```
 since the subsequence starts from index $4$.
 Then after the recursive calls, the resulting leaves would be
 ```math
-\begin{align*}\{4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}
+\{4, 5, 6, 7, 8, 9, 10, 11\}
 ```
 Then, the caller receives the root node.\
 The reason this is by design is that there's no need to have a separate driver code for this recursive function to call the appropriate bounds. Simply always provide $lowerBound = 0$, and then specify $upperBound = 2^k$, and it will immediately start shifting indices and constructing its children without more helper function bloat.
@@ -176,10 +176,10 @@ The calculations of these offsets and bounds are only done on the needed nodes i
 It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
 ```math
-\begin{align*}\text{LeftChild} = [lowerBound, mid]\end{align*}
+\text{LeftChild} = [lowerBound, mid]
 ```
 ```math
-\begin{align*}\text{RightChild} = [mid+1, upperBound]\end{align*}
+\text{RightChild} = [mid+1, upperBound]
 ```
 
 So we check if the index is in either one, and update the bounds appropriately.\
