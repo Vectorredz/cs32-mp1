@@ -267,7 +267,7 @@ With that, the steps are as follows:
     - Update [test_settings_m.py](mirror-flower/test_settings_m.py) settings to desired values
     - Run [mirror.py](mirror-flower/mirror.py)
 2. **TEST THE LIST**
-    - Update [test_settings_r.h](mirror-flower/test_settings_r.h)
+    - Update [test_settings_r.h](mirror-flower/test_settings_r.h) settings to desired values
     - Run [reflection.c](mirror-flower/reflection.c)
     - If any bugs are caught, debug with given error info and look at the line the operation failed in the **INPUT_FILE**
 3. **GRAPHS**
