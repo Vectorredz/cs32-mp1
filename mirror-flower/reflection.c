@@ -553,7 +553,7 @@ int main(){
     }
     printf("[O] [GLOBAL]: AC [%lfs]\n", _PROCESSTIME(_timeGlobal, timeGlobal));
     
-    printf("> Done.\n");
+    printf("> Well Done.\n");
 
     printf("> Writing deltatime benchmarks to output...\n");
     // Write all benchmarks to the file

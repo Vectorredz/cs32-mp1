@@ -44,23 +44,37 @@ LAYER 3:
             - SIZE, EMPTY
 
 LAYER 4:
-    * (No checking for correctness)
     * Attempts to shatter the Reflection one last time:
-        >> TIME COMPLEXITY TEST:
-            * if (LARGE_INPUTS == true):
-                - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
-                - POP_* for RANDOM_INTEGER(60000, 200000) times
-                - Along with all other OPERATIONS throughout
+        >> BREAKER TEST:
+            - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
+            - POP_* until empty
+            - Along with all other OPERATIONS throughout
+
+        >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
+            > (No checking for correctness, "RESULT" is "X")
+            - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
+            - POP_* until empty
+            - Along with all other OPERATIONS throughout
 
         >> UB TEST:
-            - Pops list until n == 0 first
+            - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
             - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+            - bound size to <=10000
             - Occassionally pops the list until 0 to test for UB
+            - After the loop, pops list until n == 0
+
+        >> EFFICIENCY TEST 2 (if (LARGE_INPUTS == true)):
+            > (No checking for correctness, "RESULT" is "X")
+                - Pops list until n == 0 first
+                - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
+                - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+                - After the loop, pops list until n == 0
 
         >> FINALE:
-            * if (LARGE_INPUTS == true):
-                Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
+            - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
             - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+            - bound size to <=10000
+            - After the loop, pops list until n == 0
 '''
 from test_settings_m import INPUT_FILE, LARGE_INPUTS, SEED
 # --------------------------------------------------------- >>
@@ -456,10 +470,11 @@ print("> Done.")
 print("> Mirrored World...")
 WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
-for u in range(2):
+# 1: Breaker Test, 2: Efficiency Test
+for u in range(1, 3):
     check = True
-    lower, upper = 500, 1000
-    if u == 1:
+    lower, upper = 2000, 5000
+    if u == 2:
         if LARGE_INPUTS == False:
             break
         check = False
@@ -511,16 +526,19 @@ for u in range(2):
     while (mirror.size() > 0):
             WRITE(check, mirror, "pop_right")
 
-for u in range(2):
-    if u == 0:
-        if random.randint(0, 8) == 0:
-            while (mirror.size() > 0):
-                WRITE(False, mirror, "pop_right")
-    else:
+# 1: UB Test, 2: Efficiency Test 2, 3: Finale Test
+for u in range(1, 4):
+    if u == 2:
         if LARGE_INPUTS == True:
             for i in range(random.randint(60000, 200000)):
                 WRITE(False, mirror, "push_left", randomData())
+        else:
+            continue
+    else:
+        for i in range(random.randint(2000, 5000)):
+            WRITE(True, mirror, "push_left", randomData())
 
+    check = u == 1 or u == 3
     operations = list(OPERATIONS.keys())
     for i in range(random.randint(50000, 100000)):
         chosen = operations[random.randint(0, len(operations)-1)]
@@ -530,8 +548,21 @@ for u in range(2):
         elif chosen == "set":
             args = tuple([randomIndex(mirror), randomData()])
         elif chosen == "push_left" or chosen == "push_right":
+            if u == 1 or u == 3:
+                if mirror.size() > 10000:
+                    continue
             args = tuple([randomData()])
-        WRITE(False, mirror, chosen, *args)
+
+        if u == 1:
+            if random.randint(0, 8) == 0:
+                while (mirror.size() > 0):
+                    WRITE(check, mirror, "pop_right")
+
+        WRITE(check, mirror, chosen, *args)
+
+    # empty
+    while (mirror.size() > 0):
+        WRITE(check, mirror, "pop_right")
             
 WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
 print("> Done.")

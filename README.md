@@ -88,7 +88,7 @@ Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
 | INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
-| LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (Warning: takes way longer to generate) | `False` |
+| LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (The specific test lines with large inputs do NOT check for correctness.) <br> (Warning: takes way longer to generate) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
@@ -195,22 +195,38 @@ It features more detailed basic operation tests, as well as more insertion/delet
 
 >>>>> LAYER 4:
 ```
-> (No checking for correctness, "RESULT" is "X")
->> TIME COMPLEXITY TEST:
-    * if (LARGE_INPUTS == true):
-        - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
-        - POP_* for RANDOM_INTEGER(60000, 200000) times
+> FINAL LAYER:
+    >> BREAKER TEST:
+        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
+        - POP_* until empty
         - Along with all other OPERATIONS throughout
 
-    * UB TEST:
-        - Pops list until n == 0 first
-        - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
-        - Occassionally pops the list until 0 to test for UB
+    >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
+        > (No checking for correctness, "RESULT" is "X")
+        - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
+        - POP_* until empty
+        - Along with all other OPERATIONS throughout
 
-    * FINALE:
-        * if (LARGE_INPUTS == true):
-            Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
+    >> UB TEST:
+        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
         - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+        - bound size to <=10000
+        - Occassionally pops the list until 0 to test for UB
+        - After the loop, pops list until n == 0
+
+    >> EFFICIENCY TEST 2 (if (LARGE_INPUTS == true)):
+        > (No checking for correctness, "RESULT" is "X")
+            - Pops list until n == 0 first
+            - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
+            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+            - After the loop, pops list until n == 0
+
+    >> FINALE:
+        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
+        - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+        - bound size to <=10000
+        - After the loop, pops list until n == 0
+
 ```
 Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
 Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
