@@ -266,7 +266,7 @@ This output file can then be used for plotting on a graph. It is used to graph *
 
 ### Steps
 With that, the steps are as follows:
-1. **GENERATE NEW TESET CASES** (Optional)
+1. **GENERATE NEW TEST CASES** (Optional)
     - Update [test_settings_m.py](mirror-flower/test_settings_m.py) settings to desired values
     - Run [mirror.py](mirror-flower/mirror.py)
 2. **TEST THE LIST**
