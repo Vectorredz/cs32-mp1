@@ -110,16 +110,26 @@ It utilizes bitshifting for quick exponents.
 A recursive function that constructs a Perfect Binary Tree from the root, with the leaves accurately representing a subsequence of the given sequence.
 Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).\
 For example, we have a sequence of
-$$\begin{align*}\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}$$
+```math
+\begin{align*}\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}
+```
 which is of length $12$.
 If we want to get a `PTree` of type $3$ with the leaves from indices $4$ to $11$, then we call the helper function with:
-$$\begin{align*}\text{lowerBound} = 0\end{align*}$$
-$$\begin{align*}\text{upperBound} = 7\end{align*}$$
+```math
+\begin{align*}\text{lowerBound} = 0\end{align*}
+```
+```math
+\begin{align*}\text{upperBound} = 7\end{align*}
+```
 (since the length is $2^3 = 8$). We also specify
-$$\begin{align*}\text{offset} = 4\end{align*}$$
+```math
+\begin{align*}\text{offset} = 4\end{align*}
+```
 since the subsequence starts from index $4$.
 Then after the recursive calls, the resulting leaves would be
-$$\begin{align*}\{4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}$$
+```math
+\begin{align*}\{4, 5, 6, 7, 8, 9, 10, 11\}\end{align*}
+```
 Then, the caller receives the root node.\
 The reason this is by design is that there's no need to have a separate driver code for this recursive function to call the appropriate bounds. Simply always provide $lowerBound = 0$, and then specify $upperBound = 2^k$, and it will immediately start shifting indices and constructing its children without more helper function bloat.
 
@@ -165,8 +175,12 @@ Because the nodes themselves don't store their index, the function must calculat
 The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to O(logn).\
 It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
-$$\begin{align*}\text{LeftChild} = [lowerBound, mid]\end{align*}$$
-$$\begin{align*}\text{RightChild} = [mid+1, upperBound]\end{align*}$$
+```math
+\begin{align*}\text{LeftChild} = [lowerBound, mid]\end{align*}
+```
+```math
+\begin{align*}\text{RightChild} = [mid+1, upperBound]\end{align*}
+```
 
 So we check if the index is in either one, and update the bounds appropriately.\
 Note that this will always either result in a leaf node holding the `DATA` value, or `NULL`.\
