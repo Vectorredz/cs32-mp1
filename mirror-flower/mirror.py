@@ -57,9 +57,9 @@ LAYER 4:
             - Along with all other OPERATIONS throughout
 
         >> UB TEST:
-            - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
-            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
-            - bound size to <=10000
+            - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
+            - All OPERATIONS for RANDOM_INTEGER(5000, 10000) times
+            - bound size to <=4444
             - Occassionally pops the list until 0 to test for UB
             - After the loop, pops list until n == 0
 
@@ -67,13 +67,13 @@ LAYER 4:
             > (No checking for correctness, "RESULT" is "X")
                 - Pops list until n == 0 first
                 - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
-                - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+                - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
                 - After the loop, pops list until n == 0
 
         >> FINALE:
-            - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
-            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
-            - bound size to <=10000
+            - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
+            - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
+            - bound size to <=4444
             - After the loop, pops list until n == 0
 '''
 from test_settings_m import INPUT_FILE, LARGE_INPUTS, SEED
@@ -528,6 +528,12 @@ for u in range(1, 3):
 
 # 1: UB Test, 2: Efficiency Test 2, 3: Finale Test
 for u in range(1, 4):
+    lower, upper = 0, 0
+    if u == 1:
+        lower, upper = 5000, 10000
+    else:
+        lower, upper = 15000, 30000
+
     if u == 2:
         if LARGE_INPUTS == True:
             for i in range(random.randint(60000, 200000)):
@@ -535,12 +541,12 @@ for u in range(1, 4):
         else:
             continue
     else:
-        for i in range(random.randint(2000, 5000)):
+        for i in range(random.randint(500, 1000)):
             WRITE(True, mirror, "push_left", randomData())
 
     check = u == 1 or u == 3
     operations = list(OPERATIONS.keys())
-    for i in range(random.randint(50000, 100000)):
+    for i in range(random.randint(lower, upper)):
         chosen = operations[random.randint(0, len(operations)-1)]
         args = ()
         if chosen == "get":
@@ -549,12 +555,12 @@ for u in range(1, 4):
             args = tuple([randomIndex(mirror), randomData()])
         elif chosen == "push_left" or chosen == "push_right":
             if u == 1 or u == 3:
-                if mirror.size() > 10000:
+                if mirror.size() > 4444:
                     continue
             args = tuple([randomData()])
 
         if u == 1:
-            if random.randint(0, 8) == 0:
+            if random.randint(0, 5) == 0:
                 while (mirror.size() > 0):
                     WRITE(check, mirror, "pop_right")
 

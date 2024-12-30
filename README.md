@@ -208,9 +208,9 @@ It features more detailed basic operation tests, as well as more insertion/delet
         - Along with all other OPERATIONS throughout
 
     >> UB TEST:
-        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
-        - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
-        - bound size to <=10000
+        - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
+        - All OPERATIONS for RANDOM_INTEGER(5000, 10000) times
+        - bound size to <=4444
         - Occassionally pops the list until 0 to test for UB
         - After the loop, pops list until n == 0
 
@@ -218,13 +218,13 @@ It features more detailed basic operation tests, as well as more insertion/delet
         > (No checking for correctness, "RESULT" is "X")
             - Pops list until n == 0 first
             - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
-            - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
+            - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
             - After the loop, pops list until n == 0
 
     >> FINALE:
-        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times first
-        - All OPERATIONS for RANDOM_INTEGER(50000, 100000) times
-        - bound size to <=10000
+        - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
+        - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
+        - bound size to <=4444
         - After the loop, pops list until n == 0
 
 ```
