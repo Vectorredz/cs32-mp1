@@ -99,7 +99,7 @@ Imported as a Python module by the generator.
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
 It implements a working list in Python, and outputs it to the corresponding **INPUT_FILE** directory. This file is a CSV delimeted by a bar `|`, with its fields as follows:
 
-> OPERATION | ARG1 | ARG2 | RESULT
+> OPERATION|ARG1|ARG2|RESULT
 
 Where **OPERATION** is the name of the operation function, **ARG1**/**ARG2** as the arguments for the function call, and **RESULT** being the correct resulting output that the target list needs to match to be considered correct.\
 Their text can be of the following:
@@ -248,13 +248,13 @@ Then, it sifts through each line. If the line's **RESULT** is not **X**, then it
 It also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)\
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
-Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file, with its fields as follows:
+Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file delimeted by a bar `|`, with its fields as follows:
 
-> OPERATION | N | TIME
+> OPERATION|N|DELTATIME
 
-Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **TIME** being the execution time (in milliseconds) of the operation.
+Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **DELTATIME** being the execution time (in milliseconds) of the operation.
 
-This output file can then be used for plotting on a graph. It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is constant, linear, or logarithmic in nature.
+This output file can then be used for plotting on a graph. It is used to graph **N** (current size when **OPERATION** was done) against **TIME** (in milliseconds) to judge whether the graph of OPERATION is constant, linear, or logarithmic in nature.
 
 
 <br>
