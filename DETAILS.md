@@ -172,7 +172,7 @@ It simply flips the `reversed` flag for the other operations to appropriately us
 #### Helper: `_getLeafNodeAtIndex(i) -> node`
 The star of the show -- this helper function's goal is to return the appropriate leaf node for a given index `i`.\
 Because the nodes themselves don't store their index, the function must calculate for the **"phantom"** index. That is, the function has to manually calculate the "offsets" and bounds themselves. In particular, it keeps track for `lowerBound` and `upperBound`.\
-The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to O(logn).\
+The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to $O(logn)$.\
 It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
 
