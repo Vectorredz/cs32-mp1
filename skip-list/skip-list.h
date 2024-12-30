@@ -27,9 +27,20 @@ typedef struct _LevelList {
     Level *bottom; // Level 0 Header
 } LevelList;
 
+typedef struct _LevelRecord {
+    Level *topLevel;
+    struct _LevelRecord *next;
+    struct _LevelRecord *prev;
+} LevelRecord;
+
+typedef struct _LevelRecordsList {
+    LevelRecord *head;
+    LevelRecord *tail;
+} LevelRecordsList;
 
 typedef struct _SkipList {
     LevelList *levels;
+    LevelRecordsList *nodeTopLevels;
     
     DATA leftmost;
     DATA rightmost;
@@ -37,12 +48,18 @@ typedef struct _SkipList {
     LENGTH maxHeight;
     LENGTH currHeight;
     LENGTH size;
-    
     bool is_reversed;
+    
 } SkipList;
 
-// HELPERS
+// Helpers
 SkipNode *_getNode(SkipList *l, LENGTH i);
+void _leftPromoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v);
+void _rightPromoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v);
+void _pruneLevel(SkipList *l, Level *currLevel);
+bool _leftDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode);
+bool _rightDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode);
+bool _flipCoin();
 
 // Init
 SkipList *_initSkipList();

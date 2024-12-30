@@ -5,13 +5,14 @@
 #include <time.h>
 #include "skip-list.h"
 
-enum MODE{
-    LEFT,
-    RIGHT
-};
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
 
-enum MODE mode = LEFT;
-// Initializes a newNode
+            ||-- INITIALIZERS --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
+
 SkipNode *_makeNode(DATA v){
     SkipNode *newNode = (SkipNode*)malloc(sizeof(SkipNode));
     newNode->below = newNode->right = newNode->left = NULL; // initialize the pointers to NULL
@@ -21,7 +22,6 @@ SkipNode *_makeNode(DATA v){
     return newNode; 
 }
 
-// Initializes a newLevel 
 Level *_makeLevel(){
     Level *newLevel = (Level*)malloc(sizeof(Level));
     newLevel->up = newLevel->down = NULL;
@@ -52,11 +52,6 @@ Level *_makeLevel(){
     return newLevel;
 } 
 
-bool _flipCoin(){
-    return rand() > RAND_MAX / 2;
-}
-
-// initialize the SkipList
 SkipList *_initSkipList(LENGTH n){
     SkipList *skip_list = malloc(sizeof(SkipList));
 
@@ -72,11 +67,24 @@ SkipList *_initSkipList(LENGTH n){
     skip_list->size = n;
     skip_list->is_reversed = false; // default : toggled off
 
+    skip_list->nodeTopLevels = (LevelRecordsList*)malloc(sizeof(LevelRecordsList));
+    LevelRecordsList *levelRecords = skip_list->nodeTopLevels;
+    levelRecords->head = levelRecords->tail = NULL;
+
     return skip_list;
 }
 
-void _promoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v){
-    
+
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
+
+            ||-- HELPERS --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
+
+Level *_promoteLevel(SkipList *l, SkipNode *sentinel, SkipNode *belowNode, DATA v, bool fromRight){
+    Level *currLevel = l->levels->bottom;
     while (l->currHeight < l->maxHeight && _flipCoin() == true){ // promote the level
         // move up a level (create a new one if topmost)
         if (currLevel->up == NULL){
@@ -101,379 +109,111 @@ void _promoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *
 
         currLevel = currLevel->up;
 
-        // right
+        SkipNode *newPrevNode = _makeNode(v);
+        SkipNode *sentinel = fromRight ? currLevel->tailSentinel : currLevel->headSentinel;
 
-        if (mode == LEFT){
-            // traverse up through sentinels, and connect left/right/below
-            SkipNode *newPrevNode = _makeNode(v);
-            sentinel = l->is_reversed ? currLevel->tailSentinel : currLevel->headSentinel;
-            SkipNode* prevNode = l->is_reversed ? sentinel->left :sentinel->right;
+        // below
+        newPrevNode->below = belowNode;
+        belowNode = newPrevNode;
 
-            // below
-            newPrevNode->below = belowNode;
-            belowNode = newPrevNode;
-
-            if (!l->is_reversed){
-                if (prevNode != NULL){
-                    prevNode->left = newPrevNode;
-                    newPrevNode->right = prevNode;
-                }
-                else {
-                    currLevel->tailSentinel->left = newPrevNode;
-                    newPrevNode->right = currLevel->tailSentinel;
-                }
-
-                // left
-                sentinel->right = newPrevNode;
-                newPrevNode->left = sentinel;
-            }
-            else {
-                if (prevNode != NULL){
-                    prevNode->right = newPrevNode;
-                    newPrevNode->left = prevNode;
-                }
-                else {
-                    currLevel->headSentinel->right = newPrevNode;
-                    newPrevNode->left = currLevel->headSentinel;
-                }
-
-                // left
-                sentinel->left = newPrevNode;
-                newPrevNode->right = sentinel;
-            }
-            newPrevNode->width = 0;
-        }
-        else if (mode == RIGHT){
-             // traverse up through sentinels, and connect left/right/below
-            SkipNode *newPrevNode = _makeNode(v);
-            sentinel = l->is_reversed ? currLevel->headSentinel : currLevel->tailSentinel;
-            SkipNode* prevNode = l->is_reversed ? sentinel->right :sentinel->left;
-
-            // below
-            newPrevNode->below = belowNode;
-            belowNode = newPrevNode;
-
-
-            if (l->is_reversed){
-                if (prevNode != NULL){
-                    prevNode->left = newPrevNode;
-                    newPrevNode->right = prevNode;
-                }
-                else {
-                    currLevel->tailSentinel->left = newPrevNode;
-                    newPrevNode->right = currLevel->tailSentinel;
-                }
-
+        if (!fromRight){
+            
             // left
+            newPrevNode->right = sentinel->right;
+            sentinel->right->left = newPrevNode;
             sentinel->right = newPrevNode;
             newPrevNode->left = sentinel;
-            }
-            else {
-                if (prevNode != NULL){
-                    prevNode->right = newPrevNode;
-                    newPrevNode->left = prevNode;
-                }
-                else {
-                    currLevel->headSentinel->right = newPrevNode;
-                    newPrevNode->left = currLevel->headSentinel;
-                }
-
-                // left
-                sentinel->left = newPrevNode;
-                newPrevNode->right = sentinel;
-            }
-            newPrevNode->width = 0;
         }
-        
-        // update values
+        else {
 
+            // right
+            newPrevNode->left = sentinel->left;
+            sentinel->left->right = newPrevNode;
+            sentinel->left = newPrevNode;
+            newPrevNode->right = sentinel;
+        }
+        newPrevNode->width = 0;
     }
 
+    return currLevel;
 }
 
-void push_left(SkipList *l, DATA v){
-    // update values
-    l->size++;
-    l->leftmost = v;
-    if (l->size == 1){
-        l->rightmost = v;
-    }
-    l->maxHeight = (LENGTH) ceil(log2(l->size));
-    
-    // update leftmost widths
-
-    Level* currLevel = l->levels->bottom; // start from level 0 
-    while (currLevel != NULL){
-        SkipNode* prevNode = l->is_reversed ? currLevel->tailSentinel->left : currLevel->headSentinel->right;
-        if (prevNode != NULL && currLevel){
-            prevNode->width++;
-        }
-        currLevel = currLevel->up;
-    }
-
-    // restart at level 0
-    currLevel = l->levels->bottom;
-    SkipNode *belowNode = _makeNode(v);
-    SkipNode *sentinel = l->is_reversed ? currLevel->tailSentinel : currLevel->headSentinel; // header
-
-    // update right connection
-    if (!l->is_reversed){
-        if (sentinel->right != NULL){
-            sentinel->right->left = belowNode; // prevNode
-            belowNode->right = sentinel->right;
-        } else {
-            currLevel->tailSentinel->left = belowNode;
-            belowNode->right = currLevel->tailSentinel;
-        }
-        // update left connection
-        sentinel->right = belowNode;
-        belowNode->left = sentinel;
-
-    }
-    else {
-        if (sentinel->left != NULL){
-            sentinel->left->right = belowNode;
-            belowNode->left = sentinel->left;
-        } else {
-            currLevel->headSentinel->right = belowNode;
-            belowNode->left = currLevel->headSentinel;
-        }
-        // update right connection
-        sentinel->left = belowNode;
-        belowNode->right = sentinel;
-    }
-    
-    // update values
-    belowNode->width = 0;
-    // change mode
-    mode = LEFT;
-    // coin flips
-    _promoteLevel(l, currLevel, sentinel, belowNode, v);
-}
-
-void push_right(SkipList *l, DATA v){
-       // update values
-    l->size++;
-    l->leftmost = v;
-    if (l->size == 1){
-        l->rightmost = v;
-    }
-    l->maxHeight = (LENGTH) ceil(log2(l->size));
-    
-    // update leftmost widths
-
-    Level* currLevel = l->levels->bottom; // start from level 0 
-    while (currLevel != NULL){
-        SkipNode* prevNode = l->is_reversed ? currLevel->headSentinel->right : currLevel->tailSentinel->left;
-        if (prevNode != NULL && currLevel){
-            prevNode->width++;
-        }
-        currLevel = currLevel->up;
-    }
-
-    // restart at level 0
-    currLevel = l->levels->bottom;
-    SkipNode *belowNode = _makeNode(v);
-    SkipNode *sentinel = l->is_reversed ? currLevel->headSentinel : currLevel->tailSentinel; // header
-
-    // update right connection
-    if (l->is_reversed){
-        if (sentinel->right != NULL){
-            sentinel->right->left = belowNode; // prevNode
-            belowNode->right = sentinel->right;
-        } else {
-            currLevel->tailSentinel->left = belowNode;
-            belowNode->right = currLevel->tailSentinel;
-        }
-        // update left connection
-        sentinel->right = belowNode;
-        belowNode->left = sentinel;
-
-    }
-    else {
-        if (sentinel->left != NULL){
-            sentinel->left->right = belowNode;
-            belowNode->left = sentinel->left;
-        } else {
-            currLevel->headSentinel->right = belowNode;
-            belowNode->left = currLevel->headSentinel;
-        }
-        // update right connection
-        sentinel->left = belowNode;
-        belowNode->right = sentinel;
-    }
-    
-    // update values
-    belowNode->width = 0;
-
-    // change mode
-    mode = RIGHT;
-    // coin flips
-    _promoteLevel(l, currLevel, sentinel, belowNode, v);
-
-}
-
-SkipList *make(LENGTH n, DATA *seq){
-    // undefined behavior
-    if (n < 0) return NULL;
-    if (n == 0) return _initSkipList(n);
-
-    SkipList *sl = _initSkipList(n);
-    
-    // traverse through the sequence
-    for (int i = 0; i < n; i++){
-        push_left(sl, seq[i]);
-    }
-
-    return sl;
-}
-
-void _pruneLevel(SkipList *l, Level *currLevel){
-    // get the below LevelSentinels
-    Level *prevLevel = currLevel->up;
-    Level *nextLevel = currLevel->down;
-
-    if (nextLevel){
-        nextLevel->up = prevLevel;
-    }
-    else {
-        l->levels->top = NULL;
-    }
-
-    if (prevLevel){
-        prevLevel->down = nextLevel;
-    }
-    else {
-        l->levels->top = nextLevel;
-    }
-    currLevel->headSentinel->below = NULL;
-    currLevel->tailSentinel->below = NULL;
-    currLevel = NULL;
-
-    l->currHeight--;
-    l->maxHeight--;
-}
-
-bool _leftDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode){
+void _demoteLevel(SkipList *l, Level *currLevel, bool fromRight){
     // update the height
-    while (currLevel && currLevel->headSentinel->right->val == popNode->val){
-        SkipNode *currHeadSentinel = currLevel->headSentinel;
-        SkipNode *currTailSentinel = currLevel->tailSentinel;
+    
+    while (currLevel != NULL){
+        SkipNode *sentinel = fromRight ? currLevel->tailSentinel : currLevel->headSentinel;
+        SkipNode *currNode = fromRight ? sentinel->left : sentinel->right;
+        SkipNode *currPrevNode = fromRight ? currNode->left : currNode->right;
 
-        SkipNode *currNode = currHeadSentinel->right;
-        SkipNode *currPrevNode = currNode->right;
-
-        // detach the node 
-        currNode->left = currNode->right = NULL;
-        currNode->below = NULL;
-        free(currNode);
-
-        // relink the sentinel to the curr level previous node
+        // Remove currNode from the level
+        bool x = currNode->isSentinel;
         if (currPrevNode){
-            currHeadSentinel->right = currPrevNode;
-            currPrevNode->left = currHeadSentinel;
+            if (!fromRight){
+                sentinel->right = currPrevNode;
+                currPrevNode->left = currLevel->headSentinel;
+
+            } else {
+                sentinel->left = currPrevNode;
+                currPrevNode->right = sentinel;
+            }
         }
         else {
-            currHeadSentinel->right = currTailSentinel;
-            currTailSentinel->left = currHeadSentinel;
+            currLevel->headSentinel->right == currLevel->tailSentinel;
         }
-        
-        // if the level has no elements prune the level
-        // if the sentinels are linked to eachother call prune
-        if ((currHeadSentinel->right == currTailSentinel) && (currTailSentinel->left == currHeadSentinel)){
-            _pruneLevel(l, currLevel);
-        }
-        currLevel = currLevel->up;
-    }
-    return true;
-}
 
-bool _rightDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode){
-     // update the height
-    while (currLevel && currLevel->tailSentinel->left->val == popNode->val){
-        SkipNode *currHeadSentinel = currLevel->headSentinel;
-        SkipNode *currTailSentinel = currLevel->tailSentinel;
+        // if (currNode){
 
-        SkipNode *currNode = currTailSentinel->left;
-        SkipNode *currPrevNode = currNode->left;
-
-        // detach the node 
-        currNode->left = currNode->right = NULL;
-        currNode->below = NULL;
+        // }
         free(currNode);
 
-        // relink the sentinel to the curr level previous node
-        if (currPrevNode){
-            currTailSentinel->left = currPrevNode;
-            currPrevNode->right = currTailSentinel;
+        // If level is empty and is NOT Level 0, then remove it from the list
+        if ((currLevel->headSentinel->right == currLevel->tailSentinel) && currLevel != l->levels->bottom){
+            if (l->levels->top == currLevel){
+                l->levels->top = currLevel->down;
+            }
+            // Update sentinel pointers
+            Level *upLevel = currLevel->up;
+            Level *downLevel = currLevel->down;
+
+            downLevel->up = upLevel;
+            if (upLevel != NULL){
+                upLevel->headSentinel->below = downLevel->headSentinel;
+                upLevel->tailSentinel->below = downLevel->tailSentinel;
+                upLevel->down = currLevel->down;
+            }
+
+            // if (downLevel){
+            //     downLevel->up = upLevel;
+            // }
+            // else {
+            //     l->levels->top = NULL;
+            // }
+
+            // if (upLevel){
+            //     upLevel->down = downLevel;
+            // }
+            // else {
+            //     l->levels->top = currLevel;
+            // }
+
+            // currLevel->headSentinel->below = currLevel->tailSentinel->below = NULL;
+            // currLevel = NULL;
+            
+            free(currLevel->headSentinel);
+            free(currLevel->tailSentinel);
+            free(currLevel);
+
+            l->currHeight--;
+            l->maxHeight--;
         }
-        else {
-            currHeadSentinel->right = currTailSentinel;
-            currTailSentinel->left = currHeadSentinel;
-        }
-        
-        // if the level has no elements prune the level
-        // if the sentinels are linked to eachother call prune
-        if ((currHeadSentinel->right == currTailSentinel) && (currTailSentinel->left == currHeadSentinel)){
-            _pruneLevel(l, currLevel);
-        }
-        currLevel = currLevel->up;
+
+        currLevel = currLevel->down;
     }
-    return true;
 }
 
-bool pop_left(SkipList *l){
-    // cannot pop an empty list
-    if (l->size == 0) return false;
-
-    Level *currLevel = l->levels->bottom; // start from level 0
-    SkipNode *popNode = currLevel->headSentinel->right; 
-    while (currLevel != NULL){
-        popNode = currLevel->headSentinel->right;
-        SkipNode* prevNode = popNode->right;
-        if (prevNode != NULL && currLevel){
-            prevNode->width--; // decrement widths
-        }
-        currLevel = currLevel->up;
-    }
-
-    currLevel = l->levels->bottom;
-    popNode = l->is_reversed ? currLevel->tailSentinel->left : currLevel->headSentinel->right;
-
-    // single case
-    l->leftmost = (popNode->right && popNode->right != currLevel->tailSentinel) ? popNode->right->val : 0; 
-
-    // decrease the size
-    l->size--;
-    
-    return l->is_reversed ? _rightDemoteLevel(l, currLevel, popNode) : _leftDemoteLevel(l, currLevel, popNode);
-}
-
-bool pop_right(SkipList *l){
-    // cannot pop an empty list
-    if (l->size == 0) return false;
-
-    Level *currLevel = l->levels->bottom; // start from level 0
-    SkipNode *popNode = currLevel->headSentinel->right; 
-    while (currLevel != NULL){
-        popNode = currLevel->headSentinel->right;
-        SkipNode* prevNode = popNode->right;
-        if (prevNode != NULL && currLevel){
-            prevNode->width--; // decrement widths
-        }
-        currLevel = currLevel->up;
-    }
-
-    currLevel = l->levels->bottom;
-    popNode = l->is_reversed ? currLevel->headSentinel->right : currLevel->tailSentinel->left;
-
-    // single case
-    l->rightmost = (popNode->left && popNode->left != currLevel->headSentinel) ? popNode->left->val : 0; 
-
-    // decrease the size
-    l->size--;
-    
-    return l->is_reversed ? _leftDemoteLevel(l, currLevel, popNode) : _rightDemoteLevel(l, currLevel, popNode);
+bool _flipCoin(){
+    return rand() > RAND_MAX / 2;
 }
 
 SkipNode *_getNode(SkipList *l, LENGTH i){
@@ -482,14 +222,15 @@ SkipNode *_getNode(SkipList *l, LENGTH i){
     LENGTH sumOffset = header->right->width; // initialize the offset for the topmost
     LENGTH target = i;   
     LENGTH sumRight = header->right->right ? header->right->right->width : 0;
-    if (i >= l->size) return NULL;  // bounds chec
+    
+    if (l->size > 0 && 0 <= target && target < l->size) return NULL; // bounds check
     
     while (header->isSentinel == true){
         if (header->right == NULL){
             header = header->below; // still a sentinel
             continue;
         }
-        if (sumOffset <= target){ // if the leftmost SkipNode width is 
+        if (sumOffset <= target){  
             header = header->right; // not sentinel anymore
             break;
         }
@@ -518,6 +259,202 @@ SkipNode *_getNode(SkipList *l, LENGTH i){
 
 }
 
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
+
+            ||-- MAIN OPERATIONS --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
+
+
+SkipList *make(LENGTH n, DATA *seq){
+    // undefined behavior
+    if (n < 0) return NULL;
+    if (n == 0) return _initSkipList(n);
+
+    SkipList *sl = _initSkipList(n);
+    
+    // traverse through the sequence
+    for (int i = 0; i < n; i++){
+        push_left(sl, seq[i]);
+    }
+
+    return sl;
+}
+
+void _push_left_base(SkipList *l, DATA v){
+    // update leftmost widths
+    Level* currLevel = l->levels->bottom; // start from level 0 
+    while (currLevel != NULL){
+        SkipNode* prevNode = currLevel->headSentinel->right;
+        if (prevNode->isSentinel == false){
+            prevNode->width++;
+        }
+        currLevel = currLevel->up;
+    }
+
+    // restart at level 0
+    currLevel = l->levels->bottom;
+    SkipNode *belowNode = _makeNode(v);
+    SkipNode *sentinel = currLevel->headSentinel; // header
+
+    // update left connection
+    belowNode->right = sentinel->right;
+    sentinel->right->left = belowNode;
+    sentinel->right = belowNode;
+    belowNode->left = sentinel;
+    
+    // update values
+    l->size++;
+    l->leftmost = v;
+    if (l->size == 1) l->rightmost = v;
+    l->maxHeight = (LENGTH) ceil(log2(l->size));
+    
+    // promote
+    Level *maxLevelReached = _promoteLevel(l, sentinel, belowNode, v, false);
+    LevelRecord *newRecord = (LevelRecord*) (malloc(sizeof(LevelRecord)));
+    newRecord->prev = NULL;
+    newRecord->next = l->nodeTopLevels->head;
+    l->nodeTopLevels->head = newRecord;
+    if (l->nodeTopLevels->tail == NULL){
+        l->nodeTopLevels->tail = newRecord;
+    }
+    newRecord->topLevel = maxLevelReached;
+}
+
+void _push_right_base(SkipList *l, DATA v){
+    // update rightmost widths
+    Level* currLevel = l->levels->bottom; // start from level 0 
+    while (currLevel != NULL){
+        SkipNode* prevNode = currLevel->tailSentinel->left;
+        if (prevNode->isSentinel == false){
+            prevNode->width++;
+        }
+        currLevel = currLevel->up;
+    }
+
+    // restart at level 0
+    currLevel = l->levels->bottom;
+    SkipNode *belowNode = _makeNode(v);
+    SkipNode *sentinel = currLevel->tailSentinel; // header
+
+    // update right connection
+    belowNode->left = sentinel->left;
+    sentinel->left->right = belowNode;
+    sentinel->left = belowNode;
+    belowNode->right = sentinel;
+    
+    // update values
+    l->size++;
+    l->rightmost = v;
+    if (l->size == 1) l->leftmost = v;
+    l->maxHeight = (LENGTH) ceil(log2(l->size));
+
+    Level *maxLevelReached = _promoteLevel(l, sentinel, belowNode, v, true);
+    LevelRecord *newRecord = (LevelRecord*) (malloc(sizeof(LevelRecord)));
+    newRecord->prev = l->nodeTopLevels->head;
+    newRecord->next = NULL;
+    l->nodeTopLevels->tail = newRecord;
+    if (l->nodeTopLevels->head == NULL){
+        l->nodeTopLevels->head = newRecord;
+    }
+    newRecord->topLevel = maxLevelReached;
+}
+
+bool _pop_left_base(SkipList *l){
+    // cannot pop an empty list
+    if (l->size == 0) return false;
+
+    // update widths
+    Level *currLevel = l->levels->bottom; // start from level 0
+    while (currLevel != NULL){
+        SkipNode* prevNode = currLevel->headSentinel->right;
+        prevNode->width--; // decrement widths
+        currLevel = currLevel->up;
+    }
+
+    // decrease the size
+    l->size--;
+
+    // remove leftmost node from list
+    LevelRecord *currRecord = l->nodeTopLevels->head;
+    LevelRecord *prevRecord = currRecord->next;
+    Level *maxLevelReached = currRecord->topLevel;
+
+    l->nodeTopLevels->head = prevRecord;
+    if (prevRecord != NULL){
+        prevRecord->prev = NULL;
+    }
+    if (l->nodeTopLevels->tail == currRecord){
+        l->nodeTopLevels->tail = NULL;
+    }
+    free(currRecord);
+    
+    _demoteLevel(l, maxLevelReached, false);
+
+    // single case
+    if (l->size > 0){
+        DATA leftmostVal = l->levels->bottom->headSentinel->right->val;
+        l->leftmost = leftmostVal;
+        if (l->size == 1){
+            l->rightmost = leftmostVal;
+        }
+    }
+
+    return true;
+}
+
+bool _pop_right_base(SkipList *l){
+    // cannot pop an empty list
+    if (l->size == 0) return false;
+
+    Level *currLevel = l->levels->bottom; // start from level 0
+    SkipNode *popNode = currLevel->headSentinel->right; 
+    while (currLevel != NULL){
+        popNode = currLevel->headSentinel->right;
+        SkipNode* prevNode = popNode->right;
+        if (prevNode != NULL && currLevel){
+            prevNode->width--; // decrement widths
+        }
+        currLevel = currLevel->up;
+    }
+
+    currLevel = l->levels->bottom;
+    popNode = l->is_reversed ? currLevel->headSentinel->right : currLevel->tailSentinel->left;
+
+    // single case
+    l->rightmost = (popNode->left && popNode->left != currLevel->headSentinel) ? popNode->left->val : 0; 
+
+    
+    // remove rightmost node from list
+    LevelRecord *currRecord = l->nodeTopLevels->tail;
+    LevelRecord *prevRecord = currRecord->prev;
+    Level *maxLevelReached = currRecord->topLevel;
+
+    l->nodeTopLevels->tail = prevRecord;
+    if (prevRecord != NULL){
+        prevRecord->next = NULL;
+    }
+    if (l->nodeTopLevels->head == currRecord){
+        l->nodeTopLevels->head = NULL;
+    }
+    free(currRecord);
+    
+    _demoteLevel(l, maxLevelReached, true);
+
+    // single case
+    if (l->size > 0){
+        DATA rightmostVal = l->levels->bottom->tailSentinel->left->val;
+        l->rightmost = rightmostVal;
+        if (l->size == 1){
+            l->leftmost = rightmostVal;
+        }
+    }
+
+    return true;
+}
+
 DATA get(SkipList *l, LENGTH i){ 
     SkipNode *retNode = _getNode(l, i);
     if (retNode == NULL){
@@ -542,6 +479,19 @@ DATA peek_left(SkipList *l){
 DATA peek_right(SkipList *l){
     if (l->size == 0) return 0;
     return l->rightmost;
+}
+
+void push_left(SkipList *l, DATA v){
+    l->is_reversed == false ? _push_left_base(l, v) : _push_right_base(l, v);
+}
+void push_right(SkipList *l, DATA v){
+    l->is_reversed == false ? _push_right_base(l, v) : _push_left_base(l, v);
+}
+bool pop_left(SkipList *l){
+    return l->is_reversed == false ? _pop_left_base(l) : _pop_right_base(l);
+}
+bool pop_right(SkipList *l){
+    return l->is_reversed == false ? _pop_right_base(l) : _pop_left_base(l);
 }
 
 void display(SkipList *sl) {
@@ -585,7 +535,10 @@ int main(){
     }
     SkipList *skip_list = make(n, array);
     display(skip_list);
-    _getNode(skip_list, 1);
+    pop_left(skip_list);
+    display(skip_list);
+    pop_left(skip_list);
+    display(skip_list);
     // printf("%d ", get(skip_list, 2));
 
 }
