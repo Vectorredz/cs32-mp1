@@ -9,8 +9,8 @@ Look into the Mirror...
 '''
 LAYER 0:
     >> INITIALIZATION TEST
-        - MAKE (0 -> 2000)
-        - MAKE (length of RANDOM_INTEGER(0, 2000))
+        - MAKE (0 -> 1000)
+        - MAKE (length of RANDOM_INTEGER(0, 1000))
     
 LAYER 1:
     >> BASIC OPERATIONS TEST
@@ -21,6 +21,7 @@ LAYER 1:
             - SIZE
             - EMPTY
             - REVERSE
+        * Repeat all of the above but done for each MAKE (0 -> 1000)
 
 LAYER 2:
     >> INSERTIONS/DELETIONS TEST
@@ -271,8 +272,8 @@ print("> Initializing tests...")
 print("> Layer 0...")
 WRITECUSTOM("LAYER", str(0))
 
-# test make (0 -> 2000)
-for n in range(2000+1):
+# test make (0 -> 1000)
+for n in range(1000+1):
     seq = list[DATA]()
     for i in range(n):
         seq.append(randomData())
@@ -284,8 +285,8 @@ for n in range(2000+1):
         "RESULT": listToResult(mirror.TEST_elements())
     })
 
-# test make (RANDOM_INTEGER(0, 2000))
-n = random.randint(0, 2000)
+# test make (RANDOM_INTEGER(0, 1000))
+n = random.randint(0, 1000+1)
 seq = list[DATA]()
 for i in range(n):
     seq.append(randomData())
@@ -312,36 +313,71 @@ for i in range(mirror.size()):
     WRITE(True, mirror, "set", i, randomData())
 
 # check other operations
-WRITE(True, mirror, "set", 0, randomData())
-WRITE(True, mirror, "peek_left")
-WRITE(True, mirror, "peek_right")
+def _basicCheck(mirror: Mirror):
+    for _ in range(2):
+        WRITE(True, mirror, "get", 0)
+        WRITE(True, mirror, "get", mirror.size()-1)
+        WRITE(True, mirror, "peek_left")
+        WRITE(True, mirror, "peek_right")
 
-WRITE(True, mirror, "set", mirror.size()-1, randomData())
-WRITE(True, mirror, "peek_left")
-WRITE(True, mirror, "peek_right")
+        WRITE(True, mirror, "reverse")
 
-WRITE(True, mirror, "reverse")
+        WRITE(True, mirror, "size")
+        WRITE(True, mirror, "empty")
 
-WRITE(True, mirror, "get", 0)
-WRITE(True, mirror, "get", mirror.size()-1)
-WRITE(True, mirror, "set", 0, randomData())
-WRITE(True, mirror, "get", 0)
-WRITE(True, mirror, "get", mirror.size()-1)
-WRITE(True, mirror, "peek_left")
-WRITE(True, mirror, "peek_right")
+    for _ in range(2):
+        WRITE(True, mirror, "get", 0)
+        WRITE(True, mirror, "get", mirror.size()-1)
+        WRITE(True, mirror, "peek_left")
+        WRITE(True, mirror, "peek_right")
 
-WRITE(True, mirror, "get", 0)
-WRITE(True, mirror, "get", mirror.size()-1)
-WRITE(True, mirror, "set", mirror.size()-1, randomData())
-WRITE(True, mirror, "get", 0)
-WRITE(True, mirror, "get", mirror.size()-1)
-WRITE(True, mirror, "peek_left")
-WRITE(True, mirror, "peek_right")
+        WRITE(True, mirror, "set", 0, randomData())
 
-WRITE(True, mirror, "reverse")
+        WRITE(True, mirror, "get", 0)
+        WRITE(True, mirror, "get", mirror.size()-1)
+        WRITE(True, mirror, "peek_left")
+        WRITE(True, mirror, "peek_right")
 
-WRITE(True, mirror, "size")
-WRITE(True, mirror, "empty")
+        WRITE(True, mirror, "set", mirror.size()-1, randomData())
+
+        WRITE(True, mirror, "get", 0)
+        WRITE(True, mirror, "get", mirror.size()-1)
+        WRITE(True, mirror, "peek_left")
+        WRITE(True, mirror, "peek_right")
+
+        WRITE(True, mirror, "reverse")
+
+        WRITE(True, mirror, "size")
+        WRITE(True, mirror, "empty")
+
+_basicCheck(mirror)
+
+# Combine with make (0 -> 1000)
+for n in range(1000+1):
+    seq = list[DATA]()
+    for i in range(n):
+        seq.append(randomData())
+    mirror = Mirror(n, seq)
+    writer.writerow({
+        "OPERATION": "make",
+        "ARG1": n,
+        "ARG2": listToResult(seq),
+        "RESULT": listToResult(mirror.TEST_elements())
+    })
+    _basicCheck(mirror)
+
+# make again (RANDOM_INTEGER(0, 1000))
+n = random.randint(0, 1000+1)
+seq = list[DATA]()
+for i in range(n):
+    seq.append(randomData())
+mirror = Mirror(n, seq)
+writer.writerow({
+    "OPERATION": "make",
+    "ARG1": n,
+    "ARG2": listToResult(seq),
+    "RESULT": listToResult(mirror.TEST_elements())
+})
 
 WRITECUSTOM("LAYERFIN", str(1))
 print("> Done.")

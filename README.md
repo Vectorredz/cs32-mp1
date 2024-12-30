@@ -138,8 +138,8 @@ This is so that it's easier to catch bugs in the earlier layers that test a set 
 > LAYER 0
 ```
 INITIALIZATION TEST
-    - MAKE (0 -> 2000)
-    - MAKE (length of RANDOM_INTEGER(0, 2000))
+    - MAKE (0 -> 1000)
+    - MAKE (length of RANDOM_INTEGER(0, 1000))
 ```
 This layer tests for the `make` operation.
 
@@ -154,8 +154,10 @@ This layer tests for the `make` operation.
     - SIZE
     - EMPTY
     - REVERSE
+    * Repeat all of the above but done for each MAKE (0 -> 1000)
 ```
-This layer is especially important for testing all non-insertion and non-deletion operations to see if they work as intended.
+This layer is especially important for testing all non-insertion and non-deletion operations to see if they work as intended.\
+Additionally, it repeats the basic operations test, but right after making a new list for each size $0$ to $1000$ again, to check for `make`'s correctness once more.
 
 
 <br>
