@@ -147,7 +147,7 @@ Then, since the datatype of `LENGTH` is unsigned, it only calls `_constructPTree
 </details>
 
 <details>
-<summary>List Info</summary>
+<summary>Flags/List Info</summary>
 
 
 ### Operation: `SIZE`
