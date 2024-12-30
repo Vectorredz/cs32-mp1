@@ -133,7 +133,7 @@ Note also that **RESULT** can be set to "**X**" to disable checking for correctn
 ### Layers
 For the actual tests themselves, to test for each ADT's correctness and efficiency, we have a **Layered Testing** system. The tests are divided into **Layers**.\
 Each **Layer** tests a particular set of operations, edge cases, and concepts, with later layers potentially being harder to pass.\
-This is so that it's easier to catch bugs in the earlier layers that test a set of operations instead of everything all at once, as the later layers throw eveything they can at the list to absolutely make sure nothing is broken and no lists pass even if they have broken edge cases, while being a bit more confusing to debug for the implementer.
+This is so that it's easier to catch bugs in the earlier layers that test a set of operations instead of everything all at once, as the later layers throw eveything they can at the list to absolutely make sure nothing is broken and no lists pass if they have unnoticed broken edge cases, while being a bit more confusing to debug for the implementer.
 
 > LAYER 0
 ```
