@@ -191,6 +191,7 @@ With this helper function, we can now make:
 If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
 It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and returns its `DATA` value.\
 The index is affected by the `reversed` flag to correct for reversal.
+
 #### Main: `set(list, i, v)`
 If $0 \leq i < n$ is not satisfied, then it simply returns.\
 It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.\
@@ -216,8 +217,9 @@ The purpose of this helper function is to construct a `PTree` of type $0$, with 
 This is useful for pushing a new value into the list.
 
 #### Helpers:
-`_mergeNonDistinctPTreesToRight(list, start)`\
-`_mergeNonDistinctPTreesToLeft(list, start)`\
+**`_mergeNonDistinctPTreesToRight(list, start)`**\
+**`_mergeNonDistinctPTreesToLeft(list, start)`**
+
 Here we have helper functions for merging non-distinct `PTrees` together, split into two: one for merging to the left, and one for merging to the right.\
 `PTrees` are non-distinct if their type `k` is the same, which means they can be combined into one greater power of two,
 improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing
@@ -230,8 +232,9 @@ We immediately stop if the next tree's type is distinct from the current tree, a
 This helper function directly modifies the doubly-linked-list of the main list.
 
 #### Helpers:
-`_cascadeRemovalLeft(list, start) -> subHead, subTail`\
-`_cascadeRemovalRight(list, start) -> subHead, subTail`\
+**`_cascadeRemovalLeft(list, start) -> subHead, subTail`**\
+**`_cascadeRemovalRight(list, start) -> subHead, subTail`**
+
 These are helper functions used by the `pop_*` operations.\
 They are pretty much the opposite of the merge operations, split into two: one for cascading the right of the `PTree`, and one for cascading the left.\
 We know that only the leftmost (rightmost) leaf of the target `PTree` is the one that needs to be removed.
