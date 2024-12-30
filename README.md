@@ -120,7 +120,7 @@ Their text can be of the following:
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
-Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.
+*\*Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.*
 
 
 <br>
