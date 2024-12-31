@@ -172,8 +172,6 @@ void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
     fclose(f);
 }
 
-
-
 char* listToResult(Reflection* list, bool includeReversal){
     // Turns a sequence of DATA values into a string delimeted by ","
     LENGTH n;
@@ -274,14 +272,24 @@ void VERIFY(Reflection* list, size_t lineNum, char* operation, char* RESULT, cha
     }
 }
 
+
 // Used for time plots output
 typedef struct _WRITEDATA {
     char* operation;
     LENGTH n;
     PROCESSED_TIME c;
 } WRITEDATA;
+
 void WRITE(FILE* f, WRITEDATA wd, bool newLine){
     fprintf(f, "%s|%zu|%" TIME_FORMAT, wd.operation, wd.n, wd.c);
+
+    if (newLine == true){
+        fprintf(f, "\n");
+    }
+}
+
+void export_delta_time(FILE* f, WRITEDATA wd, bool newLine){
+    fprintf(f, "%lf ", wd.c);
     if (newLine == true){
         fprintf(f, "\n");
     }
@@ -295,13 +303,14 @@ void WRITE(FILE* f, WRITEDATA wd, bool newLine){
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
-
 int main(){
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
 
     // Get tests first
     printf("> Getting tests for ((" INPUT_DIRECTORY ")) ...\n");
     size_t totalTests = 0;
+
+    // deltaTime array
 
     size_t totalFiles = 6;
     char** files = (char**) malloc(totalFiles*sizeof(char*));
@@ -367,12 +376,14 @@ int main(){
 
     // Where the output values are stored
     WRITEDATA* writeDataLines = (WRITEDATA*) malloc(totalOperations*sizeof(WRITEDATA));
+    double *deltaTime = malloc(totalOperations * sizeof(double));
 
     printf("> Done.\n");
 
     printf("> Conducting test operations...\n");
 
     FILE* f = fopen(OUTPUT_FILE, "w+");
+    FILE *plot = fopen("deldata.txt", "w+");
     Reflection* list = NULL;
 
     size_t opCounter = 0;
@@ -592,9 +603,9 @@ int main(){
         wd.operation = opCopy;
         wd.n = n;
         wd.c = dt;
+        deltaTime[opCounter] = dt;
         writeDataLines[opCounter] = wd;
         opCounter++;
-        
         free(mRESULT);
         free(testLine[0]);
         free(testLine[1]);
@@ -602,6 +613,7 @@ int main(){
         free(testLine[3]);
         free(testLine);
     }
+
 
     _TIME(&timeGlobal);
     if (LINE_DISPLAY == true){
@@ -616,8 +628,10 @@ int main(){
 
     printf("> Writing deltatime benchmarks to output...\n");
     // Write all benchmarks to the file
+    ;
     for (size_t opNum = 0; opNum < totalOperations; opNum++){
         WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
+        export_delta_time(plot, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
         free(writeDataLines[opNum].operation);
     }
     printf("> Done.\n");

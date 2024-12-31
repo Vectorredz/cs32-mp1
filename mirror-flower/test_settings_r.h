@@ -8,8 +8,8 @@
 // --------------------------------------------------------- >>
 
 // Modify both header and typedef to the list to test
-#include "../doubly-linked-list/d_linked_list.c" //(yes this is a Sin :man_running:)
-typedef list Reflection;
+#include "../skip-list/skip-list.c" //(yes this is a Sin :man_running:)
+typedef SkipList Reflection;
 
 // TYPE: boolean
 // Set to true if you would like the current line being executed to be displayed
@@ -32,6 +32,8 @@ typedef list Reflection;
 
 // Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.csv"
+// #define TIME_COMPLEXITY_GRAPH_DISPLAY false
+
 
 
 
