@@ -320,12 +320,15 @@ int main(){
         strcat(path, "/");
         strcat(path, files[i]);
 
+        printf("> %s...\n", path);
         size_t t = 0;
         char*** tests0 = NULL;
         getTests(path, &t, &tests0);
         fileTests[i] = tests0;
         fileLines[i] = t;
         totalTests += t;
+
+        printf("> Done.\n");
     }
 
     char*** tests = (char***) malloc(totalTests*sizeof(char**));
@@ -337,7 +340,10 @@ int main(){
             tests[_t] = tests0[j];
             _t++;
         }
+        free(tests0);
     }
+    free(fileLines);
+    free(fileTests);
 
     printf("> Done.\n");
     
