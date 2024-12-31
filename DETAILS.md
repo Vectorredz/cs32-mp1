@@ -64,9 +64,41 @@ It allocates memory for the `List` `l` using `malloc()`.\ It initially points `h
 #### Main: `*make(n, seq) -> list`
 this is the main operation of `Make`
 
+<hr>
+</details>
+
+<details>
+<summary>Flags/List Info</summary>
+
+### Operation: `reverse(l)`
+### Operation: `size(l) -> LENGTH`
+### Operation: `empty(l) -> bool`
 
 <hr>
 </details>
+
+<details>
+<summary>Getters/Setters</summary>
+
+### Operation: `get(l, i) -> DATA`
+### Operation: `set(l, i, v)`
+### Operation: `peek_left(l) -> DATA`
+### Operation: `peek_right(l) -> DATA`
+
+<hr>
+</details>
+
+<details>
+<summary>Insertions/Deletions</summary>
+
+### Operation: `pop_left(l) -> bool`
+### Operation: `pop_right(l) -> bool`
+### Operation: `push_left(l, v)`
+### Operation: `push_right(l, v)`
+
+<hr>
+</details>
+
 
 <hr>
 </details>
