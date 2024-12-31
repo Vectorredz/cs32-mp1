@@ -38,7 +38,7 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 
 <hr>
 
-<details>
+</details>
 <summary>Structs</summary>
 
 #### Struct: `List`
@@ -53,7 +53,7 @@ It has pointer `left` that references to the previous `ListNode` and `right` whi
 <hr>
 </details>
 
-<details>
+</details>
 <summary>Initializer</summary>
 
 ### Operation: `MAKE`
@@ -64,7 +64,7 @@ It allocates memory for the `List` `l` using `malloc()`.\ It initially points `h
 #### Main: `*make(n, seq) -> list`
 this is the main operation of `Make`
 
-</details>
+
 <hr>
 </details>
 
@@ -79,9 +79,73 @@ TODO
 
 <details>
 <summary>Skip List</summary>
-TODO
 
+### Summary
+
+Skip List is a unique data structure that is a combintion of `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Hence, the`update` operation of a `Linked-List` with time complexity of $O(1)$ and a search of $O(logn)$ of a `List`.
+
+<hr>
+
+<details>
+<summary>Structs</summary>
+
+#### Struct: `SkipList`
+#### Struct: `SkipNode`
+#### Struct: `Levellist`
+#### Struct: `Level`
+#### Struct: `LevelRecord`
+#### Struct: `LevelRecordsList`
+
+<hr>
 </details>
+
+<details>
+<summary>Initializer</summary>
+
+### Operation: `MAKE`
+#### Helper: `_makeNode(v) -> SkipNode`
+#### Helper: `_makeLevel() -> Level`
+#### Helper: `_initSkipList() -> SkipList`
+#### Main: `make(n, seq) -> SkipList`
+
+<hr>
+</details>
+
+<details>
+<summary>Flags/List Info</summary>
+
+### Operation: `reverse(l)`
+### Operation: `size(l) -> LENGTH`
+### Operation: `empty(l) -> bool`
+
+<hr>
+</details>
+
+<details>
+<summary>Getters/Setters</summary>
+
+### Operation: `get(l, i) -> DATA`
+### Operation: `set(l, i, v)`
+### Operation: `peek_left(l) -> DATA`
+### Operation: `peek_right(l) -> DATA`
+
+<hr>
+</details>
+
+<details>
+<summary>Insertions/Deletions</summary>
+
+### Operation: `pop_left(l) -> bool`
+### Operation: `pop_right(l) -> bool`
+### Operation: `push_left(l, v)`
+### Operation: `push_right(l, v)`
+
+<hr>
+</details>
+
+<hr>
+</details>
+
 
 <hr>
 <hr>
