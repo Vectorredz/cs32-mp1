@@ -38,7 +38,7 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 
 <hr>
 
-</details>
+<details>
 <summary>Structs</summary>
 
 #### Struct: `List`
@@ -53,7 +53,7 @@ It has pointer `left` that references to the previous `ListNode` and `right` whi
 <hr>
 </details>
 
-</details>
+<details>
 <summary>Initializer</summary>
 
 ### Operation: `MAKE`
@@ -64,7 +64,7 @@ It allocates memory for the `List` `l` using `malloc()`.\ It initially points `h
 #### Main: `*make(n, seq) -> list`
 this is the main operation of `Make`
 
-
+</details>
 <hr>
 </details>
 
