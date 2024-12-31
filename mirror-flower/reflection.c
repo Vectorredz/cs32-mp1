@@ -87,36 +87,12 @@ constant, linear, or logarithmic in nature.
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 
-void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
-    FILE *f = fopen(inputFileName, "r");
-    size_t lines = 0;
+void getTests(char* directory, size_t* testIndexRef, char**** testsRef){
+    FILE *f = fopen(directory, "r");
     bool newline = true;
 
     // temporary buffer for getting each character one at a time
     char* testBuffer = (char*) malloc(2*sizeof(char));
-
-    // get the number of lines first, then go back to beginning of file
-    while (true){
-        while (fgets(testBuffer, 2, f) != NULL){
-            if (testBuffer[0] == '\n'){
-                newline = true;
-            }
-            if (newline == true){
-                newline = false;
-                lines++;
-            }
-        }
-        if (ferror(f)){
-            return;
-        } else {
-            break;
-        }
-    }
-    rewind(f);
-
-
-    char*** tests = (char***) malloc(lines*sizeof(char**));
-    size_t i = 0;
     while (true){
         long seekBack = ftell(f);
         size_t length = 0;
@@ -153,8 +129,8 @@ void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
             j++;
             token = strtok(NULL, "|");
         }
-        tests[i] = testLine;
-        i++;
+        (*testsRef)[*testIndexRef] = testLine;
+        *testIndexRef++;
 
         if (eof == true){
             break;
@@ -164,10 +140,8 @@ void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
         }
         free(buffer);
     }
-    free(testBuffer);
 
-    *tRef = lines;
-    *testsRef = tests;
+    free(testBuffer);
     fclose(f);
 }
 
@@ -299,14 +273,19 @@ int main(){
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
 
     // Get tests first
-    printf("> Getting tests for ((" INPUT_FILE ")) ...\n");
+    printf("> Getting tests for ((" INPUT_DIRECTORY ")) ...\n");
+
     size_t totalTests = 0;
     char*** tests = NULL;
-    getTests(INPUT_FILE, &totalTests, &tests);
+    char files[4] = {"LAYER0.csv", "LAYER1.csv", "LAYER2.csv", "LAYER3.csv", "LAYER4.csv", "LAYER5.csv"};
+    
+    getTests(strcat(INPUT_DIRECTORY, files[0]), &totalTests, &tests);
+
     printf("> Done.\n");
     
     
     printf("> Initializing variables...\n");
+
     // Initialize timer
     _TIME_init();
 
@@ -322,9 +301,11 @@ int main(){
 
     // Where the output values are stored
     WRITEDATA* writeDataLines = (WRITEDATA*) malloc(totalOperations*sizeof(WRITEDATA));
+
     printf("> Done.\n");
 
     printf("> Conducting test operations...\n");
+
     FILE* f = fopen(OUTPUT_FILE, "w+");
     Reflection* list = NULL;
 
@@ -561,6 +542,7 @@ int main(){
             printf("\033[A\033[K\033[A\033[K");
         }
     }
+
     printf("[O] [GLOBAL]: AC [%lfs]\n", _PROCESSTIME(_timeGlobal, timeGlobal));
     
     printf("> Well Done.\n");

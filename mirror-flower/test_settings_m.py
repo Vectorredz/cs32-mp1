@@ -3,9 +3,10 @@
 Will your Reflection be the same as mine?
 '''
 # --------------------------------------------------------- >>
+from pathlib import Path
 
-# File path to write the operations to
-INPUT_FILE = "test_input.csv"
+# File directory to write the operations to
+INPUT_DIRECTORY = Path("inputs")
 
 # If you want to test for large inputs (WARNING: takes a long time to generate)
 # For efficiency test ONLY (The specific test lines with large inputs do NOT check for correctness)

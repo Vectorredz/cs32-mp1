@@ -26,9 +26,9 @@ typedef list Reflection;
 // TLE efficiency boundary (in milliseconds)
 #define TLE_BOUND 1000.0
 
-// Input File Path (contains operation, args, and correct result for cross-checks)
+// Inputs File Path (contains operation, args, and correct result for cross-checks)
 // ((test_input_0.csv)) is for testing the tester itself
-#define INPUT_FILE "test_input.csv"
+#define INPUT_DIRECTORY "inputs"
 
 // Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.csv"

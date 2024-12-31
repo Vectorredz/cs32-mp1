@@ -76,7 +76,7 @@ LAYER 4:
             - bound size to <=4444
             - After the loop, pops list until n == 0
 '''
-from test_settings_m import INPUT_FILE, LARGE_INPUTS, SEED
+from test_settings_m import INPUT_DIRECTORY, LARGE_INPUTS, SEED
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
 # Do not edit past this point!
@@ -88,6 +88,8 @@ from test_settings_m import INPUT_FILE, LARGE_INPUTS, SEED
 from collections.abc import Sequence, Callable
 from typing import TypeVar
 import csv, random, os
+from csv import DictWriter
+from pathlib import Path
 
 random.seed(SEED)
 
@@ -167,7 +169,7 @@ print("Look into the Mirror...")
 print("> Initializing functions and file writing...")
 
 # Helper functions for easier writing of test inputs
-dataBound = 10**18
+dataBound = 10**4
 def randomData() -> DATA:
     return random.randint(-dataBound, dataBound)
 
@@ -226,12 +228,13 @@ OPERATIONS["push_right"] = RESULT_push_right
 OPERATIONS["pop_left"] = RESULT_pop_left
 OPERATIONS["pop_right"] = RESULT_pop_right
 
-testFile = open(INPUT_FILE, "w+", newline="")
-fields = ["OPERATION", "ARG1", "ARG2", "RESULT"]
-writer = csv.DictWriter(testFile, fieldnames=fields, delimiter="|")
-writer.writeheader
+def MAKEFILE(directory: Path):
+    testFile = directory.open("w+", newline="")
+    fields = ["OPERATION", "ARG1", "ARG2", "RESULT"]
+    writer = csv.DictWriter(testFile, fieldnames=fields, delimiter="|")
+    return testFile, writer
 
-def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
+def WRITE(writer: DictWriter, checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
     # prevent UB
     if mirror.size() == 0:
         if operation == "get" \
@@ -258,15 +261,6 @@ def WRITE(checkForCorrectness: bool, mirror: Mirror, operation: str, *args):
         "RESULT": result
     })
 
-# Custom messages within the test_input itself as the tester goes through each line (currently there are "LAYER"/"LAYERFIN")
-def WRITECUSTOM(msg: int = "None", arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
-    writer.writerow({
-        "OPERATION": msg,
-        "ARG1": arg1,
-        "ARG2": arg2,
-        "RESULT": RESULT,
-    })
-
 print("> Done.")
 
 
@@ -279,15 +273,28 @@ print("> Done.")
 # ----------------------------------------- #
 # --------------------------------------------------------- >>
 
-print("> Initializing tests...")
+mirror: Mirror | None = None
 
 
 # ------------------------ LAYER 0: Initialize
-print("> Layer 0...")
-WRITECUSTOM("LAYER", str(0))
+def LAYER0(writer: DictWriter):
+    global mirror
+    
+    # test make (0 -> 1000)
+    for n in range(1000+1):
+        seq = list[DATA]()
+        for i in range(n):
+            seq.append(randomData())
+        mirror = Mirror(n, seq)
+        writer.writerow({
+            "OPERATION": "make",
+            "ARG1": n,
+            "ARG2": listToResult(seq),
+            "RESULT": listToResult(mirror.TEST_elements())
+        })
 
-# test make (0 -> 1000)
-for n in range(1000+1):
+    # test make (RANDOM_INTEGER(0, 1000))
+    n = random.randint(0, 1000+1)
     seq = list[DATA]()
     for i in range(n):
         seq.append(randomData())
@@ -298,76 +305,76 @@ for n in range(1000+1):
         "ARG2": listToResult(seq),
         "RESULT": listToResult(mirror.TEST_elements())
     })
-
-# test make (RANDOM_INTEGER(0, 1000))
-n = random.randint(0, 1000+1)
-seq = list[DATA]()
-for i in range(n):
-    seq.append(randomData())
-mirror = Mirror(n, seq)
-writer.writerow({
-    "OPERATION": "make",
-    "ARG1": n,
-    "ARG2": listToResult(seq),
-    "RESULT": listToResult(mirror.TEST_elements())
-})
-
-WRITECUSTOM("LAYERFIN", str(0))
-print("> Done.")
 
 
 # ------------------------ LAYER 1: No Insertions/Deletions
 print("> Layer 1...")
 
-WRITECUSTOM("LAYER", str(1))
-# check initial indices
-for i in range(mirror.size()):
-    WRITE(True, mirror, "get", i)
-for i in range(mirror.size()):
-    WRITE(True, mirror, "set", i, randomData())
+def LAYER1(writer: DictWriter):
+    global mirror
 
-# check other operations
-def _basicCheck(mirror: Mirror):
-    for _ in range(2):
-        WRITE(True, mirror, "get", 0)
-        WRITE(True, mirror, "get", mirror.size()-1)
-        WRITE(True, mirror, "peek_left")
-        WRITE(True, mirror, "peek_right")
+    # check initial indices
+    for i in range(mirror.size()):
+        WRITE(writer, True, mirror, "get", i)
+    for i in range(mirror.size()):
+        WRITE(writer, True, mirror, "set", i, randomData())
 
-        WRITE(True, mirror, "reverse")
+    # check other operations
+    def _basicCheck(mirror: Mirror):
+        for _ in range(2):
+            WRITE(writer, True, mirror, "get", 0)
+            WRITE(writer, True, mirror, "get", mirror.size()-1)
+            WRITE(writer, True, mirror, "peek_left")
+            WRITE(writer, True, mirror, "peek_right")
 
-        WRITE(True, mirror, "size")
-        WRITE(True, mirror, "empty")
+            WRITE(writer, True, mirror, "reverse")
 
-    for _ in range(2):
-        WRITE(True, mirror, "get", 0)
-        WRITE(True, mirror, "get", mirror.size()-1)
-        WRITE(True, mirror, "peek_left")
-        WRITE(True, mirror, "peek_right")
+            WRITE(writer, True, mirror, "size")
+            WRITE(writer, True, mirror, "empty")
 
-        WRITE(True, mirror, "set", 0, randomData())
+        for _ in range(2):
+            WRITE(writer, True, mirror, "get", 0)
+            WRITE(writer, True, mirror, "get", mirror.size()-1)
+            WRITE(writer, True, mirror, "peek_left")
+            WRITE(writer, True, mirror, "peek_right")
 
-        WRITE(True, mirror, "get", 0)
-        WRITE(True, mirror, "get", mirror.size()-1)
-        WRITE(True, mirror, "peek_left")
-        WRITE(True, mirror, "peek_right")
+            WRITE(writer, True, mirror, "set", 0, randomData())
 
-        WRITE(True, mirror, "set", mirror.size()-1, randomData())
+            WRITE(writer, True, mirror, "get", 0)
+            WRITE(writer, True, mirror, "get", mirror.size()-1)
+            WRITE(writer, True, mirror, "peek_left")
+            WRITE(writer, True, mirror, "peek_right")
 
-        WRITE(True, mirror, "get", 0)
-        WRITE(True, mirror, "get", mirror.size()-1)
-        WRITE(True, mirror, "peek_left")
-        WRITE(True, mirror, "peek_right")
+            WRITE(writer, True, mirror, "set", mirror.size()-1, randomData())
 
-        WRITE(True, mirror, "reverse")
+            WRITE(writer, True, mirror, "get", 0)
+            WRITE(writer, True, mirror, "get", mirror.size()-1)
+            WRITE(writer, True, mirror, "peek_left")
+            WRITE(writer, True, mirror, "peek_right")
 
-        WRITE(True, mirror, "size")
-        WRITE(True, mirror, "empty")
+            WRITE(writer, True, mirror, "reverse")
 
-_basicCheck(mirror)
+            WRITE(writer, True, mirror, "size")
+            WRITE(writer, True, mirror, "empty")
 
-# Combine with make (0 -> 1000)
-for n in range(1000+1):
+    _basicCheck(mirror)
+
+    # Combine with make (0 -> 1000)
+    for n in range(1000+1):
+        seq = list[DATA]()
+        for i in range(n):
+            seq.append(randomData())
+        mirror = Mirror(n, seq)
+        writer.writerow({
+            "OPERATION": "make",
+            "ARG1": n,
+            "ARG2": listToResult(seq),
+            "RESULT": listToResult(mirror.TEST_elements())
+        })
+        _basicCheck(mirror)
+
+    # make again (RANDOM_INTEGER(0, 1000))
+    n = random.randint(0, 1000+1)
     seq = list[DATA]()
     for i in range(n):
         seq.append(randomData())
@@ -378,173 +385,143 @@ for n in range(1000+1):
         "ARG2": listToResult(seq),
         "RESULT": listToResult(mirror.TEST_elements())
     })
-    _basicCheck(mirror)
 
-# make again (RANDOM_INTEGER(0, 1000))
-n = random.randint(0, 1000+1)
-seq = list[DATA]()
-for i in range(n):
-    seq.append(randomData())
-mirror = Mirror(n, seq)
-writer.writerow({
-    "OPERATION": "make",
-    "ARG1": n,
-    "ARG2": listToResult(seq),
-    "RESULT": listToResult(mirror.TEST_elements())
-})
-
-WRITECUSTOM("LAYERFIN", str(1))
 print("> Done.")
 
 
 # ------------------------ LAYER 2: Consecutive
 print("> Layer 2...")
-WRITECUSTOM("LAYER", str(2))
 
-# Consecutive Normal Pushes
-for i in range(random.randint(500, 1000)):
-    WRITE(True, mirror, "push_left", randomData())
+def LAYER2(writer: DictWriter):
+    global mirror
 
-# Consecutive Normal Pops
-while (mirror.size() > 0):
-    WRITE(True, mirror, "pop_left")
-    
+    # Consecutive Normal Pushes
+    for i in range(random.randint(500, 1000)):
+        WRITE(writer, True, mirror, "push_left", randomData())
 
-# Again.
-for i in range(random.randint(500, 1000)):
-    WRITE(True, mirror, "push_right", randomData())
-while (mirror.size() > 0):
-    WRITE(True, mirror, "pop_right")
-
-# Double Consecutive Normal Punch
-for i in range(random.randint(500, 1000)):
-    operations = ["push_left", "push_right", "pop_left", "pop_right"]
-    chosen = operations[random.randint(0, len(operations)-1)]
-    if chosen == "pop_left" or chosen == "pop_right":
-        WRITE(True, mirror, chosen)
-    else:
-        WRITE(True, mirror, chosen, randomData())
-WRITECUSTOM("LAYERFIN", str(2))
-print("> Done.")
-
-
-# ------------------------ LAYER 3: Killer Move: Serious Series
-print("> Layer 3...")
-WRITECUSTOM("LAYER", str(3))
-
-# Serious Punch
-for i in range(random.randint(5000, 10000)):
-    r = random.randint(1, 4)
-    if r == 1:
-        WRITE(True, mirror, "get", randomIndex(mirror))
-    elif r == 2:
-        WRITE(True, mirror, "set", randomIndex(mirror), randomData())
-    elif r == 3:
-        WRITE(True, mirror, "peek_left")
-    elif r == 4:
-        WRITE(True, mirror, "peek_right")
+    # Consecutive Normal Pops
+    while (mirror.size() > 0):
+        WRITE(writer, True, mirror, "pop_left")
         
-    if random.randint(1, 10) == 1:
-        WRITE(True, mirror, "reverse")
-    WRITE(True, mirror, "size")
-    WRITE(True, mirror, "empty")
 
-operations = ["push_left", "push_right", "pop_left", "pop_right"]
-for i in range(random.randint(5000, 10000)):
-    chosen = operations[random.randint(0, len(operations)-1)]
-    if chosen.find("pop") != -1:
-        WRITE(True, mirror, chosen)
-    else:
-        WRITE(True, mirror, chosen, randomData())
-    if (random.randint(1, 10) == 1):
-        WRITE(True, mirror, "reverse")
-    if (random.randint(1, 5) == 1):
-        WRITE(True, mirror, "set", randomIndex(mirror), randomData())
-    WRITE(True, mirror, "size")
-    WRITE(True, mirror, "empty")
-WRITECUSTOM("LAYERFIN", str(3))
-print("> Done.")
+    # Again.
+    for i in range(random.randint(500, 1000)):
+        WRITE(writer, True, mirror, "push_right", randomData())
+    while (mirror.size() > 0):
+        WRITE(writer, True, mirror, "pop_right")
+
+    # Double Consecutive Normal Punch
+    for i in range(random.randint(500, 1000)):
+        operations = ["push_left", "push_right", "pop_left", "pop_right"]
+        chosen = operations[random.randint(0, len(operations)-1)]
+        if chosen == "pop_left" or chosen == "pop_right":
+            WRITE(writer, True, mirror, chosen)
+        else:
+            WRITE(writer, True, mirror, chosen, randomData())
+
+
+    # ------------------------ LAYER 3: Killer Move: Serious Series
+
+def LAYER3(writer: DictWriter):
+    global mirror
+
+    # Serious Punch
+    for i in range(random.randint(5000, 10000)):
+        r = random.randint(1, 4)
+        if r == 1:
+            WRITE(writer, True, mirror, "get", randomIndex(mirror))
+        elif r == 2:
+            WRITE(writer, True, mirror, "set", randomIndex(mirror), randomData())
+        elif r == 3:
+            WRITE(writer, True, mirror, "peek_left")
+        elif r == 4:
+            WRITE(writer, True, mirror, "peek_right")
+            
+        if random.randint(1, 10) == 1:
+            WRITE(writer, True, mirror, "reverse")
+        WRITE(writer, True, mirror, "size")
+        WRITE(writer, True, mirror, "empty")
+
+    operations = ["push_left", "push_right", "pop_left", "pop_right"]
+    for i in range(random.randint(5000, 10000)):
+        chosen = operations[random.randint(0, len(operations)-1)]
+        if chosen.find("pop") != -1:
+            WRITE(writer, True, mirror, chosen)
+        else:
+            WRITE(writer, True, mirror, chosen, randomData())
+        if (random.randint(1, 10) == 1):
+            WRITE(writer, True, mirror, "reverse")
+        if (random.randint(1, 5) == 1):
+            WRITE(writer, True, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(writer, True, mirror, "size")
+        WRITE(writer, True, mirror, "empty")
 
 
 # ------------------------ LAYER 4: << dlroW derorriM >>
-print("> Mirrored World...")
-WRITECUSTOM("LAYER", "dlroW>><<derorriM")
 
-# 1: Breaker Test, 2: Efficiency Test
-for u in range(1, 3):
-    check = True
-    lower, upper = 2000, 5000
-    if u == 2:
-        if LARGE_INPUTS == False:
-            break
-        check = False
-        lower = 60000
-        upper = 200000
 
-    for i in range(random.randint(lower, upper)):
-        WRITE(check, mirror, "push_left", randomData())
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(check, mirror, "get", randomIndex(mirror))
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "size")
-        WRITE(check, mirror, "empty")
-    while (mirror.size() > 0):
-        WRITE(check, mirror, "pop_left")
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(check, mirror, "get", randomIndex(mirror))
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "size")
-        WRITE(check, mirror, "empty")
+def LAYER4(writer: DictWriter):
+    global mirror
 
-    for i in range(random.randint(lower, upper)):
-        WRITE(check, mirror, "push_right", randomData())
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(check, mirror, "get", randomIndex(mirror))
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "size")
-        WRITE(check, mirror, "empty")
-    while (mirror.size() > 0):
-        WRITE(check, mirror, "pop_right")
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(check, mirror, "get", randomIndex(mirror))
-        WRITE(check, mirror, "peek_left")
-        WRITE(check, mirror, "peek_right")
-        WRITE(check, mirror, "size")
-        WRITE(check, mirror, "empty")
+    # 1: Breaker Test, 2: Efficiency Test
+    for u in range(1, 3):
+        check = True
+        lower, upper = 1000, 2222
+        if u == 2:
+            if LARGE_INPUTS == False:
+                break
+            check = False
+            lower = 60000
+            upper = 200000
 
-    while (mirror.size() > 0):
-            WRITE(check, mirror, "pop_right")
+        for i in range(random.randint(lower, upper)):
+            WRITE(writer, check, mirror, "push_left", randomData())
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+        while (mirror.size() > 0):
+            WRITE(writer, check, mirror, "pop_left")
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
 
-# 1: UB Test, 2: Efficiency Test 2, 3: Finale Test
-for u in range(1, 4):
-    lower, upper = 0, 0
-    if u == 1:
-        lower, upper = 5000, 10000
-    else:
-        lower, upper = 15000, 30000
+        for i in range(random.randint(lower, upper)):
+            WRITE(writer, check, mirror, "push_right", randomData())
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+        while (mirror.size() > 0):
+            WRITE(writer, check, mirror, "pop_right")
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
 
-    if u == 2:
-        if LARGE_INPUTS == True:
-            for i in range(random.randint(60000, 200000)):
-                WRITE(False, mirror, "push_left", randomData())
-        else:
-            continue
-    else:
-        for i in range(random.randint(500, 1000)):
-            WRITE(True, mirror, "push_left", randomData())
+def LAYER5(writer: DictWriter):
+    # 1: Finale Test
+    lower, upper = 10000, 15000
+    for i in range(random.randint(500, 1000)):
+        WRITE(writer, True, mirror, "push_left", randomData())
 
-    check = u == 1 or u == 3
     operations = list(OPERATIONS.keys())
     for i in range(random.randint(lower, upper)):
         chosen = operations[random.randint(0, len(operations)-1)]
@@ -554,28 +531,49 @@ for u in range(1, 4):
         elif chosen == "set":
             args = tuple([randomIndex(mirror), randomData()])
         elif chosen == "push_left" or chosen == "push_right":
-            if u == 1 or u == 3:
-                if mirror.size() > 4444:
-                    continue
             args = tuple([randomData()])
 
-        if u == 1:
-            if random.randint(0, 5) == 0:
-                while (mirror.size() > 0):
-                    WRITE(check, mirror, "pop_right")
-
-        WRITE(check, mirror, chosen, *args)
+        WRITE(writer, True, mirror, chosen, *args)
 
     # empty
     while (mirror.size() > 0):
-        WRITE(check, mirror, "pop_right")
+        WRITE(writer, True, mirror, "pop_right")
             
-WRITECUSTOM("LAYERFIN", "Mirrored<<>>World")
-print("> Done.")
 
-# Remove extra line at end of file
-testFile.truncate(testFile.tell()-len(os.linesep))
+
+print("> Initializing tests...")
+
+if not INPUT_DIRECTORY.exists():
+    INPUT_DIRECTORY.mkdir()
+tests: dict[str, Callable[[DictWriter], None]] = {
+    "0": LAYER0,
+    "1": LAYER1,
+    "2": LAYER2,
+    "3": LAYER3,
+    "4": LAYER4,
+    "5": LAYER5,
+}
+for layer, func in tests.items():
+    directory = INPUT_DIRECTORY / Path("LAYER" + layer + ".csv")
+
+    if layer == "4":
+        print("> Mirrored...")
+    elif layer == "5":
+        print("> World...")
+    else:
+        print("> Layer " + layer + "...")
+
+    file, writer = MAKEFILE(directory)
+    func(writer)
+
+    # Remove extra line at end of file
+    if file.tell() != 0:
+        file.truncate(file.tell()-len(os.linesep))
+
+    print("> Done.")
+
+
 print("Tests successfully initialized.")
-print("Test operations can be found in (({INPUT_FILE:s}))\n".format(INPUT_FILE=INPUT_FILE))
+print("Test operations can be found in (({I:s}))\n".format(I=str(INPUT_DIRECTORY)))
 
 print("Will you look into the Mirror once more?")
