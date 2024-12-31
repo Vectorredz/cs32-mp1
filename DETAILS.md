@@ -29,10 +29,39 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 <hr>
 <hr>
 
-<details>
 <summary>Doubly Linked List</summary>
-TODO
+
+## Doubly Linked List
+
+### Summary
+...
+
+<hr>
+
 </details>
+<summary>Structs</summary>
+
+#### Struct: `List`
+A doubly-linked list which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\ 
+The struct also have a field `size` that stores the size `n` of the list.\ Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.\ 
+This property allows the implementation to have an $O(1)$ worst-case time complexity for its `reverse` operation.\
+
+#### Struct: `ListNode`
+This represents the doubly-linked list node for the `List`.\
+It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
+
+<hr>
+</details>
+<summary>Initializer</summary>
+
+### Operation: `MAKE`
+
+#### Helper: `initList()`
+It allocates memory for the `List` `l` using `malloc()`.\ It initially points `head` and `tail` pointers  to `NULL`. Moreover, it sets `reversed` and `size` to `bool` false and `LENGTH` $0$ respectively.\ Lastly it returns the initialized `List` `L` to the caller.
+
+#### Main: `*make(n, seq) -> list`
+this is the main operation of `Make`
+
 
 <hr>
 <hr>
