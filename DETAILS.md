@@ -35,7 +35,6 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 ## Doubly Linked List
 
 ### Summary
-...
 
 <hr>
 
@@ -52,6 +51,7 @@ This represents the doubly-linked list node for the `List`.\
 It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
 
 <hr>
+</details>
 
 </details>
 <summary>Initializer</summary>
