@@ -29,6 +29,7 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 <hr>
 <hr>
 
+<details>
 <summary>Doubly Linked List</summary>
 
 ## Doubly Linked List
@@ -51,6 +52,7 @@ This represents the doubly-linked list node for the `List`.\
 It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
 
 <hr>
+
 </details>
 <summary>Initializer</summary>
 
@@ -64,7 +66,8 @@ this is the main operation of `Make`
 
 
 <hr>
-<hr>
+</details>
+
 
 <details>
 <summary>Dynamic Array</summary>
