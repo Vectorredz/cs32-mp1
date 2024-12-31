@@ -315,12 +315,12 @@ int main(){
     size_t* fileLines = (size_t*) malloc(totalFiles*sizeof(size_t));
     char**** fileTests = (char****) malloc(totalFiles*sizeof(char***));
     for (size_t i = 0; i < totalFiles; i++){
-        char* path = (char*) malloc((strlen(INPUT_DIRECTORY) + strlen(files[i]) + strlen("/") + 1) * sizeof(char));
+        char* path = (char*) malloc((strlen(INPUT_DIRECTORY) + strlen("/") + strlen(files[i]) + 1) * sizeof(char));
         strcpy(path, INPUT_DIRECTORY);
         strcat(path, "/");
         strcat(path, files[i]);
 
-        printf("> %s...\n", path);
+        printf("> ((%s)) ...\n", path);
         size_t t = 0;
         char*** tests0 = NULL;
         getTests(path, &t, &tests0);
@@ -328,7 +328,9 @@ int main(){
         fileLines[i] = t;
         totalTests += t;
 
-        printf("> Done.\n");
+        printf("> acquired -> ((%s))\n", path);
+
+        free(path);
     }
 
     char*** tests = (char***) malloc(totalTests*sizeof(char**));
