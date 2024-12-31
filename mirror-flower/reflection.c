@@ -87,12 +87,37 @@ constant, linear, or logarithmic in nature.
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 
-void getTests(char* directory, size_t* testIndexRef, char**** testsRef){
-    FILE *f = fopen(directory, "r");
+// Gets tests and stores in an array.
+void getTests(char* inputFileName, size_t* tRef, char**** testsRef){
+    FILE *f = fopen(inputFileName, "r");
+    size_t lines = 0;
     bool newline = true;
 
     // temporary buffer for getting each character one at a time
     char* testBuffer = (char*) malloc(2*sizeof(char));
+
+    // get the number of lines first, then go back to beginning of file
+    while (true){
+        while (fgets(testBuffer, 2, f) != NULL){
+            if (testBuffer[0] == '\n'){
+                newline = true;
+            }
+            if (newline == true){
+                newline = false;
+                lines++;
+            }
+        }
+        if (ferror(f)){
+            return;
+        } else {
+            break;
+        }
+    }
+    rewind(f);
+
+
+    char*** tests = (char***) malloc(lines*sizeof(char**));
+    size_t i = 0;
     while (true){
         long seekBack = ftell(f);
         size_t length = 0;
@@ -129,8 +154,8 @@ void getTests(char* directory, size_t* testIndexRef, char**** testsRef){
             j++;
             token = strtok(NULL, "|");
         }
-        (*testsRef)[*testIndexRef] = testLine;
-        *testIndexRef++;
+        tests[i] = testLine;
+        i++;
 
         if (eof == true){
             break;
@@ -140,8 +165,10 @@ void getTests(char* directory, size_t* testIndexRef, char**** testsRef){
         }
         free(buffer);
     }
-
     free(testBuffer);
+
+    *tRef = lines;
+    *testsRef = tests;
     fclose(f);
 }
 
@@ -274,12 +301,43 @@ int main(){
 
     // Get tests first
     printf("> Getting tests for ((" INPUT_DIRECTORY ")) ...\n");
-
     size_t totalTests = 0;
-    char*** tests = NULL;
-    char files[4] = {"LAYER0.csv", "LAYER1.csv", "LAYER2.csv", "LAYER3.csv", "LAYER4.csv", "LAYER5.csv"};
-    
-    getTests(strcat(INPUT_DIRECTORY, files[0]), &totalTests, &tests);
+
+    size_t totalFiles = 6;
+    char** files = (char**) malloc(totalFiles*sizeof(char*));
+    files[0] = "LAYER0.csv";
+    files[1] = "LAYER1.csv";
+    files[2] = "LAYER2.csv";
+    files[3] = "LAYER3.csv";
+    files[4] = "LAYER4.csv";
+    files[5] = "LAYER5.csv";
+
+    size_t* fileLines = (size_t*) malloc(totalFiles*sizeof(size_t));
+    char**** fileTests = (char****) malloc(totalFiles*sizeof(char***));
+    for (size_t i = 0; i < totalFiles; i++){
+        char* path = (char*) malloc((strlen(INPUT_DIRECTORY) + strlen(files[i]) + strlen("/") + 1) * sizeof(char));
+        strcpy(path, INPUT_DIRECTORY);
+        strcat(path, "/");
+        strcat(path, files[i]);
+
+        size_t t = 0;
+        char*** tests0 = NULL;
+        getTests(path, &t, &tests0);
+        fileTests[i] = tests0;
+        fileLines[i] = t;
+        totalTests += t;
+    }
+
+    char*** tests = (char***) malloc(totalTests*sizeof(char**));
+    size_t _t = 0;
+    for (size_t i = 0; i < totalFiles; i++){
+        size_t t = fileLines[i];
+        char ***tests0 = fileTests[i];
+        for (size_t j = 0; j < t; j++){
+            tests[_t] = tests0[j];
+            _t++;
+        }
+    }
 
     printf("> Done.\n");
     
@@ -289,12 +347,12 @@ int main(){
     // Initialize timer
     _TIME_init();
 
-    // Get the number of actual operations (since a line can contain the custom "LAYER"/"LAYERFIN" message which doesn't count as an operation)
+    // Get the number of actual operations (since a line can contain the custom message which doesn't count as an operation)
     size_t totalOperations = 0;
     for (size_t testNum = 0; testNum < totalTests; testNum++){
         char** testLine = tests[testNum];
         char* operation = testLine[0];
-        if (strcmp(operation, "LAYER") != 0 && strcmp(operation, "LAYERFIN") != 0){
+        if (strcmp(operation, "MSG") != 0){
             totalOperations++;
         }
     }
@@ -335,14 +393,15 @@ int main(){
         }
 
         // Custom LAYER messages
-        if (strcmp(operation, "LAYER") == 0){
+        if (strcmp(operation, "MSG") == 0){
             prevWasMsg = true;
-            printf("!! LAYER %s !!\n", arg1);
-            continue;
-        }
-        if (strcmp(operation, "LAYERFIN") == 0){
-            prevWasMsg = true;
-            printf("!! LAYER %s Passed. !!\n", arg1);
+            if (strcmp(arg1, "LAYER") == 0){
+                printf("!! LAYER %s !!\n", arg2);
+
+            } else if (strcmp(arg1, "LAYERFIN") == 0){
+                printf("!! LAYER %s Passed. !!\n", arg2);
+
+            }
             continue;
         }
 

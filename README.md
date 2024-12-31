@@ -37,7 +37,6 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 [test_settings_r.h](mirror-flower/test_settings_r.h)\
 [reflection.c](mirror-flower/reflection.c)
 
-
 [test_input_0.csv](mirror-flower/test_input_0.csv)\
 [test_input.csv](mirror-flower/test_input.py)\
 [test_output.py](mirror-flower/test_output.py)
@@ -87,7 +86,7 @@ The settings for the test generator.\
 Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
-| INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
+| INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
 | LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (The specific test lines with large inputs do NOT check for correctness.) <br> (Warning: takes way longer to generate) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
@@ -98,7 +97,7 @@ Imported as a Python module by the generator.
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
-It implements a working list in Python, and outputs it to the corresponding **INPUT_FILE** directory. This file is a CSV delimeted by a bar `|`, with its fields as follows:
+It implements a working list in Python, and outputs test operations to the corresponding **INPUT_DIRECTORY**. These set of files are CSV's delimeted by a bar `|`, with its fields as follows:
 
 > OPERATION|ARG1|ARG2|RESULT
 
@@ -140,8 +139,9 @@ This is so that it's easier to catch bugs in the earlier layers that test a set 
 INITIALIZATION TEST
     - MAKE (0 -> 1000)
     - MAKE (length of RANDOM_INTEGER(0, 1000))
+    - with DATA in ranges [-10^18, 10^18]
 ```
-This layer tests for the `make` operation.
+This layer tests for the `make` operation, as well as the list's ability to hold DATA in large ranges.
 
 <br>
 
@@ -173,7 +173,6 @@ This is the start of basic insertion/deletion operations. It does each `push` an
 <br>
 
 >>>> LAYER 3:
-
 ```
 >> BASIC OPERATIONS TEST [Harder]
     - GET (Random Index)
@@ -195,42 +194,33 @@ It features more detailed basic operation tests, as well as more insertion/delet
 
 >>>>> LAYER 4:
 ```
-> FINAL LAYER:
     >> BREAKER TEST:
         - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
         - POP_* until empty
-        - Along with all other OPERATIONS throughout
+        - Along with all other OPERATIONS throughout (to test for UB)
 
     >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
         > (No checking for correctness, "RESULT" is "X")
         - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
         - POP_* until empty
         - Along with all other OPERATIONS throughout
+```
+Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times, to test for edge cases and UB. If a list was not caught broken before, it will be now.\
+Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
+This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
 
-    >> UB TEST:
-        - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
-        - All OPERATIONS for RANDOM_INTEGER(5000, 10000) times
-        - bound size to <=4444
-        - Occassionally pops the list until 0 to test for UB
-        - After the loop, pops list until n == 0
+<br>
 
-    >> EFFICIENCY TEST 2 (if (LARGE_INPUTS == true)):
-        > (No checking for correctness, "RESULT" is "X")
-            - Pops list until n == 0 first
-            - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
-            - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
-            - After the loop, pops list until n == 0
-
+>>>>>> LAYER 5:
+```
+> FINAL LAYER:
     >> FINALE:
         - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
         - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
         - bound size to <=4444
         - After the loop, pops list until n == 0
-
 ```
-Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times. If a list was not caught broken before, it will be now.\
-Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
-This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
+The final **Layer**. The tester gives up and surrenders itself to probability due to its inability to break the list in **Layer 4**. Now, it only tries to break the list with random operations. It is maybe possible that the list still breaks in this layer due to some unforeseen edge cases.
 
 <br>
 
@@ -247,7 +237,7 @@ Included as a C header by the tester.
 | LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
-| INPUT_FILE | `string` <br> The test inputs' file directory. | `test_input.csv` |
+| INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
 | OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.csv` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 
@@ -290,7 +280,7 @@ With that, the steps are as follows:
 2. **TEST THE LIST**
     - Update [test_settings_r.h](mirror-flower/test_settings_r.h) settings to desired values
     - Run [reflection.c](mirror-flower/reflection.c)
-    - If any bugs are caught, debug with given error info and look at the line the operation failed in the **INPUT_FILE**
+    - If any bugs are caught, debug with given error info and look at the line the operation failed in the files in **INPUT_DIRECTORY**
 3. **GRAPHS**
     - Analyze the graph generated by the tester in **OUTPUT_FILE** for each operation, and judge whether it is constant, linear, or logarithmic in nature.
 

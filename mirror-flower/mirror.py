@@ -11,6 +11,7 @@ LAYER 0:
     >> INITIALIZATION TEST
         - MAKE (0 -> 1000)
         - MAKE (length of RANDOM_INTEGER(0, 1000))
+        - with DATA in ranges [-10^18, 10^18]
     
 LAYER 1:
     >> BASIC OPERATIONS TEST
@@ -56,20 +57,8 @@ LAYER 4:
             - POP_* until empty
             - Along with all other OPERATIONS throughout
 
-        >> UB TEST:
-            - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
-            - All OPERATIONS for RANDOM_INTEGER(5000, 10000) times
-            - bound size to <=4444
-            - Occassionally pops the list until 0 to test for UB
-            - After the loop, pops list until n == 0
-
-        >> EFFICIENCY TEST 2 (if (LARGE_INPUTS == true)):
-            > (No checking for correctness, "RESULT" is "X")
-                - Pops list until n == 0 first
-                - Pushes around RANDOM_INTEGER(60000, 200000) elements first (Random Data)
-                - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
-                - After the loop, pops list until n == 0
-
+LAYER 5:
+    * Gives up        
         >> FINALE:
             - PUSH_* (Random Data) for RANDOM_INTEGER(500, 1000) times first
             - All OPERATIONS for RANDOM_INTEGER(15000, 30000) times
@@ -169,7 +158,7 @@ print("Look into the Mirror...")
 print("> Initializing functions and file writing...")
 
 # Helper functions for easier writing of test inputs
-dataBound = 10**4
+dataBound = 5000
 def randomData() -> DATA:
     return random.randint(-dataBound, dataBound)
 
@@ -261,6 +250,14 @@ def WRITE(writer: DictWriter, checkForCorrectness: bool, mirror: Mirror, operati
         "RESULT": result
     })
 
+def WRITEMSG(arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
+    writer.writerow({
+        "OPERATION": "MSG",
+        "ARG1": arg1,
+        "ARG2": arg2,
+        "RESULT": RESULT,
+    })
+
 print("> Done.")
 
 
@@ -284,7 +281,7 @@ def LAYER0(writer: DictWriter):
     for n in range(1000+1):
         seq = list[DATA]()
         for i in range(n):
-            seq.append(randomData())
+            seq.append(random.randint(-10**18, 10**18))
         mirror = Mirror(n, seq)
         writer.writerow({
             "OPERATION": "make",
@@ -297,7 +294,7 @@ def LAYER0(writer: DictWriter):
     n = random.randint(0, 1000+1)
     seq = list[DATA]()
     for i in range(n):
-        seq.append(randomData())
+        seq.append(random.randint(-10**18, 10**18))
     mirror = Mirror(n, seq)
     writer.writerow({
         "OPERATION": "make",
@@ -308,7 +305,6 @@ def LAYER0(writer: DictWriter):
 
 
 # ------------------------ LAYER 1: No Insertions/Deletions
-print("> Layer 1...")
 
 def LAYER1(writer: DictWriter):
     global mirror
@@ -386,11 +382,8 @@ def LAYER1(writer: DictWriter):
         "RESULT": listToResult(mirror.TEST_elements())
     })
 
-print("> Done.")
-
 
 # ------------------------ LAYER 2: Consecutive
-print("> Layer 2...")
 
 def LAYER2(writer: DictWriter):
     global mirror
@@ -556,15 +549,20 @@ tests: dict[str, Callable[[DictWriter], None]] = {
 for layer, func in tests.items():
     directory = INPUT_DIRECTORY / Path("LAYER" + layer + ".csv")
 
-    if layer == "4":
-        print("> Mirrored...")
-    elif layer == "5":
-        print("> World...")
+    layerMsg, layerfinMsg = "", ""
+    if layer == "5":
+        layerMsg = "dlroW>><<derorriM"
+        layerfinMsg = "Mirrored<<>>World"
+        print("> Mirrored World...")
     else:
+        layerMsg = layer
+        layerfinMsg = layer
         print("> Layer " + layer + "...")
 
     file, writer = MAKEFILE(directory)
+    WRITEMSG("LAYER", layerMsg)
     func(writer)
+    WRITEMSG("LAYERFIN", layerfinMsg)
 
     # Remove extra line at end of file
     if file.tell() != 0:
