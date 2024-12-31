@@ -29,7 +29,7 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 <hr>
 <hr>
 
-<details>
+</details>
 <summary>Doubly Linked List</summary>
 
 ## Doubly Linked List
