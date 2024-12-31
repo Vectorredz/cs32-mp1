@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 typedef struct _SkipNode {
     struct _SkipNode *right;  // link to the right adjacent nodes
     struct _SkipNode *left; // link to the left adjacent nodes
@@ -19,6 +20,7 @@ typedef struct _Level {
     struct _Level *down;
     SkipNode *headSentinel; // head
     SkipNode *tailSentinel; // tail
+    LENGTH cachedRightWidth;
 } Level;
 
 // Vertical doubly-linked List to store the levels
@@ -49,19 +51,22 @@ typedef struct _SkipList {
     LENGTH currHeight;
     LENGTH size;
     bool is_reversed;
-    
 } SkipList;
 
 // Helpers
-SkipNode *_getNode(SkipList *l, LENGTH i);
-void _leftPromoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v);
-void _rightPromoteLevel(SkipList *l, Level *currLevel, SkipNode *sentinel, SkipNode *belowNode, DATA v);
-void _pruneLevel(SkipList *l, Level *currLevel);
-bool _leftDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode);
-bool _rightDemoteLevel(SkipList *l, Level *currLevel, SkipNode *popNode);
+LENGTH _capHeight(LENGTH n);
 bool _flipCoin();
+SkipNode *_getNode(SkipList *l, LENGTH i, bool fromSet, DATA v);
+Level *_promoteLevel(SkipList *l, bool fromRight);
+void _demoteLevel(SkipList *l, Level *currLevel, bool fromRight);
+void _push_left_base(SkipList *l, DATA v);
+void _push_right_base(SkipList *l, DATA v);
+bool _pop_left_base(SkipList *l);
+bool _pop_right_base(SkipList *l);
 
 // Init
+SkipNode *_makeNode(DATA v);
+Level *_makeLevel();
 SkipList *_initSkipList();
 SkipList *make(LENGTH n, DATA *seq);
 
