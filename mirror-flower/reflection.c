@@ -36,6 +36,18 @@
 
 // TIMER
 // TODO: implement other os later
+
+
+#if TIME_COMPLEXITY_GRAPH_DISPLAY == true
+    #define DISPLAY true
+    #define STATUS "enabled"
+#else
+    #define DISPLAY false
+    #define STATUS "disabled"
+#endif
+
+
+
 #if CHECK_FOR_EFFICIENCY == true
     #include <windows.h>
     #include <sys/timeb.h>
@@ -283,13 +295,30 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
 
 
 // --------------------------------------------------------- >>
-/* ----------------------------------------- <<
+/* ----------------------------------------- << 
 
             ||-- MAIN TESTER --||
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 int main(){
+
+    // Write which implementation is currently used
+    FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
+    if (strcmp(IMPLEMENTATION, "DOUBLY_LINKED_LIST") == 0){
+        fprintf(implementation, "DOUBLY_LINKED_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "DYNAMIC_ARRAY") == 0){
+        fprintf(implementation, "DYNAMIC_ARRAY");
+    }
+    if (strcmp(IMPLEMENTATION, "SKIP_LIST") == 0){
+        fprintf(implementation, "SKIP_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "TREE_SEQUENCE") == 0){
+        fprintf(implementation, "TREE_SEQUENCE");
+    }
+
+
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
 
     // Get tests first for each file
