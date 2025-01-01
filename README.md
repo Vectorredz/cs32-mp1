@@ -258,11 +258,11 @@ Included as a C header by the tester.
 | IMPLEMENTATION | `DOUBLY_LINKED_LIST | DYNAMIC_ARRAY | SKIP_LIST | TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
 | OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `inputs` |
 
-### [C] Grapher: *[graph.c](mirror-flower/graph.c)*
+### [C] Grapher (Generator): *[graph.c](mirror-flower/graph.c)*
 A specialized generator which tests the list against large inputs, without checking for correctness.\
 After the tests, it outputs plot points/deltatime benchmarks for each operation in their own .txt file in **OUTPUT_DIRECTORY**.
 
-### [C] Grapher: *[graph.c](mirror-flower/graph.c)*
+### [C] Grapher (Display): *[graph.py](mirror-flower/graph.py)*
 Displays the graphs using the outputs in **OUTPUT_DIRECTORY** for judging whether the graph of OPERATION is constant, linear, or logarithmic in nature.
 
 
