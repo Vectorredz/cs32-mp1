@@ -184,10 +184,15 @@ It features more detailed basic operation tests, as well as more insertion/delet
 
 >>>>> LAYER 4:
 ```
-    >> BREAKER TEST:
-        - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
-        - POP_* until empty
-        - Along with all other OPERATIONS throughout (to test for UB)
+>> BREAKER TEST:
+    - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
+    - POP_* until empty
+    - Along with all other OPERATIONS throughout (to test for UB)
+
+>> BREAKER TEST 2 (Random Operations)
+    - PUSH_* (Random Data)
+    - POP_*
+    - Along with all other OPERATIONS throughout (to test for UB)
 ```
 Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times, to test for edge cases and UB. If a list was not caught broken before, it will be now.\
 It throws everything it can towards the list. Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
