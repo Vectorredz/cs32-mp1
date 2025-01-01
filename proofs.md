@@ -88,9 +88,9 @@ The implementation returns a variable of the doubly linked list data structure, 
 
 As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
 
-Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not; and `peek` returns the leftmost or rightmost. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not; and `peek` returns the leftmost or rightmost that are saved in the data structure. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` and `peek` also runs at $O(1)$.
 
-Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
+Thus, we have proven that `size` and `empty` and `peek` runs at $O(1)$ worst case.
 
 #### Function: `get` \& `set` 
 
@@ -304,7 +304,7 @@ From this, we simplify it to be $T_{decrease} = O(n)$. However, it is important 
 
 Thus, we have proven that `push_left`  and `push_right` runs at $O(1)$ amortized regardless of whether the list is reversed or not, because the operations done remain constant.
 
-#### Function: `peek`\&`size` \& `empty`
+#### Function: `peek`\& `size` \& `empty`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - return statement
@@ -313,9 +313,9 @@ The implementation returns a variable of the doubly linked list data structure, 
 
 As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
 
-Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `d->size == 0` or not; and `peek` returns the leftmost or rightmost value. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `d->size == 0` or not; and `peek` returns the leftmost or rightmost value that are saved in the data structure. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` and `peek` also runs at $O(1)$.
 
-Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
+Thus, we have proven that `size` and `empty` and `peek` runs at $O(1)$ worst case.
 
 #### Function: `get` \& `set`
 **Time Complexity: $O(1)$ worst case**<br>
@@ -343,6 +343,177 @@ As observed, because there is a singular statement, that is the negation. The ti
 
 Thus, we have proven that `reverse` runs at $O(1)$ worst case.
 
+***
+
+### Skip List
+
+#### Function: `make`\& `push_left`\& `push_right`
+**Time Complexity: $O(\mathscr{l})$ expected**<br>
+<b>Proof:</b> Notice the implementation involves two function calls, `_initSkipList` and `push_right`, a for-loop, and a series of the following constant-time operations:
+- variable assignment
+- malloc
+- if-else statement
+- return statement
+
+Each of the operations involved that were done within the functions run in constant time, $O(1)$. From this we can derive the recurrence relation of the combination of all the constant time operations, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the recursive function.
+
+**T<sub>Loop</sub>: for-loop**. The loop iterates a total of $\mathscr{l}$ times, where $\mathscr{l}$ is the length of the given sequence. That would mean that the loop itself would have a time complexity of $O(\mathscr{l})$ worst case. However, since the cost of each iteration would be $T_{push}$, we can leave $T_{loop}$ to be the following:
+
+$$T_{loop} = O(\mathscr{l}) \cdot T_{push}$$
+Where the final time complexity of the loop will depend on the time complexity of $T_{push}$.
+
+**T<sub>init</sub>: \_initSkipList**.  The function contains a series of operations and another function, `_makeLevel`, that run in constant time, $O(1)$. Since`_makeLevel` runs in $O(1)$ because it only contains a series of constant time operations., that would mean `_initSkipList` would also run at $O(1)$. Thus, 
+
+$$T_\text{init} = O(1)$$
+
+**T<sub>push</sub>: push_\***. The`push` operation only calls a helper function`_push_*_base`. This means that the time complexity of `push` is equivalent to the time complexity of `_push_*_base`. Here, `_push_*_base` calls two more functions, `_capHeight` and `_promoteLevel`. 
+
+For `_capHeight`,  it utilizes `ceiling` and `log` functions of `math.h` to calculate the maximum height of the skip list. Since these operations run at $O(1)$, we can expect that the time complexity for `_capHeight`, $T_{capHeight}$ , to be $O(1)$ worst case.
+
+Moreover,  `_promoteLevel` utilizes a while-loop to iterate through the maximum height of the skip list which is calculated at `_capHeight` to be $\lceil \lg n\rceil$, where n is the number of elements in the list. This means the loop will iterate for a maximum of $\lceil \lg n\rceil$ times. Since each iteration of the loop will run in constant time, $O(1)$, that would mean that the time complexity of `_promoteLevel` would be $O(\lg n)$ worst case. 
+
+However, it is important to note that the loops iteration is dependent on the probability that `_flipCoin`, a random number generator that generates either true or false. It will only continue iterating if `_flipCoin` returns true. This means that it would have a $50\%$ chance for the loop to terminate, making the expected number of iterations a constant number, $2$. For clarity, we calculate the number of expected iterations with probability $p$ to be the following:
+
+$$\text{expected iterations} = \frac{1}{p} = \frac{1}{0.5}=2$$
+
+As a result, since the expected iterations of `_flipCoin` to be in constant expected time, $O(1)$, `_promoteLevel` would end up having a time complexity of $O(1)$ *expected*. This is because the iteration relies on probabilistic means for it to continue iterating and the initial pushing action runs in $O(1)$ worst case. Thus,
+
+$$T_{promote}=O(1) \text{ expected}$$
+
+We can use the same logic for the while-loop inside `_push_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+
+Combining all these time complexities, we get the following time complexity for the `push` operation:
+
+$$T_{push} =T_{pushBase}= T_{capHeight}+T_{promote}+T_{while}$$
+$$=O(1)+O(1)+O(1)$$
+$$T_{push} = O(1) \text{ expected}$$
+
+Both push functions use similar algorithms, having almost the same functions and operations. Since there are no extra functions added and it only differs by a few constant time operations, they will have similar time complexities.
+
+Since $T_{push}=O(1)$ expected, $T_{init} = O(1)$ worst case, and $T_{loop} =O(\mathscr{l})$ worst case, we can conclude the following:
+
+$$T_{make} = T_{init} + T_{outer}+T_{loop}\cdot T_{push}$$
+$$= O(1) + O(1) + O(\mathscr{l})\cdot O(1)$$
+$$T_{make} = O(l) \text{ expected}$$
+$T_{loop}$ is multiplied to $T_{push}$ because for every iteration of $T_{loop}$ , `push` is called, thus the cost for each iteration of the loop to be $T_{push}$.
+
+Thus, we have proven that the time complexity of `make` is $O(\mathscr{l})$ expected.
+
+Moreover, `push_left` and `push_right` will have a time complexity of $O(1)$ expected.
+
+#### Function: `pop_left`\& `pop_right`
+**Time Complexity: $O(1)$ expected**
+
+**Proof**: The `pop` operation only involves calling a function, `_pop_left_base`. Thus, the time complexity of `pop` is equivalent to the time complexity of `_pop_left_base`. Here, `_pop_left_base` consists of a while-loop and calls two more functions, `_capHeight` and `_demoteLevel`. 
+
+For `_capHeight`,  it utilizes `ceiling` and `log` functions of `math.h` to calculate the maximum height of the skip list. Since these operations run at $O(1)$, we can expect that the time complexity for `_capHeight`, $T_{capHeight}$ , to be $O(1)$ worst case.
+
+Moreover, `_demoteLevel` utilizes a while-loop to iterate through the maximum height of the skip list which is calculated at `_capHeight` to be $\lceil \lg n\rceil$, where n is the number of elements in the list. This means the loop will iterate for a maximum of $\lceil \lg n\rceil$ times. Since each iteration of the loop will run in constant time, $O(1)$, that would mean that the time complexity of `_demoteLevel` would be $O(\lg n)$ worst case. 
+
+However, it is important to note that the loops iteration is dependent on the probability that `_flipCoin`, a random number generator that generates either true or false. It will only continue iterating if `_flipCoin` returns true. This means that it would have a $50\%$ chance for the loop to terminate, making the expected number of iterations a constant number, $2$. For clarity, we calculate the number of expected iterations with probability $p$ to be the following:
+
+$$\text{expected iterations} = \frac{1}{p} = \frac{1}{0.5}=2$$
+
+As a result, since the expected iterations of `_flipCoin` to be a constant, `_demoteLevel` would end up having a time complexity of $O(1)$ *expected*. This is because the iteration relies on probabilistic means for it to continue iterating and the initial pushing action runs in $O(1)$ worst case. Thus,
+
+$$T_{demote} = O(1) \text{ expected}$$
+
+We can use the same logic for the while-loop inside `_pop_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+
+Combining all these time complexities, we get the following time complexity for the `push` operation:
+
+$$T_{pop} =T_{popBase}= T_{capHeight}+T_{promote}+T_{while}$$
+$$=O(1)+O(1)+O(1)$$
+$$T_{pop} = O(1) \text{ expected}$$
+
+
+Both push functions use similar algorithms, having almost the same functions and operations. Since there are no extra functions added and it only differs by a few constant time operations, they will have similar time complexities.
+
+Thus, we have proven that both `pop` functions have time complexities $O(1)$ expected.
+
+#### Function: `peek` \& `size` \& `empty`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- return statement
+
+The implementation returns a variable of the doubly linked list data structure, `l->size`. Where $sl$ is the skip list passed to the `size` operation.
+
+As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
+
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not; and `peek` returns the leftmost or rightmost value that are saved in the data structure. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` and `peek` also runs at $O(1)$.
+
+Thus, we have proven that `size` and `empty` and `peek` runs at $O(1)$ worst case.
+
+#### Function: `get` \& `set`
+**Time Complexity: $O(\log n)$ expected**
+
+**Proof**: Aside from constant time operations, the `get` and `set` operations involve calling a function, `_getNode`. Since all the operations outside the function call are constant time operations, by definition of Big O, the time complexity of `get` and `set` are dependent on `_getNode`. 
+
+In `_getNode`, there are constant time operations alongside two while-loops. This would mean that the overall time complexity is dependent on the time complexity of the two while-loops combined. 
+
+For the first while-loop, $T_{L1}$ , the loop iterates through the sentinel nodes, stopping when it encounters a sentinel node connected to a node whose width offset is less than or equal to the desired index. 
+
+The amount of sentinel nodes present are determined by the `_capHeight` function. Since there are $\lceil \lg n \rceil$ sentinel nodes, the while loop would iterate at most $\lceil \lg n \rceil$ times. Thus, $T_{L1}$ would have the following time complexity:
+
+$$T_{L1} = O(\lceil \lg n \rceil)$$
+
+We can simplify the complexity by removing the ceiling function. To remove the ceiling function, we need to find a value that bounds the function from above. Thus, we can propose the following:
+
+$$T_{L1} = O(\lceil \lg n\rceil)=O(\lg n + 1)$$
+Here, $\lg n + 1 > \lg n$ allowing us to make it the "simplified" time complexity. Simplifying it further since logarithmic growth is much quicker than constant growth, there exists a constant $c$ and some sufficiently large $n$, such that the constant growth is negligible. Thus, we can remove the $+1$. We can also simplify $\lg n$ to $\log n$ further. Since $\log n$ and $\lg n$ grow asymptotically positive at the same rate, differing by a constant (base), there exists a constant $c$ such that for all sufficiently large $n$, $\lg n \le c \cdot \log n$. Therefore we can simplify it further into the following:
+
+$$T_{L1}=O(\lg n+1) = O(\log n)$$
+
+Now, for the second while-loop, $T_{L2}$ , the loop traverses through the list moving either rightwards or downwards until it finds the desired node. If we were to form a list and become *unlucky* such that no node beyond the lowest level, we would end up with a singly-linked list. This would cause the loop to iterate an $n$ amount of times worst case, resulting in $T_{L2}=O(n)$ worst case. However, because we are playing into chance, the probability of the worst case happening such that $n$ is large enough to affect the running time is very low. 
+
+We know that the loop depends on the total amount of times you move right or down. Since we have proved that in $T_{L1}$ ,  that the running time of downward movement is worst case $O(\log n)$. Now, all we need to prove rightward movement.
+
+For rightward movement, we know that the number of nodes decreases geometrically by a power of two, $2^k$. We can get the recurrence relation of the number of rightward movements per level to be the following:
+
+$$T(n) =T(n -2^{\lg n-1})+O(1)$$
+Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](#### constructPTrees)). Simplifying the recurrence relation we get the following:
+
+$$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
+
+Solving the recurrence relation using *Master's Theorem*, we set $a=1$, $b=2$, critical point $p=0$, and $k=0$, where $O(n^k)$.  Since $p=k$, it falls into case 2 of the *Master's Theorem*. We get the following:
+
+$$T(n) = O(n^k+\log_b n)$$
+$$T(n)=O(n^0+\log_2n)$$
+$$T(n)=O(\log_2n)$$
+
+Simplifying this further by standardizing the logarithmic function using the definition of big O, we get:
+
+$$T(n)=O(\log n)$$
+
+Thus, we have proven that there are at most $O(\log n)$ nodes per level excluding the lowest level. 
+
+Since we know that there are $O(\log n)$ possible nodes for rightward movement, excluding the lowest level's nodes, and because skip lists are constructed probabilistically, we expect the number of rightward movements to be much less than $n$. The chance of encountering nodes in the upper levels reduces the number of required rightward movements. Therefore, we can conclude that the total number of rightward movements is $O(\log n)$ in expectation. Given that each iteration of the loop performs constant work, $O(1)$, we can determine that the time complexity for $T_{L2}$ is:
+
+$$T_{L2}=O(\log n) \text{ expected}$$
+
+Thus, the total time complexity of `_getNode` is the following:
+
+$$T(n)=T_{L1}+T_{L2}$$
+$$=O(\log n) +O(\log n)$$
+
+Simplifying this further, since $T_{L2}$ is somewhat of an upper bound of $T_{L1}$ due to its *expected* behavior, we can get the following:
+
+$$T(n) = O(\log n) \text{ expected}$$
+
+Since `_getNode` is $O(\log n)$ expected, that would mean both `get` and `set` would also be $O(\log n)$ expected because the operations outside of `_getNode` run in constant time, $O(1)$. 
+
+Thus, we have proven that both `get` and `set` run in $O(\log n)$ expected.
+
+#### Function: `reverse`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- negation statement: `reversed = !reversed`
+
+The implementation lies on the boolean `l->reversed`, where $l$ is the list passed to the `reverse` function. The only thing it does is negates the current value of the boolean. This is possible because all the other operations adjust to the current state of `reversed`, that is, it will do the exact opposite if reversed.
+
+As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$.
+
+Thus, we have proven that `reverse` runs at $O(1)$ worst case.
 ***
 ### Sequence of Trees
 ***
@@ -392,6 +563,7 @@ $$T(\mathscr{l}) = T_{main} + O(pow+recursion+outer)$$
 
 This is because, `_constructPTrees` runs a total of $T_{main}$ times. Moreover, for each iteration, it costs $O(pow+recursion+outer)$.
 
+#### constructPTrees
 $$T(\mathscr{l})=T(\mathscr{l}-2^{\lg\mathscr{l}}) + O(\lg\mathscr{l}+ \mathscr{l}+1)$$
 
 
