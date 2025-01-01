@@ -50,6 +50,10 @@ LAYER 4:
             - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
             - POP_* until empty
             - Along with all other OPERATIONS throughout
+        >> BREAKER TEST 2 (Random Operations)
+            - PUSH_* (Random Data)
+            - POP_*
+            - Along with all other OPERATIONS throughout (to test for UB)
 
 LAYER 5:
     * Gives up        
@@ -439,7 +443,7 @@ def LAYER3(writer: DictWriter):
     operations = ["push_left", "push_right", "pop_left", "pop_right"]
     for i in range(random.randint(5000, 10000)):
         chosen = operations[random.randint(0, len(operations)-1)]
-        if chosen.find("pop") != -1:
+        if chosen == "pop_left" or chosen == "pop_right":
             WRITE(writer, True, mirror, chosen)
         else:
             WRITE(writer, True, mirror, chosen, randomData())
@@ -459,20 +463,61 @@ def LAYER4(writer: DictWriter):
 
     # 1: Breaker Test
     check = True
-    lower, upper = 1000, 2222
+    lower, upper = 1000, 1500
 
-    for i in range(random.randint(lower, upper)):
-        WRITE(writer, check, mirror, "push_left", randomData())
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(writer, check, mirror, "get", randomIndex(mirror))
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "size")
-        WRITE(writer, check, mirror, "empty")
-    while (mirror.size() > 0):
-        WRITE(writer, check, mirror, "pop_left")
+    for _ in range(2):
+        for i in range(random.randint(lower, upper)):
+            WRITE(writer, check, mirror, "push_left", randomData())
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+        while (mirror.size() > 0):
+            WRITE(writer, check, mirror, "pop_left")
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+
+        for i in range(random.randint(lower, upper)):
+            WRITE(writer, check, mirror, "push_right", randomData())
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+        while (mirror.size() > 0):
+            WRITE(writer, check, mirror, "pop_right")
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+            WRITE(writer, check, mirror, "get", randomIndex(mirror))
+            WRITE(writer, check, mirror, "peek_left")
+            WRITE(writer, check, mirror, "peek_right")
+            WRITE(writer, check, mirror, "size")
+            WRITE(writer, check, mirror, "empty")
+        
+        WRITE(writer, check, mirror, "reverse")
+    
+    operations = ["push_left", "push_right", "pop_left", "pop_right"]
+    for i in range(random.randint(1000, 1500)):
+        chosen = operations[random.randint(0, len(operations)-1)]
+        if chosen == "pop_left" or chosen == "pop_right":
+            WRITE(writer, check, mirror, chosen)
+        else:
+            WRITE(writer, check, mirror, chosen, randomData())
+        
         WRITE(writer, check, mirror, "peek_left")
         WRITE(writer, check, mirror, "peek_right")
         WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
@@ -482,26 +527,9 @@ def LAYER4(writer: DictWriter):
         WRITE(writer, check, mirror, "size")
         WRITE(writer, check, mirror, "empty")
 
-    for i in range(random.randint(lower, upper)):
-        WRITE(writer, check, mirror, "push_right", randomData())
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(writer, check, mirror, "get", randomIndex(mirror))
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "size")
-        WRITE(writer, check, mirror, "empty")
-    while (mirror.size() > 0):
-        WRITE(writer, check, mirror, "pop_right")
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
-        WRITE(writer, check, mirror, "get", randomIndex(mirror))
-        WRITE(writer, check, mirror, "peek_left")
-        WRITE(writer, check, mirror, "peek_right")
-        WRITE(writer, check, mirror, "size")
-        WRITE(writer, check, mirror, "empty")
+        if (random.randint(1, 6) == 1):
+            WRITE(writer, True, mirror, "reverse")
+
 
 def LAYER5(writer: DictWriter):
     # 1: Finale Test
