@@ -39,6 +39,16 @@ constant, linear, or logarithmic in nature.
 
 // TIMER for outputting execution time plots
 // TODO: implement other os later
+#if TIME_COMPLEXITY_GRAPH_DISPLAY == true
+    #define DISPLAY true
+    #define STATUS "enabled"
+#else
+    #define DISPLAY false
+    #define STATUS "disabled"
+#endif
+
+
+
 #if CHECK_FOR_EFFICIENCY == true
     #include <windows.h>
     #include <sys/timeb.h>
@@ -728,7 +738,14 @@ int main(){
     
     printf("---------------------------------------------------------\n");
     printf("<<<< TESTING SUCCESSFUL >>>>\n");
-    printf("!! Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
+    printf("Time plot points <%s>\n\n", STATUS);
+    if (DISPLAY == true){
+        printf("> Opening graphs.py ...\n");
+        Sleep(2000);
+        printf("> graph.py successfully opened.\n\n");
+        Sleep(2000);
+        popen("python graph.py", "r");
+    }
     printf("? Ah...\n? Despite everything, it's still you...\n...A mere Reflection.\n\n");
 
     

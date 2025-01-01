@@ -1,6 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from enum import Enum
 # Size of inputs vs. DeltaTime plot
+
+class Implementation(Enum):
+    DOUBLY_LINKED_LIST = 1
+    DYNAMIC_ARRAY = 2
+    SKIP_LIST = 3
+    TREE_SEQUENCE = 4
+
 operations = ["make", "push_left", "push_right", "pop_left", "pop_right", "peek_left", "peek_right", "set", "get", "reverse", "empty", "size"]
 
 total_size = []
@@ -117,15 +125,68 @@ def extract(line, size, deltaTime):
 plot_data()
 
     
-fig, axs =  plt.subplots(2,2)
-axs[0, 0].plot(total_size[0],total_deltaTime[0])
-axs[0, 0].set_title("Operation: make")
-axs[0, 1].plot(total_size[1],total_deltaTime[1])
-axs[0, 1].set_title("Operation: push_left")
-axs[1, 0].plot(total_size[2],total_deltaTime[2])
-axs[1, 0].set_title("Operation: push_right")
-axs[1, 1].plot(total_size[3],total_deltaTime[3])
-axs[1, 1].set_title("Operation: peek_left")
+fig, axes1 =  plt.subplots(2,3)
+axes1[0, 0].plot(total_size[0],total_deltaTime[0],label="O(l)")
+axes1[0, 0].set_title("Operation: make")
+axes1[0, 0].grid()
+axes1[0, 0].legend()
+
+axes1[0, 1].plot(total_size[1],total_deltaTime[1],label="O(log(n))")
+axes1[0, 1].set_title("Operation: push_left")
+axes1[0, 1].grid()
+axes1[0, 1].legend()
+
+axes1[0, 2].plot(total_size[2],total_deltaTime[2],label="O(log(n))")
+axes1[0, 2].set_title("Operation: push_right")
+axes1[0, 2].grid()
+axes1[0, 2].legend()
+
+axes1[1, 1].plot(total_size[3],total_deltaTime[3],label="O(1)")
+axes1[1, 1].set_title("Operation: pop_left")
+axes1[1, 1].grid()
+axes1[1, 1].legend()
+
+axes1[1, 2].plot(total_size[2],total_deltaTime[2],label="O(log(n))")
+axes1[1, 2].set_title("Operation: pop_right")
+axes1[1, 2].grid()
+axes1[1, 2].legend()
+
+axes1[1, 0].plot(total_size[3],total_deltaTime[3],label="O(1)")
+axes1[1, 0].set_title("Operation: reverse")
+axes1[1, 0].grid()
+axes1[1, 0].legend()
+
+   
+fig, axes2 =  plt.subplots(2, 3)
+axes2[0, 0].plot(total_size[0],total_deltaTime[0],label="O(l)")
+axes2[0, 0].set_title("Operation: peek_left")
+axes2[0, 0].grid()
+axes2[0, 0].legend()
+
+axes2[0, 1].plot(total_size[1],total_deltaTime[1],label="O(log(n))")
+axes2[0, 1].set_title("Operation: peek_right")
+axes2[0, 1].grid()
+axes2[0, 1].legend()
+
+axes2[0, 2].plot(total_size[0],total_deltaTime[0],label="O(l)")
+axes2[0, 2].set_title("Operation: size")
+axes2[0, 2].grid()
+axes2[0, 2].legend()
+
+axes2[1, 0].plot(total_size[1],total_deltaTime[1],label="O(log(n))")
+axes2[1, 0].set_title("Operation: get")
+axes2[1, 1].grid()
+axes2[1, 1].legend()
+
+axes2[1, 1].plot(total_size[2],total_deltaTime[2],label="O(log(n))")
+axes2[1, 1].set_title("Operation: set")
+axes2[1, 1].grid()
+axes2[1, 1].legend()
+
+axes2[1, 2].plot(total_size[3],total_deltaTime[3],label="O(1)")
+axes2[1, 2].set_title("Operation: empty")
+axes2[1, 2].grid()
+axes2[1, 2].legend()
 plt.show()
 
 
