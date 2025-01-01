@@ -39,6 +39,8 @@ constant, linear, or logarithmic in nature.
 
 // TIMER for outputting execution time plots
 // TODO: implement other os later
+
+
 #if TIME_COMPLEXITY_GRAPH_DISPLAY == true
     #define DISPLAY true
     #define STATUS "enabled"
@@ -362,19 +364,37 @@ void EXPORT_DELTA_TIME(FILE **output, WriteData wd, bool newLine){
     }
     if (strcmp(wd.operation, "size") == 0){
         fprintf(output[11], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[11], "\n");
     }
 
 }
 
 
 // --------------------------------------------------------- >>
-/* ----------------------------------------- <<
+/* ----------------------------------------- << 
 
             ||-- MAIN TESTER --||
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 int main(){
+
+    // Write which implementation is currently used
+    FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
+    if (strcmp(IMPLEMENTATION, "DOUBLY_LINKED_LIST") == 0){
+        fprintf(implementation, "DOUBLY_LINKED_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "DYNAMIC_ARRAY") == 0){
+        fprintf(implementation, "DYNAMIC_ARRAY");
+    }
+    if (strcmp(IMPLEMENTATION, "SKIP_LIST") == 0){
+        fprintf(implementation, "SKIP_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "TREE_SEQUENCE") == 0){
+        fprintf(implementation, "TREE_SEQUENCE");
+    }
+
+
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
 
     // Get tests first for each file
@@ -451,16 +471,15 @@ int main(){
     FILE *_reverse = fopen("../mirror-flower/outputs/reverse.txt", "w+");
     FILE *_pop_r = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
     FILE *_pop_l = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
+    
     output[0] = _make;
     output[1] = _push_l;
     output[2] = _push_r;
     output[3] = _pop_l;
-
     output[4] = _pop_r;
     output[5] = _peek_l;
     output[6] = _peek_r;
     output[7] = _set;
-
     output[8] = _get;
     output[9] = _reverse;
     output[10] = _empty;

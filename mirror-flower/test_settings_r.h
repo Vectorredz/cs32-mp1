@@ -8,9 +8,17 @@
 // --------------------------------------------------------- >>
 
 // Modify both header and typedef to the list to test
-#include "../doubly-linked-list/d_linked_list.c"
-typedef list Reflection;
+#include "../tree-sequence/p_tree_list.c"
+typedef PTreeList Reflection;
 
+// Set which implementation to test. Choose among the following:
+/*
+    DOUBLY_LINKED_LIST
+    DYNAMIC_ARRAY
+    SKIP_LIST
+    TREE_SEQUENCE
+ */
+#define IMPLEMENTATION "TREE_SEQUENCE"
 // TYPE: boolean
 // Set to true if you would like the current line being executed to be displayed
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown
@@ -37,7 +45,7 @@ typedef list Reflection;
 
 // Output File Path (contains operation, current size (n), and deltatime benchmark for graph plotting)
 #define OUTPUT_FILE "test_output.txt"
-// #define TIME_COMPLEXITY_GRAPH_DISPLAY false
+#define TIME_COMPLEXITY_GRAPH_DISPLAY true
 
 
 
