@@ -77,7 +77,7 @@ Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| LARGE_INPUTS | `boolean` <br> Switch to efficiency test/graphing mode. This will output a large number of outputs to the **SPECIAL** layer .txt file in **INPUT_DIRECTORY**, for graph plotting. <br> For efficiency test ONLY (The specific test lines with large inputs do NOT check for correctness) (WARNING: takes a long time to generate) | `False` |
+| LARGE_INPUTS | `boolean` <br> Switch to efficiency test/graphing mode. This will output a large number of outputs to the **SPECIAL** layer .txt file in **INPUT_DIRECTORY** *and that layer only*, for graph plotting. <br> For efficiency test ONLY (The specific test lines with large inputs do NOT check for correctness) (WARNING: takes a long time to generate) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
@@ -229,7 +229,7 @@ Included as a C header by the tester.
 | (list header) | `header (.h)` <br> The target list's header file. | N/A |
 | (list source) | `source (.c)` <br> The target list's source file. | N/A |
 | LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
-| LARGE_INPUTS | `boolean` <br> Whether the automatic tester tests only against the **SPECIAL** efficiency/graphing layer. <br> (WARNING: takes a long time to test)  (**TLE**). | `true` |
+| LARGE_INPUTS | `boolean` <br> Whether the automatic tester tests only against the **SPECIAL** efficiency/graphing layer *and that layer only.* <br> (WARNING: takes a long time to test)  (**TLE**). | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
