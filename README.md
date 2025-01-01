@@ -26,20 +26,10 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 <br>
 
 ### Tester Files
-*\* Contains all files relevant for testing.*\
+*\* This directory contains all files relevant for testing.*\
 *\* Please see **[Unit Test](#unit-test)** for more details.*
 
-
 **[mirror-flower](mirror-flower)**\
-[test_settings_m.py](mirror-flower/test_settings_m.py)\
-[mirror.py](mirror-flower/mirror.py)
-
-[test_settings_r.h](mirror-flower/test_settings_r.h)\
-[reflection.c](mirror-flower/reflection.c)
-
-[test_input_0.csv](mirror-flower/test_input_0.csv)\
-[test_input.csv](mirror-flower/test_input.py)\
-[test_output.py](mirror-flower/test_output.py)
 
 <br>
 
@@ -74,9 +64,9 @@ It is divided into the **Python-side**, and the **C-side**.
 [test_settings_r.h](mirror-flower/test_settings_r.h) - Tester (settings)\
 [reflection.c](mirror-flower/reflection.c) - Tester
 
-[test_input.csv](mirror-flower/test_input.py) - Test inputs\
-[test_input_0.csv](mirror-flower/test_input_0.csv) - Test inputs (for testing the tester itself)\
-[test_output.py](mirror-flower/test_output.py) - Test outputs (graph plotting)
+[inputs](mirror-flower/inputs) - Test inputs (operations)\
+[outputs](mirror-flower/outputs) - Test outputs (graphing)\
+[inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - Special input, for testing the tester itself\
 
 <br>
 
@@ -87,7 +77,7 @@ Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| LARGE_INPUTS | `boolean` <br> Whether the tests will test for large inputs to check efficiency. <br> (The specific test lines with large inputs do NOT check for correctness.) <br> (Warning: takes way longer to generate) | `False` |
+| LARGE_INPUTS | `boolean` <br> Switch to efficiency test/graphing mode. This will output a large number of outputs to the special layer .txt file in **INPUT_DIRECTORY**, for graph plotting. <br> For efficiency test ONLY (The specific test lines with large inputs do NOT check for correctness) (Warning: takes a long time to generate/test) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
@@ -97,7 +87,7 @@ Imported as a Python module by the generator.
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
 The generator for the tests. It acts as the "mirror" for the list to appropriately match as its reflection.\
-It implements a working list in Python, and outputs test operations to the corresponding **INPUT_DIRECTORY**. These set of files are CSV's delimeted by a bar `|`, with its fields as follows:
+It implements a working list in Python, and outputs test operations to the corresponding **INPUT_DIRECTORY**. These set of files are .txt files delimeted by a bar `|`, with its fields as follows:
 
 > OPERATION|ARG1|ARG2|RESULT
 
@@ -122,7 +112,7 @@ Their text can be of the following:
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
-*\*Please see [test_input_0.csv](mirror-flower/test_input_0.csv) for a complete example.*
+*\*Please see [inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) for a complete example.*
 
 
 <br>
@@ -198,15 +188,9 @@ It features more detailed basic operation tests, as well as more insertion/delet
         - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
         - POP_* until empty
         - Along with all other OPERATIONS throughout (to test for UB)
-
-    >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
-        > (No checking for correctness, "RESULT" is "X")
-        - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
-        - POP_* until empty
-        - Along with all other OPERATIONS throughout
 ```
 Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times, to test for edge cases and UB. If a list was not caught broken before, it will be now.\
-Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
+It throws everything it can towards the list. Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
 This is also where the **LARGE_INPUTS** setting is utilized for efficiency checking (**TLE**), and where the test output is particularly useful for graphing benchmark execution times.
 
 <br>
@@ -221,6 +205,16 @@ This is also where the **LARGE_INPUTS** setting is utilized for efficiency check
         - After the loop, pops list until n == 0
 ```
 The final **Layer**. The tester gives up and surrenders itself to probability due to its inability to break the list in **Layer 4**. Now, it only tries to break the list with random operations. It is maybe possible that the list still breaks in this layer due to some unforeseen edge cases.
+
+>>>>>>> SPECIAL:
+```
+    > (No checking for correctness, "RESULT" is "X")
+        >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
+            - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
+            - POP_* until empty
+            - Along with all other OPERATIONS throughout
+```
+A special layer, It generates a large number of inputs, mainly for testing efficiency and graph plotting.
 
 <br>
 
@@ -238,7 +232,7 @@ Included as a C header by the tester.
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.csv` |
+| OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.txt` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 
 <br>
@@ -252,14 +246,14 @@ Included as a C header by the tester.
 ### [C] Reflection: *[reflection.c](mirror-flower/reflection.c)*
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
-It first obtains each line of the CSV and stores it in an array.\
+It first obtains each line of the .txt and stores it in an array.\
 Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.
 
 The tester also uses special test functions for its testing. These are global test operations that must be implemented for each list. They can be viewed in the **Global** section of **[DETAILS.md](DETAILS.md)**. In particular, it also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
-Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a CSV file delimeted by a bar `|`, with its fields as follows:
+Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a .txt file delimeted by a bar `|`, with its fields as follows:
 
 > OPERATION|N|DELTATIME
 
