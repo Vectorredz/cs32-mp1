@@ -308,7 +308,7 @@ int64_t get(dynamic_array *d, int i)
     else // d->reverse == true
     {
         // reverses the index 
-        int reverse_index = abs((d->last) - i) % d->size;
+        int reverse_index = (d->start + d->last) - i;
         
         return d->array[reverse_index];
     }
@@ -339,7 +339,7 @@ void set(dynamic_array *d, int i, int64_t v)
     {
 
         // reverses the index 
-        int reverse_index = abs((d->last) - i);
+        int reverse_index = (d->start + d->last) - i;
         d->array[reverse_index] = v;
     }   
 }
@@ -355,11 +355,9 @@ DATA* TEST_elements(dynamic_array* list, LENGTH* nRef, DATA* seqRef){
   LENGTH n = list->elements;
   DATA* seq = (DATA*) malloc(n * sizeof(DATA));
 
-  // --
-  // insert elements into seq in order
-  // --
+  get(list, nRef);
   
-  *nRef n;
+  *nRef = n;
   *seqRef = n;
 }
 

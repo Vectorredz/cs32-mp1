@@ -12,7 +12,7 @@
 
 Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the for-loop.
 
-Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where &#8467 is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
+Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where $\mathscr{l}$ is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
 
 $$T(\mathscr{l}) = T(\mathscr{l}-1) + c $$
 $$T(\mathscr{l}-1) = T(\mathscr{l}-2) + c$$$$ \vdots$$
@@ -79,7 +79,7 @@ As observed, the operations involved run in constant time, $O(1)$. Therefore, we
 Thus, we have proven that `pop_left & pop_right` runs at $O(1)$ worst case regardless of whether the list is reversed or not, because the operations done remain constant.
 
 
-#### Function: `size` \& `empty`
+#### Function: `peek` & `size` \& `empty`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - return statement
@@ -88,7 +88,7 @@ The implementation returns a variable of the doubly linked list data structure, 
 
 As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
 
-Now, `empty` is similar to `size` except that it adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `l->size` and returns either `true` or `false` depending if `l->size == 0` or not; and `peek` returns the leftmost or rightmost. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
 
 Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
 
@@ -155,6 +155,7 @@ The implementation lies on the boolean `l->reversed`, where $l$ is the list pass
 As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$. 
 
 Thus, we have proven that `reverse` runs at $O(1)$ worst case.
+
 
 ***
 ### Dynamic Array
@@ -303,7 +304,7 @@ From this, we simplify it to be $T_{decrease} = O(n)$. However, it is important 
 
 Thus, we have proven that `push_left`  and `push_right` runs at $O(1)$ amortized regardless of whether the list is reversed or not, because the operations done remain constant.
 
-#### Function: `size` \& `empty`
+#### Function: `peek`\&`size` \& `empty`
 **Time Complexity: $O(1)$ worst case**<br>
 <b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
 - return statement
@@ -312,7 +313,7 @@ The implementation returns a variable of the doubly linked list data structure, 
 
 As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
 
-Now, `empty` is similar to `size` except that it adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `d->size == 0` or not. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `d->size == 0` or not; and `peek` returns the leftmost or rightmost value. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
 
 Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
 
@@ -323,6 +324,7 @@ Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
 - if-else statement
 - return statement
 - arithmetic operations
+- array indexing operations
 
 For example, both operations operations free find the index that is passed to the function relative to the current indexing of the list. That is because the starting index of the list may be a $-4$ or a $5$, so it is important to find the relative index of the list. For the `get` operation, the value at `d->array[relative_index]` is returned. In the case of the `set` operation, a new value $v$ is assigned to the element at the specified index, such that, `d->array[relative_index] = v`, where $v$ is the value passed to the `set` function.
 
@@ -344,3 +346,228 @@ Thus, we have proven that `reverse` runs at $O(1)$ worst case.
 ***
 ### Sequence of Trees
 ***
+#### Function: `make`
+**Time Complexity: $O(\mathscr{l})$ worst case**<br>
+<b>Proof:</b> Notice the implementation contains a recursive function, `_constructPTreesFromRange`; and two looping functions, `_getGreatestPowerOfTwo` and `_constructPTrees` . Within each function, we can see that the operations involve a series of the following constant-time operations:
+- variable assignment
+- malloc
+- if-else statement
+- return statement
+
+Each of the operations involved that were done within the functions run in constant time, $O(1)$. From this we can derive the recurrence relation of the combination of all the constant time operations, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the recursive function.
+
+**T<sub>pow</sub>: \_getGreatestPowerOfTwo**. Analyzing this while-loop function, we can notice that the function uses a special technique called bit-shifting. Notice that each iteration of the loop, $\text{pow}$ exponentially grows in value. As a result, as it iterates through the loop, until $\text{pow} \ge \text{num}$, $pow=2^{k++}$. Thus, the iteration happens a total of $\lfloor\lg \mathscr{l}\rfloor$ times, where $\mathscr{l}$ is $\text{num}$ or the length of the given sequence.
+
+By definition of big O notation, since $\lg \mathscr{l}$ grows at a logarithmic power, $\lg \mathscr{l}$ grows asymptotically positive at the same rate as $\log \mathscr{l}$. As a result, `_getGreatestPowerOfTwo` runs at $T_{pow} = O(\log \mathscr{l})$.
+
+**T<sub>recursion</sub>:  \_constructPTreesFromRange**. Now, focusing on the recursive function, `_constructPTreesFromRange`, we can see that within `_constructPTreesFromRange` are a combination of the constant time operations aforementioned and recursive calls. Similar to a divide and conquer algorithm, the recursive call divides the list into two halves. To analyze the function, lets view it from somewhat of a mathematical induction's perspective.
+
+**Base Case.** When the `upperBound` and the `lowerBound` end up equal to each other, then it would do a series of two constant time operations, `variable assignment` and `array indexing assignment`. As a result, the base case runs at $O(1)$.
+
+**Inductive Step:** When the `upperBound` and the `lowerBound` are not equal to each other, the recursive call splits the list into two halves. This happens until it cannot be split anymore, which is when the `base case` is met. Both sizes of the left and right subtree (of when the list is split) results in size of $n/2$.  After splitting, the function then constructs the parent nodes and does other assignment. Since these are constant time operations, the cost for these are $O(1)$. From this, we can derive the following recurrence relation $T_{recursion}$:
+
+$$T(n)=2T(n/2) + O(1)$$
+
+Where $2T(n/2)$ represent the two initial subtrees created by the function and $O(1)$ represents the cost within the recursive calls as explained above.
+
+Now, solving the recurrence relation using *Master's Theorem*. We let $a=2$, $b=2$, and $f(n) = O(1)$.
+Since $f(n) = O(1)$, we let $k=0$. Calculating for the critical value $p$, we get the following:
+
+$$p=\log_{b}{a}=\log_22=1$$
+
+Since $p=1$ and $k=0$, resulting in $k<p$, by Case 1 of the *Master's Theorem*, the time complexity of the recurrence relation results in $T(n)=O(n^p) = O(n^1) = O(n)$. For this case, since $n$ represents the length of the given list, we can rewrite it as $\mathscr{l}$. We get, 
+
+$$T_{recursion} = O(\mathscr{l})$$
+
+**T<sub>main</sub>: \_constructPTrees**. This function is where it all began. Analyzing the function, it is observed that the function creates a series of operations, similar to the aforementioned, that run in constant time, $O(1)$. Aside from this, it contains two function calls, $T_{L_1}$ and $T_{recursion}$. 
+
+Focusing on the while-loop, it runs until $\text{currentStart} > \text{upperBound}$, where $\text{currentStart}$ starts at $0$ and $\text{upperBound}$ starts at $\mathscr{l}-1$. Here, $\text{currentStart}$ increments by a power of two. We can construct a working sequence of the while-loop to be the following for better visualization, where $c$ is $\text{currentStart}$ and $\mathscr{l}$ is the length of the given sequence:
+
+$${c_n}= c+2^{\lg\mathscr{l}}+2^{\mathscr{l}-2^{\lg\mathscr{l}}}+... < \mathscr{l}$$
+$$c_n = c+\sum_{i=0}^{\lg{\mathscr{l}}}{2^{\lg(\mathscr{l}-2^i)}}$$
+
+with the assumption that $\lg$ is equivalent to $\lfloor\log_2 \rfloor$. From this, and all the functions aforementioned, we can derive the a working recurrence to describe the time complexity of `_constructPTrees`.
+
+$$T(\mathscr{l}) = T_{main} + O(pow+recursion+outer)$$
+
+This is because, `_constructPTrees` runs a total of $T_{main}$ times. Moreover, for each iteration, it costs $O(pow+recursion+outer)$.
+
+$$T(\mathscr{l})=T(\mathscr{l}-2^{\lg\mathscr{l}}) + O(\lg\mathscr{l}+ \mathscr{l}+1)$$
+
+
+Note that since  $\lg = \lfloor\log_{2}\rfloor$, we need to drop the floor function somehow. This is important because 
+
+$$\mathscr{l}-2^{\lfloor\lg\mathscr{l}\rfloor}\ge\mathscr{l}-2^{\lg \mathscr{l}}$$
+
+ Thus, making $\mathscr{l}-2^{\lg \mathscr{l}}$ the lower bound for $\mathscr{l}-2^{\lfloor\lg\mathscr{l}\rfloor}$. Since in big O, we are analyzing the upper bound of the time complexity, we can transform the floor function to something simpler. We get the following:
+
+$$\mathscr{l}-2^{\lfloor\lg\mathscr{l}\rfloor} \rightarrow \mathscr{l}-2^{\lg\mathscr{l}-1}$$
+This transformation satisfies the fact that $\mathscr{l}-2^{\lfloor\lg\mathscr{l}\rfloor} \le \mathscr{l}-2^{\lg\mathscr{l}-1}$ allowing us to use it instead for simpler calculations. 
+
+Now, simplifying the recurrence further, we get the following:
+
+$$T(\mathscr{l}) = T(\mathscr{l}-2^{\lg\mathscr{l}-1})+O(\lg\mathscr{l}+\mathscr{l}+1)$$
+$$T(\mathscr{l}) = T\left(\mathscr{l}-\frac{2^{\lg\mathscr{l}}}{2}\right)+O(\lg\mathscr{l}+\mathscr{l}+1)$$
+$$ T(\mathscr{l}) = T\left(\mathscr{l}-\frac{{\mathscr{l}}}{2}\right)+O(\lg\mathscr{l}+\mathscr{l}+1)$$
+
+Thus, we get the following:
+
+$$T(\mathscr{l})=  T(\mathscr{l}) = T\left(\frac{{\mathscr{l}}}{2}\right)+O(\lg\mathscr{l}+\mathscr{l}+1)$$
+
+and by definition of big O, since polynomial grows much quicker than logarithmic and constant growth, at some very large $\mathscr{l}_0$, for all $\mathscr{l}>\mathscr{l}_0$, $\lg{\mathscr{l}}$ and $1$ become negligible. As a result, we can simplify it further to the following:
+
+$$T(\mathscr{l}) = T\left(\frac{{\mathscr{l}}}{2}\right)+O(\mathscr{l})$$
+
+Now, solving the recurrence relation using *Master's Theorem*. We let $a=1$, $b=2$, and $f(\mathscr{l}) = O(\mathscr{l})$.
+Since $f(n) = O(\mathscr{l})$, we let $k=1$. Calculating for the critical value $p$, we get the following:
+
+$$p=\log_{b}{a}=\log_21=0$$
+
+Since $p=0$ and $k=1$, resulting in $k>p$, the recurrence relation falls into Case 3 of the *Master's Theorem*. As a result, we need to verify the regularity condition. The regularity condition $c<1$ where:
+
+$$af\left(\frac{\mathscr{l}}{b}\right) \le c\cdot f(\mathscr{l})$$
+
+We get the following:
+
+$$f\left(\frac{\mathscr{l}}{2}\right)\le c\cdot f(\mathscr{l})$$
+
+Now, simplifying $f\left(\frac{\mathscr{l}}{2}\right)$ for comparison and defining $f(n)=O(\mathscr{l})$ as stated above, we get:
+
+$$f\left(\frac{\mathscr{l}}{2}\right)=O\left(\frac{\mathscr{l}}{2}\right)=\frac{1}{2}O(\mathscr{l})$$
+$$\frac{1}{2}O(\mathscr{l})\le c\cdot O(\mathscr{l})$$
+
+Here, we can see that $c=\frac{1}{2}$ by comparison and  since $c<1$, it satisfies the regularity condition. By case 3, $T(\mathscr{l})=O(f(\mathscr{l}))$, we get:
+
+$$T(\mathscr{l})=O(\mathscr{l})$$
+
+Since we have shown that `_constructPTrees` runs in $O(\mathscr{l})$, we may now conclude that `make` also runs in $O(\mathscr{l})$. Thus proving that `make` runs at $O(\mathscr{l})$ worst case. 
+
+#### Function: `push_left` \& `push_right`
+**Time Complexity: $O(\log{n})$ worst case**<br>
+<b>Proof:</b> Notice the implementation calls a function, `_push_*_base`. Within the function, two other functions are called, `_constructZeroPTree` and `_mergeNonDistinctPTrees*` However, if we focus on the lines outside the function calls, we can see that the operation involves a series of the following constant-time operations:
+- variable assignment
+- if-else statement
+- arithmetic operations
+
+Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the recursive function.
+
+**T<sub>zero</sub>: \_constructZeroPTree**. Focusing on this function, it is observed to have a series of constant time operations. There are no recursive calls or loops present. Thus, $T_{zero}$ has a time complexity of $O(1)$.
+
+**T<sub>merge</sub>: \_mergeNonDistinctPTrees\***. Focusing on this function, it is observed to have a series of constant time operations along with a while-loop. Because a `PTree` has a height of $\lg n$, where $n$ is the number of nodes in the tree, the loop iterates a total of $\lg n$ times as it traverses each level of the tree. 
+
+The running time of the loop is proportional to the amount of iterations multiplied by the cost of each iteration. Since the loop runs for a total of $\lg n$ iterations and each iteration takes constant time to run, then we can achieve it's time complexity to be $T_{merge}=O(\lg n)$. 
+
+Rewriting the time complexity further in terms of standard logarithms, since $\lg n$ and $\log n$ grow asymptotically positive at the same rate, there exists a constant $c$ such that $\lg n \le c \cdot \log n$. Thus, by definition of big O, we can express: 
+
+$$T_{merge}=O(\lg n) = O(\log n)$$
+
+Now, getting the total time complexity of the function, we have the following:
+
+$$T(n) = T_{outer} + T_{zero} + T_{merge}$$
+$$T(n)=O(1)+O(1)+O(\log n)$$
+
+By definition of big O, we can ignore $O(1)$ because logarithmic time grows quicker than constant time for all n and for some sufficiently large $n_0$ where $n\ge n_0$.
+
+Thus proving that `push` runs at $O(\log n)$ worst case. 
+
+#### Function: `pop_left` \& `pop_right`
+**Time Complexity: $O(\log{n})$ worst case**<br>
+<b>Proof:</b> Notice the implementation calls a function, `_pop_*_base`. Within the function, another function is called, `_peekABoo`. However, if we focus on the lines outside `_peekABoo` and the if-else statement used in`pop`, we can see that the operation involves a series of the following constant-time operations:
+- variable assignment
+- if-else statement
+- arithmetic operations
+
+Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the recursive function.
+
+**T<sub>cascade</sub>: \_cascadeRemoval\***. The first loop traverses through each tree node in the sequence. Each tree is of size $2^k$ and that it is constructed by taking the largest power of two first, if possible. This approach is similar to the binary number system, where it prioritizes the largest power of two first, it can be used to represent the amount of trees a decimal number would have.  
+
+Using the concept, since the maximum number of bits that any decimal number would have is $\lfloor \lg n \rfloor + 1$, that means that there are also the same amount of trees given n. Since we are searching for the upper bound, we can put down the floor function, giving us the following:
+
+$$\text{amount of trees} = \lg n +1$$
+
+Therefore, the while loop will iterate at most $\lg n + 1$ times. And since the operations used within the while loop are constant time operations, we get the following time complexity for this function to be $T_{cascade} = O(\lg n +1) = O(\lg n)$.
+
+This can be simplified to $O(\log⁡ n)$, as $\lg n$ and $\log n$ grow asymptotically at the same rate, differing by a constant factor due to the differences in bases. By the definition of big O, we conclude the following:
+
+$$T_{cascade}=O(\lg n) = O(\log n)$$
+
+**T<sub>peek</sub>: \_peekABoo**. Focusing on this function, it is observed to have a series of constant time operations alongside two while-loop. After popping a node, the function would then traverse both the left and right of the tree until the end to set the last node as the new leftmost or rightmost. Because the loop traverses through a tree, it naturally iterates the same amount as the height of the tree. That is, since the height of the tree is $\log n$ (as proven in the `push` function) and the operations within the loop run in constant time, we get the following:
+
+$$T_{peek} = O(2\log n) =O(\log n)$$
+
+The time complexity is $O(2\log n)$ because there are two while-loop in the function. However, this can be simplified to $O(\log⁡ n)$, as $2\log n$ and $\log n$ grow asymptotically at the same rate, differing only by a constant factor. Specifically, there exists a constant $c \ge 2$ such that $2 \log n \le c \cdot \log n$. By the definition of big O, we conclude that $T_{peek}=O(\log ⁡n)$.
+
+Now, combining all of it, we get:
+
+$$T(n)=T_{outer} + T_{cascade} + T_{peek}$$
+$$= O(1) + O(\log n) + O(\log n)$$
+$$T(n) = O(2\log n + 1)$$
+
+This can be simplified further using the same concepts as the aforementioned into:
+
+$$T(n)=O(\log n)$$
+
+Thus proving that `push` runs at $O(\log n)$ worst case. 
+
+#### Function: `peek`\&`size` \& `empty`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- return statement
+
+The implementation returns a variable of the doubly linked list data structure, `list->n`. Where $d$ is the dynamic array passed to the `size` operation.
+
+As observed, because the return statement runs at constant time, $O(1)$, and is the sole operation in `size`. By definition, `size` also runs at $O(1)$ worst case. 
+
+Now, `empty` and `peek` is similar to `size` except that `empty` adds an if-else statement dependent on `d->size` and returns either `true` or `false` depending if `list->n == 0` or not; and `peek` returns the leftmost or rightmost value. Notice that both return and the if-else statement runs in constant time, $O(1)$. Therefore, `empty` also runs at $O(1)$.
+
+Thus, we have proven that `size` and `empty` runs at $O(1)$ worst case.
+
+#### Function: `get` \& `set`
+**Time Complexity: $O(\log{n})$ worst case**<br>
+<b>Proof:</b> Notice the implementation calls a function, `_getLeafNodeAtIndex`. Within the function, we can see that the operation involves a series of the following constant-time operations alongside two while-loop:
+- variable assignment
+- if-else statement
+- arithmetic operations
+- return statement
+
+Each of the operations involved that were done outside of the for-loop run at constant time, $O(1)$. From this we can derive the recurrence relation of the combination of outer statements, $T_{outer} = c$, where c is the constant representing the total time taken by the combination of operations outside the recursive function.
+
+**T<sub>get</sub>: \_getLeafNodeatIndex**. The first loop traverses through each tree node in the sequence. Each tree is of size $2^k$ and that it is constructed by taking the largest power of two first, if possible. This approach is similar to the binary number system, where it prioritizes the largest power of two first, it can be used to represent the amount of trees a decimal number would have.  
+
+Using the concept, since the maximum number of bits that any decimal number would have is $\lfloor \lg n \rfloor + 1$, that means that there are also the same amount of trees given n. Since we are searching for the upper bound, we can put down the floor function, giving us the following:
+
+$$\text{amount of trees} = \lg n +1$$
+
+Therefore, the while loop will iterate at most $\lg n + 1$ times. And since the operations used within the while loop are constant time operations, we get the following time complexity for this function to be the following:
+
+$$T_{get} = O(\lg n +1) = O(\lg n)$$
+
+This can be simplified to $O(\log⁡ n)$, as $\lg n$ and $\log n$ grow asymptotically at the same rate, differing by a constant factor due to the differences in bases. By the definition of big O, we conclude that 
+
+$$T_{get}=O(\log ⁡n)$$
+
+Focusing on the second loop, it is observed to have a series of constant time operations alongside two while-loop. After popping a node, the function would then traverse both the left and right of the tree until the end to set the last node as the new leftmost or rightmost. Because the loop traverses through a tree, it naturally iterates the same amount as the height of the tree. That is, since the height of the tree is $\log n$ (as proven in the `push` function) and the operations within the loop run in constant time, we get the following:
+
+$$T(n) = O(2\log n) =O(\log n)$$
+
+The time complexity is $O(2\log n)$ because there are two while-loop in the function. However, this can be simplified to $O(\log⁡ n)$, as $2\log n$ and $\log n$ grow asymptotically at the same rate, differing only by a constant factor. Specifically, there exists a constant $c \ge 2$ such that $2 \log n \le c \cdot \log n$. By the definition of big O, we conclude that $T(n)=O(\log ⁡n)$.
+
+Combining the complexities we get:
+
+$$T(n) = O(\log n)  + O(\log n) = O(2\log n)$$
+Simplifying this further to be:
+
+$$T(n) = O(\log n)$$
+
+Thus proving that `get` and `set` runs at $O(\log n)$ worst case. 
+
+#### Function: `reverse`
+**Time Complexity: $O(1)$ worst case**<br>
+<b>Proof:</b>  Notice there is only one operation involved in the `size` operation:
+- negation statement: `reversed = !reversed`
+
+The implementation lies on the boolean `list->reversed`, where $l$ is the list passed to the `reverse` function. The only thing it does is negates the current value of the boolean. This is possible because all the other operations adjust to the current state of `reversed`, that is, it will do the exact opposite if reversed.
+
+As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$.
+
+Thus, we have proven that `reverse` runs at $O(1)$ worst case.
