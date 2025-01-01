@@ -375,7 +375,9 @@ Since $f(n) = O(1)$, we let $k=0$. Calculating for the critical value $p$, we ge
 
 $$p=\log_{b}{a}=\log_22=1$$
 
-Since $p=1$ and $k=0$, resulting in $k<p$, by Case 1 of the *Master's Theorem*, the time complexity of the recurrence relation results in $T(n)=O(n^p) = O(n^1) = O(n)$. For this case, since $n$ represents the length of the given list, we can rewrite it as $\mathscr{l}$. We get, $T_{recursion} = O(\mathscr{l})$.
+Since $p=1$ and $k=0$, resulting in $k<p$, by Case 1 of the *Master's Theorem*, the time complexity of the recurrence relation results in $T(n)=O(n^p) = O(n^1) = O(n)$. For this case, since $n$ represents the length of the given list, we can rewrite it as $\mathscr{l}$. We get, 
+
+$$T_{recursion} = O(\mathscr{l})$$
 
 **T<sub>main</sub>: \_constructPTrees**. This function is where it all began. Analyzing the function, it is observed that the function creates a series of operations, similar to the aforementioned, that run in constant time, $O(1)$. Aside from this, it contains two function calls, $T_{L_1}$ and $T_{recursion}$. 
 
