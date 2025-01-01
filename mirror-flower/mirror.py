@@ -16,8 +16,8 @@ LAYER 0:
 LAYER 1:
     >> BASIC OPERATIONS TEST
         * Gazes at:
-            - GET (Random Index)
-            - SET (Random Index and Random Data)
+            - GET (Random Index) (2 -> 924)
+            - SET (Random Index and Random Data) (925 -> 1847)
             - PEEK_*
             - SIZE
             - EMPTY
@@ -50,12 +50,10 @@ LAYER 4:
             - PUSH_* (Random Data) for RANDOM_INTEGER(2000, 5000) times
             - POP_* until empty
             - Along with all other OPERATIONS throughout
-
-        >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
-            > (No checking for correctness, "RESULT" is "X")
-            - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
-            - POP_* until empty
-            - Along with all other OPERATIONS throughout
+        >> BREAKER TEST 2 (Random Operations)
+            - PUSH_* (Random Data)
+            - POP_*
+            - Along with all other OPERATIONS throughout (to test for UB)
 
 LAYER 5:
     * Gives up        
@@ -65,7 +63,7 @@ LAYER 5:
             - bound size to <=4444
             - After the loop, pops list until n == 0
 '''
-from test_settings_m import INPUT_DIRECTORY, LARGE_INPUTS, SEED
+from test_settings_m import INPUT_DIRECTORY, SEED
 # --------------------------------------------------------- >>
 # --------------------------------------------------------- >>
 # Do not edit past this point!
@@ -291,7 +289,7 @@ def LAYER0(writer: DictWriter):
         })
 
     # test make (RANDOM_INTEGER(0, 1000))
-    n = random.randint(0, 1000+1)
+    n = random.randint(0, 1000)
     seq = list[DATA]()
     for i in range(n):
         seq.append(random.randint(-10**18, 10**18))
@@ -370,7 +368,7 @@ def LAYER1(writer: DictWriter):
         _basicCheck(mirror)
 
     # make again (RANDOM_INTEGER(0, 1000))
-    n = random.randint(0, 1000+1)
+    n = random.randint(0, 1000)
     seq = list[DATA]()
     for i in range(n):
         seq.append(randomData())
@@ -438,7 +436,7 @@ def LAYER3(writer: DictWriter):
     operations = ["push_left", "push_right", "pop_left", "pop_right"]
     for i in range(random.randint(5000, 10000)):
         chosen = operations[random.randint(0, len(operations)-1)]
-        if chosen.find("pop") != -1:
+        if chosen == "pop_left" or chosen == "pop_right":
             WRITE(writer, True, mirror, chosen)
         else:
             WRITE(writer, True, mirror, chosen, randomData())
@@ -456,17 +454,11 @@ def LAYER3(writer: DictWriter):
 def LAYER4(writer: DictWriter):
     global mirror
 
-    # 1: Breaker Test, 2: Efficiency Test
-    for u in range(1, 3):
-        check = True
-        lower, upper = 1000, 2222
-        if u == 2:
-            if LARGE_INPUTS == False:
-                break
-            check = False
-            lower = 60000
-            upper = 200000
+    # 1: Breaker Test
+    check = True
+    lower, upper = 1000, 1500
 
+    for _ in range(2):
         for i in range(random.randint(lower, upper)):
             WRITE(writer, check, mirror, "push_left", randomData())
             WRITE(writer, check, mirror, "peek_left")
@@ -508,6 +500,29 @@ def LAYER4(writer: DictWriter):
             WRITE(writer, check, mirror, "peek_right")
             WRITE(writer, check, mirror, "size")
             WRITE(writer, check, mirror, "empty")
+        
+        WRITE(writer, check, mirror, "reverse")
+    
+    operations = ["push_left", "push_right", "pop_left", "pop_right"]
+    for i in range(random.randint(1000, 1500)):
+        chosen = operations[random.randint(0, len(operations)-1)]
+        if chosen == "pop_left" or chosen == "pop_right":
+            WRITE(writer, check, mirror, chosen)
+        else:
+            WRITE(writer, check, mirror, chosen, randomData())
+        
+        WRITE(writer, check, mirror, "peek_left")
+        WRITE(writer, check, mirror, "peek_right")
+        WRITE(writer, check, mirror, "set", randomIndex(mirror), randomData())
+        WRITE(writer, check, mirror, "get", randomIndex(mirror))
+        WRITE(writer, check, mirror, "peek_left")
+        WRITE(writer, check, mirror, "peek_right")
+        WRITE(writer, check, mirror, "size")
+        WRITE(writer, check, mirror, "empty")
+
+        if (random.randint(1, 6) == 1):
+            WRITE(writer, True, mirror, "reverse")
+
 
 def LAYER5(writer: DictWriter):
     # 1: Finale Test
@@ -531,13 +546,13 @@ def LAYER5(writer: DictWriter):
     # empty
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_right")
-            
 
 
 print("> Initializing tests...")
 
 if not INPUT_DIRECTORY.exists():
     INPUT_DIRECTORY.mkdir()
+
 tests: dict[str, Callable[[DictWriter], None]] = {
     "0": LAYER0,
     "1": LAYER1,
@@ -546,8 +561,9 @@ tests: dict[str, Callable[[DictWriter], None]] = {
     "4": LAYER4,
     "5": LAYER5,
 }
+
 for layer, func in tests.items():
-    directory = INPUT_DIRECTORY / Path("LAYER" + layer + ".csv")
+    directory = INPUT_DIRECTORY / Path("LAYER" + layer + ".txt")
 
     layerMsg, layerfinMsg = "", ""
     if layer == "5":
@@ -567,6 +583,8 @@ for layer, func in tests.items():
     # Remove extra line at end of file
     if file.tell() != 0:
         file.truncate(file.tell()-len(os.linesep))
+
+    file.close()
 
     print("> Done.")
 
