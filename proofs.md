@@ -392,7 +392,7 @@ $$T(\mathscr{l}) = T_{main} + O(pow+recursion+outer)$$
 
 This is because, `_constructPTrees` runs a total of $T_{main}$ times. Moreover, for each iteration, it costs $O(pow+recursion+outer)$.
 
-$$T(\mathscr{l})=T(\mathscr{l}-2^{lg\mathscr{l}}) + O(\lg\mathscr{l}+ \mathscr{l}+1)$$
+$$T(\mathscr{l})=T(\mathscr{l}-2^{\lg\mathscr{l}}) + O(\lg\mathscr{l}+ \mathscr{l}+1)$$
 
 
 Note that since  $\lg = \lfloor\log_{2}\rfloor$, we need to drop the floor function somehow. This is important because 
