@@ -31,12 +31,11 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 
 <details>
 <summary>Doubly Linked List</summary>
-Doubly-linked List is one of the most common data structures that offers advantages over the others. It is an extension to `Singly-linked List` but instead of being a one-way traversal, doubly-linked List provides a two-way connection from front to back and vice-versa.
-
 
 ## Doubly Linked List
 
 ### Summary
+Doubly-linked List is one of the most common data structures that offers advantages over the others. It is an extension to `Singly-linked List` but instead of being a one-way traversal, doubly-linked List provides a two-way connection from front to back and vice-versa.
 
 <hr>
 
