@@ -8,8 +8,8 @@
 // --------------------------------------------------------- >>
 
 // Modify both header and typedef to the list to test
-#include "../skip-list/skip-list.c" //(yes this is a Sin :man_running:)
-typedef SkipList Reflection;
+#include "../doubly-linked-list/d_linked_list.c" //(yes this is a Sin :man_running:)
+typedef list Reflection;
 
 // TYPE: boolean
 // Set to true if you would like the current line being executed to be displayed

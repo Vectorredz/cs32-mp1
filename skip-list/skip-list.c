@@ -14,15 +14,7 @@
 // --------------------------------------------------------- >>
 
 LENGTH _capHeight(LENGTH n){
-    LENGTH pow = 1;
-    LENGTH k = 0;
-    while (pow < n){
-        LENGTH new = pow << 1;
-        if (new > n) break;
-        pow = new;
-        k++;
-    }
-    return (k+1); // ceil up
+    return (LENGTH)ceil(log2(n)); // ceil up
 }
 
 bool _flipCoin(){
@@ -70,7 +62,7 @@ Level *_makeLevel(){
 } 
 
 SkipList *_initSkipList(){
-    SkipList *skip_list = malloc(sizeof(SkipList));
+    SkipList *skip_list = (SkipList*)malloc(sizeof(SkipList));
 
     // initalize level-related members
     skip_list->levels = (LevelList*)malloc(sizeof(LevelList));

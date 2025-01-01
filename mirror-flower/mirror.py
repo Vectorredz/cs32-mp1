@@ -9,15 +9,15 @@ Look into the Mirror...
 '''
 LAYER 0:
     >> INITIALIZATION TEST
-        - MAKE (0 -> 1000)
+        - MAKE (0 -> 1004)
         - MAKE (length of RANDOM_INTEGER(0, 1000))
         - with DATA in ranges [-10^18, 10^18]
     
 LAYER 1:
     >> BASIC OPERATIONS TEST
         * Gazes at:
-            - GET (Random Index)
-            - SET (Random Index and Random Data)
+            - GET (Random Index) (2 -> 924)
+            - SET (Random Index and Random Data) (925 -> 1847)
             - PEEK_*
             - SIZE
             - EMPTY

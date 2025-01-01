@@ -288,11 +288,56 @@ void WRITE(FILE* f, WRITEDATA wd, bool newLine){
     }
 }
 
-void export_delta_time(FILE* f, WRITEDATA wd, bool newLine){
-    fprintf(f, "%lf ", wd.c);
-    if (newLine == true){
-        fprintf(f, "\n");
+void export_delta_time(FILE **output, WRITEDATA wd, bool newLine){
+
+    if (strcmp(wd.operation, "make") == 0){
+        fprintf(output[0], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[0], "\n");
     }
+    if (strcmp(wd.operation, "push_left") == 0){
+        fprintf(output[1], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[1], "\n");
+    }
+    if (strcmp(wd.operation, "push_right") == 0){
+        fprintf(output[2], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[2], "\n");
+    }
+    if (strcmp(wd.operation, "pop_left") == 0){
+        fprintf(output[3], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[3], "\n");
+    }
+    if (strcmp(wd.operation, "pop_right") == 0){
+        fprintf(output[4], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[4], "\n");
+    }
+    if (strcmp(wd.operation, "peek_left") == 0){
+        fprintf(output[5], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[5], "\n");
+    }
+    if (strcmp(wd.operation, "peek_right") == 0){
+        fprintf(output[6], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[6], "\n");
+    }
+    if (strcmp(wd.operation, "set") == 0){
+        fprintf(output[7], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[7], "\n");
+    }
+    if (strcmp(wd.operation, "get") == 0){
+        fprintf(output[8], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[8], "\n");
+    }
+    if (strcmp(wd.operation, "reverse") == 0){
+        fprintf(output[9], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[9], "\n");
+    }
+    if (strcmp(wd.operation, "empty") == 0){
+        fprintf(output[10], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[10], "\n");
+    }
+    if (strcmp(wd.operation, "size") == 0){
+        fprintf(output[11], "%zu | %lf", wd.n, wd.c);
+    }
+
 }
 
 
@@ -383,7 +428,36 @@ int main(){
     printf("> Conducting test operations...\n");
 
     FILE* f = fopen(OUTPUT_FILE, "w+");
-    FILE *plot = fopen("deldata.txt", "w+");
+    const char *outputs = "../mirror-flower/outputs/";
+    FILE **output = malloc(12 * sizeof(FILE));
+    FILE *_make = fopen("../mirror-flower/outputs/make.txt", "w+");
+    FILE *_peek_l = fopen("../mirror-flower/outputs/peek_l.txt", "w+");
+    FILE *_peek_r = fopen("../mirror-flower/outputs/peek_r.txt", "w+");
+    FILE *_push_l = fopen("../mirror-flower/outputs/push_l.txt", "w+");
+    FILE *_push_r = fopen("../mirror-flower/outputs/push_r.txt", "w+");
+    FILE *_set = fopen("../mirror-flower/outputs/set.txt", "w+");
+    FILE *_get = fopen("../mirror-flower/outputs/get.txt", "w+");
+    FILE *_empty = fopen("../mirror-flower/outputs/empty.txt", "w+");
+    FILE *_size = fopen("../mirror-flower/outputs/size.txt", "w+");
+    FILE *_reverse = fopen("../mirror-flower/outputs/reverse.txt", "w+");
+    FILE *_pop_r = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
+    FILE *_pop_l = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
+    output[0] = _make;
+    output[1] = _push_l;
+    output[2] = _push_r;
+    output[3] = _pop_l;
+
+    output[4] = _pop_r;
+    output[5] = _peek_l;
+    output[6] = _peek_r;
+    output[7] = _set;
+
+    output[8] = _get;
+    output[9] = _reverse;
+    output[10] = _empty;
+    output[11] = _size;
+
+
     Reflection* list = NULL;
 
     size_t opCounter = 0;
@@ -603,7 +677,6 @@ int main(){
         wd.operation = opCopy;
         wd.n = n;
         wd.c = dt;
-        deltaTime[opCounter] = dt;
         writeDataLines[opCounter] = wd;
         opCounter++;
         free(mRESULT);
@@ -631,7 +704,7 @@ int main(){
     ;
     for (size_t opNum = 0; opNum < totalOperations; opNum++){
         WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
-        export_delta_time(plot, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
+        export_delta_time(output, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
         free(writeDataLines[opNum].operation);
     }
     printf("> Done.\n");
