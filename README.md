@@ -64,8 +64,12 @@ It is divided into the **Python-side**, and the **C-side**.
 [test_settings_r.h](mirror-flower/test_settings_r.h) - Tester (settings)\
 [reflection.c](mirror-flower/reflection.c) - Tester
 
+[test_settings_r.h](mirror-flower/test_settings_r.h) - Grapher (settings)\
+[graph.c](mirror-flower/graph.c) - Grapher Generator
+[graph.py](mirror-flower/graph.py) - Grapher Display
+
 [inputs](mirror-flower/inputs) - Test inputs (operations)\
-[outputs](mirror-flower/outputs) - Test outputs (graphing)\
+[outputs](mirror-flower/outputs) - Graph plot points\
 [inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - For testing the tester itself\
 
 <br>
@@ -77,7 +81,6 @@ Imported as a Python module by the generator.
 | SETTING | DATATYPE | DEFAULT |
 | :------ | :------- | :------ |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| LARGE_INPUTS | `boolean` <br> Switch to efficiency test/graphing mode. This will output a large number of outputs to the **SPECIAL** layer .txt file in **INPUT_DIRECTORY** *and that layer only*, for graph plotting. <br> For efficiency test ONLY (The specific test lines with large inputs do NOT check for correctness) (WARNING: takes a long time to generate) | `False` |
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
@@ -210,16 +213,6 @@ It throws everything it can towards the list. Even the most precise implemented 
 ```
 The final **Layer**. The tester gives up and surrenders itself to probability due to its inability to break the list in **Layer 4**. Now, it only tries to break the list with random operations. It is maybe possible that the list still breaks in this layer due to some unforeseen edge cases.
 
->>>>>>> SPECIAL:
-```
-    > (No checking for correctness, "RESULT" is "X")
-        >> EFFICIENCY TEST (if (LARGE_INPUTS == true)):
-            - PUSH_* (Random Data) for RANDOM_INTEGER(60000, 200000) times
-            - POP_* until empty
-            - Along with all other OPERATIONS throughout
-```
-A special layer, It generates a large number of inputs, mainly for testing efficiency and graph plotting.
-
 <br>
 
 <hr>
@@ -233,7 +226,6 @@ Included as a C header by the tester.
 | (list header) | `header (.h)` <br> The target list's header file. | N/A |
 | (list source) | `source (.c)` <br> The target list's source file. | N/A |
 | LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
-| LARGE_INPUTS | `boolean` <br> Whether the automatic tester tests only against the **SPECIAL** efficiency/graphing layer *and that layer only.* <br> (WARNING: takes a long time to test)  (**TLE**). | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
@@ -258,13 +250,22 @@ The tester also uses special test functions for its testing. These are global te
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
-Finally, after the test, it generates the benchmark execution times of all operations to the specified **OUTPUT_FILE** directory. It is also a .txt file delimeted by a bar `|`, with its fields as follows:
 
-> OPERATION|N|DELTATIME
+### [C] Grapher (settings): *[test_settings_g.h](mirror-flower/test_settings_g.h)*
+The settings for the graph tester.
+Included as a C header by the tester.
+| SETTING | VALUE | DEFAULT |
+| :------ | :------- | :------ |
+| (list header) | `header (.h)` <br> The target list's header file. | N/A |
+| (list source) | `source (.c)` <br> The target list's source file. | N/A |
+| OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `inputs` |
 
-Where **OPERATION** is the name of the operation function, **N** is the size of the list at the time the operation was done, and **DELTATIME** being the execution time (in milliseconds) of the operation.
+### [C] Grapher: *[graph.c](mirror-flower/graph.c)*
+A specialized generator which tests the list against large inputs, without checking for correctness.\
+After the tests, it outputs plot points/deltatime benchmarks for each operation in their own .txt file in **OUTPUT_DIRECTORY**.
 
-This output file can then be used for plotting on a graph. It is used to graph **N** (current size when **OPERATION** was done) against **TIME** (in milliseconds) to judge whether the graph of OPERATION is constant, linear, or logarithmic in nature.
+### [C] Grapher: *[graph.c](mirror-flower/graph.c)*
+Displays the graphs using the outputs in **OUTPUT_DIRECTORY** for judging whether the graph of OPERATION is constant, linear, or logarithmic in nature.
 
 
 <br>
@@ -273,15 +274,18 @@ This output file can then be used for plotting on a graph. It is used to graph *
 
 ### Steps
 With that, the steps are as follows:
-1. **GENERATE NEW TEST CASES** (Optional)
+1. **GENERATE NEW TEST CASES** *(Optional)*
     - Update [test_settings_m.py](mirror-flower/test_settings_m.py) settings to desired values
     - Run [mirror.py](mirror-flower/mirror.py)
 2. **TEST THE LIST**
     - Update [test_settings_r.h](mirror-flower/test_settings_r.h) settings to desired values
     - Run [reflection.c](mirror-flower/reflection.c)
     - If any bugs are caught, debug with given error info and look at the line the operation failed in the files in **INPUT_DIRECTORY**
-3. **GRAPHS**
-    - Analyze the graph generated by the tester in **OUTPUT_FILE** for each operation, and judge whether it is constant, linear, or logarithmic in nature. *(This is only for analyzing, and not a true determiner of its time complexity.)*
+3. **GRAPHS** *(Optional)*
+    - Update [test_settings_g.h](mirror-flower/test_settings_g.h) settings to desired values
+    - Run [graph.c](mirror-flower/graph.c) to generate plot points
+    - Run [graph.py](mirror-flower/graph.py) to display the graphs
+    - Judge whether each operation is constant, linear, or logarithmic in nature. *(This is only for analyzing, and not a true determiner of its time complexity.)*
 
 
 <br>

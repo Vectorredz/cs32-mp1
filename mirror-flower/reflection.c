@@ -4,13 +4,10 @@
 */
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
-            #||-- OUTPUT --||#
+            ||-- TESTER --||
 << ----------------------------------------- */
 /*
-- After the test, the tester will output OUTPUT_FILE
-- OUTPUT_FILE is a .txt file composed of Fields (OPERATION | N | DELTATIME)
-It is used to graph N (current size when OPERATION was done) against DELTATIME (in milliseconds) to judge whether the graph of OPERATION is
-constant, linear, or logarithmic in nature.
+- The tester will display any wrong operations, and determine if the list passes all tests.
 */
 #include "test_settings_r.h"
 // --------------------------------------------------------- >>
@@ -37,7 +34,7 @@ constant, linear, or logarithmic in nature.
 // --------------------------------------------------------- >>
 
 
-// TIMER for outputting execution time plots
+// TIMER
 // TODO: implement other os later
 #if CHECK_FOR_EFFICIENCY == true
     #include <windows.h>
@@ -77,15 +74,7 @@ constant, linear, or logarithmic in nature.
 #endif
 
 
-// Used for time plots output
-typedef struct _WriteData {
-    char* operation;
-    LENGTH n;
-    PROCESSED_TIME c;
-} WriteData;
-
 // Used for tests
-
 typedef struct _TestData {
     char* path;
     size_t totalTests;
@@ -267,23 +256,21 @@ void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
     fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n------\n", listToResult(list, false));
     fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
 }
-void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForCorrectness, bool checkForEfficiency){
-    if (checkForCorrectness == true){
-        if (strcmp(mRESULT, RESULT) != 0){
-            fprintf(stderr, "(( %s ))\n", path);
-            fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", testNum, dt);
-            fprintf(stderr, "!! Failed Operation !!\n");
-            
-            size_t i = 0;
-            while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
-                i++;
-            }
-            DISPLAY_LOGS(list, operation, extraOperation);
-            fprintf(stderr, ":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", testNum, i, RESULT[i], mRESULT[i]);
-            fprintf(stderr, ":: FAULTY OUTPUT -> %s\n", mRESULT);
-            fprintf(stderr, ":: SUPPOSED OUTPUT -> %s\n", RESULT);
-            exit(1);
+void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForEfficiency){
+    if (strcmp(mRESULT, RESULT) != 0){
+        fprintf(stderr, "(( %s ))\n", path);
+        fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", testNum, dt);
+        fprintf(stderr, "!! Failed Operation !!\n");
+        
+        size_t i = 0;
+        while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
+            i++;
         }
+        DISPLAY_LOGS(list, operation, extraOperation);
+        fprintf(stderr, ":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", testNum, i, RESULT[i], mRESULT[i]);
+        fprintf(stderr, ":: FAULTY OUTPUT -> %s\n", mRESULT);
+        fprintf(stderr, ":: SUPPOSED OUTPUT -> %s\n", RESULT);
+        exit(1);
     }
     if (checkForEfficiency == true){
         if (dt > TLE_BOUND){
@@ -292,68 +279,6 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
             exit(1);
         }
     }
-}
-
-
-// Used for time plots output
-void WRITE(FILE* f, WriteData wd, bool newLine){
-    fprintf(f, "%s|%zu|%" TIME_FORMAT, wd.operation, wd.n, wd.c);
-
-    if (newLine == true){
-        fprintf(f, "\n");
-    }
-}
-
-void EXPORT_DELTA_TIME(FILE **output, WriteData wd, bool newLine){
-
-    if (strcmp(wd.operation, "make") == 0){
-        fprintf(output[0], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[0], "\n");
-    }
-    if (strcmp(wd.operation, "push_left") == 0){
-        fprintf(output[1], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[1], "\n");
-    }
-    if (strcmp(wd.operation, "push_right") == 0){
-        fprintf(output[2], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[2], "\n");
-    }
-    if (strcmp(wd.operation, "pop_left") == 0){
-        fprintf(output[3], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[3], "\n");
-    }
-    if (strcmp(wd.operation, "pop_right") == 0){
-        fprintf(output[4], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[4], "\n");
-    }
-    if (strcmp(wd.operation, "peek_left") == 0){
-        fprintf(output[5], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[5], "\n");
-    }
-    if (strcmp(wd.operation, "peek_right") == 0){
-        fprintf(output[6], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[6], "\n");
-    }
-    if (strcmp(wd.operation, "set") == 0){
-        fprintf(output[7], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[7], "\n");
-    }
-    if (strcmp(wd.operation, "get") == 0){
-        fprintf(output[8], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[8], "\n");
-    }
-    if (strcmp(wd.operation, "reverse") == 0){
-        fprintf(output[9], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[9], "\n");
-    }
-    if (strcmp(wd.operation, "empty") == 0){
-        fprintf(output[10], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[10], "\n");
-    }
-    if (strcmp(wd.operation, "size") == 0){
-        fprintf(output[11], "%zu | %lf", wd.n, wd.c);
-    }
-
 }
 
 
@@ -371,23 +296,14 @@ int main(){
     printf("> Getting tests for (( " INPUT_DIRECTORY " )) ...\n");
     size_t totalOperations = 0; // number of actual operations (since a line can contain the custom message which doesn't count as an operation)
     
-    size_t totalFiles;
-    char** files;
-    
-    if (LARGE_INPUTS == false){
-        totalFiles = 6;
-        files = (char**) malloc(totalFiles*sizeof(char*));
-        files[0] = "LAYER0.txt";
-        files[1] = "LAYER1.txt";
-        files[2] = "LAYER2.txt";
-        files[3] = "LAYER3.txt";
-        files[4] = "LAYER4.txt";
-        files[5] = "LAYER5.txt";
-    } else {
-        totalFiles = 1;
-        files = (char**) malloc(totalFiles*sizeof(char*));
-        files[0] = "LAYERSPECIAL.txt";
-    }
+    size_t totalFiles = 6;
+    char** files = (char**) malloc(totalFiles*sizeof(char*));
+    files[0] = "LAYER0.txt";
+    files[1] = "LAYER1.txt";
+    files[2] = "LAYER2.txt";
+    files[3] = "LAYER3.txt";
+    files[4] = "LAYER4.txt";
+    files[5] = "LAYER5.txt";
 
     TestData* fileTests = (TestData*) malloc(totalFiles*sizeof(TestData)); // Tests array for each file
     for (size_t fileNum = 0; fileNum < totalFiles; fileNum++){
@@ -422,39 +338,6 @@ int main(){
     // timer
     _TIME_init();
 
-    // where the output values are stored
-    WriteData* writeDataLines = (WriteData*) malloc(totalOperations*sizeof(WriteData));
-    double *deltaTime = malloc(totalOperations * sizeof(double));
-
-    FILE* f = fopen(OUTPUT_FILE, "w+");
-    const char *outputs = "../mirror-flower/outputs/";
-    FILE **output = malloc(12 * sizeof(FILE));
-    FILE *_make = fopen("../mirror-flower/outputs/make.txt", "w+");
-    FILE *_peek_l = fopen("../mirror-flower/outputs/peek_l.txt", "w+");
-    FILE *_peek_r = fopen("../mirror-flower/outputs/peek_r.txt", "w+");
-    FILE *_push_l = fopen("../mirror-flower/outputs/push_l.txt", "w+");
-    FILE *_push_r = fopen("../mirror-flower/outputs/push_r.txt", "w+");
-    FILE *_set = fopen("../mirror-flower/outputs/set.txt", "w+");
-    FILE *_get = fopen("../mirror-flower/outputs/get.txt", "w+");
-    FILE *_empty = fopen("../mirror-flower/outputs/empty.txt", "w+");
-    FILE *_size = fopen("../mirror-flower/outputs/size.txt", "w+");
-    FILE *_reverse = fopen("../mirror-flower/outputs/reverse.txt", "w+");
-    FILE *_pop_r = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
-    FILE *_pop_l = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
-    output[0] = _make;
-    output[1] = _push_l;
-    output[2] = _push_r;
-    output[3] = _pop_l;
-
-    output[4] = _pop_r;
-    output[5] = _peek_l;
-    output[6] = _peek_r;
-    output[7] = _set;
-
-    output[8] = _get;
-    output[9] = _reverse;
-    output[10] = _empty;
-    output[11] = _size;
     printf("> Done.\n");
 
 
@@ -483,8 +366,6 @@ int main(){
             char* RESULT = testLine[3];
             char* mRESULT;
             char* extraOperation;
-            bool checkForCorrectness = strcmp("X", RESULT) != 0;
-            
 
             // Clear past 2 lines of output and display new executing line
             if (LINE_DISPLAY == true){
@@ -513,7 +394,7 @@ int main(){
             prevWasMsg = false;
             
             LENGTH n = list != NULL ? size(list) : 0;
-            RECORDED_TIME _time, time;
+            RECORDED_TIME _rec, rec;
 
             // Get appropriate variables for ARG1/ARG2, execute the desired operation while timing it, and (if checking for correctness) verify the output
             if (strcmp(operation, "make") == 0){
@@ -530,163 +411,128 @@ int main(){
                     }
                 }
 
-                _TIME(&_time);
+                _TIME(&_rec);
                 list = make(n, seq);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             } else if (strcmp(operation, "size") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 LENGTH listSize = size(list);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = NULL;
-                if (checkForCorrectness == true){
-                    mRESULT = lengthToStr(listSize);
-                }
+                mRESULT = lengthToStr(listSize);
 
             } else if (strcmp(operation, "empty") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 bool listEmpty = empty(list);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = NULL;
-                if (checkForCorrectness == true){
-                    mRESULT = boolToStr(listEmpty);
-                }
+                mRESULT = boolToStr(listEmpty);
 
             } else if (strcmp(operation, "reverse") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 reverse(list);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             } else if (strcmp(operation, "get") == 0){
                 LENGTH i = strToLength(arg1);
 
-                _TIME(&_time);
+                _TIME(&_rec);
                 DATA data = get(list, i);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = NULL;
-                if (checkForCorrectness == true){
-                    mRESULT = dataToStr(data);
-                }
+                mRESULT = dataToStr(data);
 
             } else if (strcmp(operation, "set") == 0){
                 LENGTH i = strToLength(arg1);
                 DATA v = strToData(arg2);
 
-                _TIME(&_time);
+                _TIME(&_rec);
                 set(list, i, v);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    LENGTH n;
-                    DATA* seq;
-                    TEST_elements(list, &n, &seq);
-                    mRESULT = dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]);
-                }
+                LENGTH n;
+                DATA* seq;
+                TEST_elements(list, &n, &seq);
+                mRESULT = dataToStr(seq[TEST_reversed(list) == false ? i : n-1-i]);
 
             } else if (strcmp(operation, "peek_left") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 DATA data = peek_left(list);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = NULL;
-                if (checkForCorrectness == true){
-                    mRESULT = dataToStr(data);
-                }
+                mRESULT = dataToStr(data);
 
             } else if (strcmp(operation, "peek_right") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 DATA data = peek_right(list);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = NULL;
-                if (checkForCorrectness == true){
-                    mRESULT = dataToStr(data);
-                }
+                mRESULT = dataToStr(data);
 
             } else if (strcmp(operation, "push_left") == 0){
                 DATA v = strToData(arg1);
 
-                _TIME(&_time);
+                _TIME(&_rec);
                 push_left(list, v);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             } else if (strcmp(operation, "push_right") == 0){
                 DATA v = strToData(arg1);
 
-                _TIME(&_time);
+                _TIME(&_rec);
                 push_right(list, v);
-                _TIME(&time);
+                _TIME(&rec);
 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             } else if (strcmp(operation, "pop_left") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 pop_left(list);
-                _TIME(&time);
+                _TIME(&rec);
                 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             } else if (strcmp(operation, "pop_right") == 0){
-                _TIME(&_time);
+                _TIME(&_rec);
                 pop_right(list);
-                _TIME(&time);
+                _TIME(&rec);
                 
                 extraOperation = "TEST_elements";
-                if (checkForCorrectness == true){
-                    mRESULT = listToResult(list, true);
-                }
+                mRESULT = listToResult(list, true);
 
             }
 
-            PROCESSED_TIME dt = _PROCESSTIME(_time, time) * 1000.0;
+            PROCESSED_TIME dt = _PROCESSTIME(_rec, rec) * 1000.0;
 
             // For internal tests
-            if (checkForCorrectness == true){
-                VERIFY(list, path, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", checkForCorrectness, false);
-            }
+            VERIFY(list, path, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", false);
 
             // Verify the output
-            VERIFY(list, path, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, checkForCorrectness, true);
+            VERIFY(list, path, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, true);
 
             if (LINE_DISPLAY == true){
                 printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dt);
             }
 
-            // Finally, write the new benchmark to output array
-            char* opCopy = (char*) malloc((strlen(operation)+1)*sizeof(char));
-            strcpy(opCopy, operation);
             
-            WriteData wd = *((WriteData*) malloc(sizeof(WriteData)));
-            wd.operation = opCopy;
-            wd.n = n;
-            wd.c = dt;
-            writeDataLines[opCounter] = wd;
-            opCounter++;
             free(mRESULT);
             free(testLine[0]);
             free(testLine[1]);
@@ -698,8 +544,6 @@ int main(){
         free(testData.path);
         free(testData.tests);
     }
-
-
     _TIME(&timeGlobal);
     if (LINE_DISPLAY == true){
         if (opCounter > 0 && prevWasMsg == false){
@@ -710,25 +554,15 @@ int main(){
     printf("> Well Done.\n");
 
 
-    // Write all benchmarks to the file
-    printf("> Writing deltatime benchmarks to output...\n");
-    for (size_t opNum = 0; opNum < totalOperations; opNum++){
-        WRITE(f, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
-        EXPORT_DELTA_TIME(output, writeDataLines[opNum], opNum < totalOperations-1 ? true : false);
-        free(writeDataLines[opNum].operation);
-    }
-    printf("> Done.\n");
-    
-
+    // Cleanup
     printf("> Cleanup...\n");
+
     free(fileTests);
-    free(writeDataLines);
-    fclose(f);
+
     printf("> Done.\n\n");
     
     printf("---------------------------------------------------------\n");
     printf("<<<< TESTING SUCCESSFUL >>>>\n");
-    printf("!! Time plot points can be found in ((" OUTPUT_FILE "))\n\n");
     printf("? Ah...\n? Despite everything, it's still you...\n...A mere Reflection.\n\n");
 
     
