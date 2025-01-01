@@ -6,19 +6,21 @@
     Look into the Mirror...
 */
 // --------------------------------------------------------- >>
+#define DOUBLY_LINKED_LIST 0
+#define DYNAMIC_ARRAY 1
+#define SKIP_LIST 2
+#define TREE_SEQUENCE 3
 
-// Modify both header and typedef to the list to test
-#include "../tree-sequence/p_tree_list.c"
-typedef PTreeList Reflection;
-
-// Set which implementation to test. Choose among the following:
+// Set which implementations to test. Choose among the following:
 /*
     DOUBLY_LINKED_LIST
     DYNAMIC_ARRAY
     SKIP_LIST
     TREE_SEQUENCE
- */
-#define IMPLEMENTATION "TREE_SEQUENCE"
+*/
+#define IMPLEMENTATION SKIP_LIST
+
+
 // TYPE: boolean
 // Set to true if you would like the current line being executed to be displayed
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown

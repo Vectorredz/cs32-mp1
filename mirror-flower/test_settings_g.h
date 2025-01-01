@@ -5,15 +5,24 @@
     << Grapher >>
 */
 // --------------------------------------------------------- >>
+#define DOUBLY_LINKED_LIST 0
+#define DYNAMIC_ARRAY 1
+#define SKIP_LIST 2
+#define TREE_SEQUENCE 3
 
-// Modify both header and typedef to the list to test
-#include "../doubly-linked-list/d_linked_list.c"
-typedef list Reflection;
+// Set which implementations to test. Choose among the following:
+/*
+    DOUBLY_LINKED_LIST
+    DYNAMIC_ARRAY
+    SKIP_LIST
+    TREE_SEQUENCE
+*/
+#define IMPLEMENTATION SKIP_LIST
+
+
 
 // Output File Path (plot points/deltatime benchmarks for graphing)
 #define OUTPUT_DIRECTORY "outputs"
-
-
 
 
 #endif

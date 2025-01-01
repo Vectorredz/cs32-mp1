@@ -20,6 +20,7 @@
 #include "../H_global.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define MAX_NUMBER_DIGITS 25
 
@@ -32,20 +33,22 @@
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
-
+#if IMPLEMENTATION == DOUBLY_LINKED_lIST
+    #include "../doubly-linked-list/d-linked-list.c"
+    typedef list Reflection;
+#elif IMPLEMENTATION == DYNAMIC_ARRAY
+    #include "../dynamic-arr/dynamic-array.c"
+    typedef dynamic_array Reflection;
+#elif IMPLEMENTATION == SKIP_LIST
+    #include "../skip-list/skip-list.c"
+    typedef SkipList Reflection;
+#elif IMPLEMENTATION == TREE_SEQUENCE
+    #include "../tree-sequence/p_tree_list.c"
+    typedef PTreeList Reflection;
+#endif
 
 // TIMER
 // TODO: implement other os later
-
-
-#if TIME_COMPLEXITY_GRAPH_DISPLAY == true
-    #define DISPLAY true
-    #define STATUS "enabled"
-#else
-    #define DISPLAY false
-    #define STATUS "disabled"
-#endif
-
 
 
 #if CHECK_FOR_EFFICIENCY == true
@@ -86,13 +89,6 @@
 #endif
 
 
-// Used for tests
-typedef struct _TestData {
-    char* path;
-    size_t totalTests;
-    char*** tests;
-} TestData;
-
 
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
@@ -101,6 +97,14 @@ typedef struct _TestData {
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
+
+
+// Used for tests
+typedef struct _TestData {
+    char* path;
+    size_t totalTests;
+    char*** tests;
+} TestData;
 
 // Gets tests and stores in an array.
 TestData getTests(char* path){
@@ -302,29 +306,10 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 int main(){
-
-    // Write which implementation is currently used
-    FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
-    if (strcmp(IMPLEMENTATION, "DOUBLY_LINKED_LIST") == 0){
-        fprintf(implementation, "DOUBLY_LINKED_LIST");
-    }
-    if (strcmp(IMPLEMENTATION, "DYNAMIC_ARRAY") == 0){
-        fprintf(implementation, "DYNAMIC_ARRAY");
-    }
-    if (strcmp(IMPLEMENTATION, "SKIP_LIST") == 0){
-        fprintf(implementation, "SKIP_LIST");
-    }
-    if (strcmp(IMPLEMENTATION, "TREE_SEQUENCE") == 0){
-        fprintf(implementation, "TREE_SEQUENCE");
-    }
-
-
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
 
     // Get tests first for each file
     printf("> Getting tests for (( " INPUT_DIRECTORY " )) ...\n");
-    size_t totalOperations = 0; // number of actual operations (since a line can contain the custom message which doesn't count as an operation)
-    
     size_t totalFiles = 6;
     char** files = (char**) malloc(totalFiles*sizeof(char*));
     files[0] = "LAYER0.txt";
@@ -346,12 +331,6 @@ int main(){
 
         TestData testData = getTests(path);
         fileTests[fileNum] = testData;
-
-        for (size_t testNum = 0; testNum < testData.totalTests; testNum++){
-            if (strcmp((testData.tests)[testNum][0], "MSG") != 0){
-                totalOperations++;
-            }
-        }
 
         printf("> acquired -> (( %s ))\n", path);
 

@@ -20,7 +20,32 @@
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
 
-            ||-- MISCELLANEOUS --||
+            ||-- SETTINGS --||
+
+<< ----------------------------------------- */
+// --------------------------------------------------------- >>
+
+#if IMPLEMENTATION == DOUBLY_LINKED_lIST
+    #include "../doubly-linked-list/d-linked-list.c"
+    typedef list Reflection;
+#elif IMPLEMENTATION == DYNAMIC_ARRAY
+    #include "../dynamic-arr/dynamic-array.c"
+    typedef dynamic_array Reflection;
+#elif IMPLEMENTATION == SKIP_LIST
+    #include "../skip-list/skip-list.c"
+    typedef SkipList Reflection;
+#elif IMPLEMENTATION == TREE_SEQUENCE
+    #include "../tree-sequence/p_tree_list.c"
+    typedef PTreeList Reflection;
+#endif
+
+
+
+
+// --------------------------------------------------------- >>
+/* ----------------------------------------- <<
+
+            ||-- HELPERS --||
 
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
@@ -51,22 +76,13 @@ PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
     return final < 0.0L ? 0.0L : final;
 }
 
+
 // Used for time plots output
 typedef struct _WriteData {
     char* operation;
     LENGTH n;
     PROCESSED_TIME c;
 } WriteData;
-
-
-
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- HELPERS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
 
 WriteData NEW_WRITE(char* operation, LENGTH n, PROCESSED_TIME c){
     WriteData writeData = *((WriteData*) malloc(sizeof(WriteData)));
@@ -191,6 +207,21 @@ int main(){
 
     // Initialize others
     printf("> Initializing variables...\n");
+
+    // Write which implementation is currently used
+    FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
+    if (strcmp(IMPLEMENTATION, "DOUBLY_LINKED_LIST") == 0){
+        fprintf(implementation, "DOUBLY_LINKED_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "DYNAMIC_ARRAY") == 0){
+        fprintf(implementation, "DYNAMIC_ARRAY");
+    }
+    if (strcmp(IMPLEMENTATION, "SKIP_LIST") == 0){
+        fprintf(implementation, "SKIP_LIST");
+    }
+    if (strcmp(IMPLEMENTATION, "TREE_SEQUENCE") == 0){
+        fprintf(implementation, "TREE_SEQUENCE");
+    }
 
     // Timer and randomizer
     _TIME_init();
