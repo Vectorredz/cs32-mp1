@@ -71,8 +71,13 @@ this is the main operation of `Make`
 <summary>Flags/List Info</summary>
 
 ### Operation: `reverse(l)`
+Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\ Instead this function will `toggle` the `bool` `field` in `SkipList` called `reversed`.\ It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
+
 ### Operation: `size(l) -> LENGTH`
+It simply returns a `LENGTH` which is the current `size` `n` of the `list`. \
+
 ### Operation: `empty(l) -> bool`
+It simply returns `bool` that checks whether the `list` has no elements or has `size == 0`.\
 
 <hr>
 </details>
@@ -81,9 +86,16 @@ this is the main operation of `Make`
 <summary>Getters/Setters</summary>
 
 ### Operation: `get(l, i) -> DATA`
+This operation traverses the `SkipList` from left to right until the target index `i` is found, returning the `DATA` element found.\ 
+
 ### Operation: `set(l, i, v)`
+Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `SkipNode` found in the index `i` with `v`.\
+
 ### Operation: `peek_left(l) -> DATA`
+This simply returns the leftmost `DATA` of the `SkipNode`.\ The leftmost is stored with the help of the `headSentinel`, the `dummy` nodes at the very front of the `SkipList`.\
+
 ### Operation: `peek_right(l) -> DATA`
+This simply returns the rightmost `DATA` of the `SkipNode`.\ The rightmost is stored with the help of the `tailSentinel`, the `dummy` nodes at the very end of the `SkipList`.\
 
 <hr>
 </details>
@@ -92,9 +104,16 @@ this is the main operation of `Make`
 <summary>Insertions/Deletions</summary>
 
 ### Operation: `pop_left(l) -> bool`
+This operation `deletes` the leftmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `headSentinel` to the `SkipNode` adjacent to the leftmost node.\ This updates the leftmost node.\
+
 ### Operation: `pop_right(l) -> bool`
+This operation `deletes` the rightmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `tailSentinel` to the `SkipNode` adjacent to the rightmost node.\ This updates the rightmost node.\
+
 ### Operation: `push_left(l, v)`
+This operation `adds` a new `SkipNode` to the `SkipList` by reconnecting the `headSentinel` to the `newNode` and pointing the `newNode` to the current leftmost node.\ This updates the leftmost node.\
+
 ### Operation: `push_right(l, v)`
+This operation `adds` a new `SkipNode` to the `SkipList` by reconnecting the `tailSentinel` to the `newNode` and pointing the `newNode` to the current rightmost node.\ This updates the rightmost node.\
 
 <hr>
 </details>
