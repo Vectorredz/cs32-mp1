@@ -31,6 +31,8 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 
 <details>
 <summary>Doubly Linked List</summary>
+Doubly-linked List is one of the most common data structures that offers advantages over the others. It is an extension to `Singly-linked List` but instead of being a one-way traversal, doubly-linked List provides a two-way connection from front to back and vice-versa.
+
 
 ## Doubly Linked List
 
@@ -42,14 +44,15 @@ For example, the Sequence of Trees implementation tests for the required sequenc
 <summary>Structs</summary>
 
 #### Struct: `List`
-A doubly-linked list which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\ 
+A doubly-linked list which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\
 The struct also have a field `size` that stores the size `n` of the list.\
- Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.\ 
-This property allows the implementation to have an $O(1)$ worst-case time complexity for its `reverse` operation.\
+Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.\
+This property allows the implementation to have an $O(1)$ worst-case time complexity for its `reverse` operation.
 
 #### Struct: `ListNode`
 This represents the doubly-linked list node for the `List`.\
-It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
+It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\
+Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
 
 <hr>
 </details>
@@ -155,7 +158,11 @@ Skip List is a unique data structure that is a combintion of `List` and `Linked-
 <summary>Structs</summary>
 
 #### Struct: `SkipList`
+Represents the main overarching list for this ADT.\
+The bottommost level or the commonly known as the `Level 0` of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, `Level 0` contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in `Level 0` varying dependent on the probability `p`.
+
 #### Struct: `SkipNode`
+Represents the elements in the `SkipList` that has indices. 
 #### Struct: `Levellist`
 #### Struct: `Level`
 #### Struct: `LevelRecord`
