@@ -262,7 +262,7 @@ Included as a C header by the tester.
 A specialized generator which tests the list against large inputs, without checking for correctness.\
 After the tests, it outputs plot points/deltatime benchmarks for each operation in their own .txt file in **OUTPUT_DIRECTORY**.
 
-### [C] Grapher (Display): *[graph.py](mirror-flower/graph.py)*
+### [PYTHON] Grapher (Display): *[graph.py](mirror-flower/graph.py)*
 Displays the graphs using the outputs in **OUTPUT_DIRECTORY** for judging whether the graph of OPERATION is constant, linear, or logarithmic in nature.
 
 
