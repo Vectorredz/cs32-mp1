@@ -290,6 +290,7 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
     }
     if (checkForEfficiency == true){
         if (dt > TLE_BOUND){
+            fprintf(stderr, "(( %s ))\n", path);
             fprintf(stderr, "[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", testNum, dt, TLE_BOUND);
             DISPLAY_LOGS(list, operation, extraOperation);
             exit(1);
