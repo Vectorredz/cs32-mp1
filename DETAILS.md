@@ -161,9 +161,23 @@ Represents the main overarching list for this ADT.\
 The bottommost level or the commonly known as the `Level 0` of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, `Level 0` contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in `Level 0` varying dependent on the probability `p`.
 
 #### Struct: `SkipNode`
-Represents the elements in the `SkipList` that has indices. 
+Represents the connected elements in the `SkipList`.\ 
+Each `SkipNode` has `left` pointer that references to the previous `existing node`, if there is no node in the left side then it will be connected to the `headSentinel` instead.\
+Its `right` pointer points to the `next` `existing node`, if no node then it will be connected to the `tailSentinel` instead.\
+It also has `below` pointer that points to the `existing node` beneath it.\
+Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise./
+Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
+
 #### Struct: `Levellist`
+Represents a `list` that stores each `levels` present in the `SkipList`.\
+To keep track of the `HEADER` (where the `SkipList` starts), it has `two (2)` pointers that points to the `top` and `bottom`.
+`top` level pertains to the topmost level and `bottom` level always pertains to the `Level 0`.
+
+
 #### Struct: `Level`
+It has `two (2)` pointers `up` and `down` that helps navigates the `succeeding` and `preceding` levels in vertical direction.\
+Each levellist  
+
 #### Struct: `LevelRecord`
 #### Struct: `LevelRecordsList`
 
