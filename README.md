@@ -29,7 +29,7 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 *\* This directory contains all files relevant for testing.*\
 *\* Please see **[Unit Test](#unit-test)** for more details.*
 
-**[mirror-flower](mirror-flower)**\
+**[mirror-flower](mirror-flower)**
 
 <br>
 
@@ -43,7 +43,7 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 
 ## Implementation of Code
 For the list implementations, we used the references and concepts provided by the MP1 document for each of the implementations to implement our own version of each Abstract Data Type of a list.\
-All lists are pointers of a `struct`, and any members for a `struct` are `pointers` to that `struct` as well, so that we only use the arrow `->` operations for all lists for consistency.\
+All lists are pointers of a `struct`, and any members for a `struct` are `pointers` to that `struct` as well, so that we only use the arrow `->` sugar operations for all lists for consistency.\
 We also have the global types `LENGTH` (`size_t`) and `DATA` (`int64_t`) to represent values based on the length of the list and data values, respectively.
 
 ***[DETAILS.md](DETAILS.md)** holds more details on each of the list's implementations.*
@@ -65,12 +65,12 @@ It is divided into the **Python-side**, and the **C-side**.
 [reflection.c](mirror-flower/reflection.c) - Tester
 
 [test_settings_r.h](mirror-flower/test_settings_r.h) - Grapher (settings)\
-[graph.c](mirror-flower/graph.c) - Grapher Generator
+[graph.c](mirror-flower/graph.c) - Grapher Generator\
 [graph.py](mirror-flower/graph.py) - Grapher Display
 
 [inputs](mirror-flower/inputs) - Test inputs (operations)\
 [outputs](mirror-flower/outputs) - Graph plot points\
-[inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - For testing the tester itself\
+[inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - For testing the tester itself
 
 <br>
 
@@ -84,8 +84,6 @@ Imported as a Python module by the generator.
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
-
-<hr>
 
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
@@ -101,7 +99,7 @@ Their text can be of the following:
 | :-------- | :--- | :--- | :----- |
 | make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | size | "**None**" | "**None**" | `returned LENGTH` <br> number |
-| empty | "**None**" | "**None**" | `returned bool` <br> "0" / "1" |
+| empty | "**None**" | "**None**" | `returned bool` <br> "**0**" / "**1**" |
 | reverse | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | get | `LENGTH i` <br> number | "**None**" | `returned DATA` <br> number |
 | set | `LENGTH i` <br> number | `DATA v` <br> number | "**None**" |
@@ -117,6 +115,7 @@ Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check fo
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
 *\*Please see [inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) for a complete example.*
 
+Lastly, by specifying **OPERATION** to be "**MSG**", the tester can send custom messages to the output stream using the other three columns, such as telling the user the current set of test types currently being performed, as it reads the .txt file line-by-line, or the beginning and end of a **Layer**.
 
 <br>
 
@@ -237,8 +236,6 @@ Included as a C header by the tester.
 
 <br>
 
-<hr>
-
 ### [C] Reflection: *[reflection.c](mirror-flower/reflection.c)*
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
@@ -249,6 +246,9 @@ The tester also uses special test functions for its testing. These are global te
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
+<br>
+
+<hr>
 
 ### [C] Grapher (settings): *[test_settings_g.h](mirror-flower/test_settings_g.h)*
 The settings for the graph tester.
@@ -325,4 +325,4 @@ With that, the steps are as follows:
 <br>
 <br>
 
-砕けろ, 鏡花水月.
+砕けろ、鏡花水月。
