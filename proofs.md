@@ -107,7 +107,7 @@ Both `get` and `set` are passed a list $l$ and index $i$ while `set` is also giv
 
 We can see that the operations done outside of the while-loop are a series of constant time operations. Thus, we can derive `get`and `set` to have recurrence relations of $T_{outer}=c$.
 
-Now, looking within the while loop, it is observed that if $i$ = $n$, where$n$ is the length of the list, the while loop runs at worst-case $O(n)$. For clarity, we can derive the recurrence relation to be $T_{loop} = T(n+1)+O(1)$, where $O(1)$ represents the constant time operations within the while-loop and $T(n+1)$ represent the time complexity of the number of iterations of the while-loop (Note that if given a size $n$ inclusive, the while-loop runs $n+1$ times where the $n+1$ is the last iteration before exiting). If we were to solve the recurrence relation.
+Now, looking within the while loop, it is observed that if $i$ = $n$, where $n$ is the length of the list, the while loop runs at worst-case $O(n)$. For clarity, we can derive the recurrence relation to be $T_{loop} = T(n+1)+O(1)$, where $O(1)$ represents the constant time operations within the while-loop and $T(n+1)$ represent the time complexity of the number of iterations of the while-loop (Note that if given a size $n$ inclusive, the while-loop runs $n+1$ times where the $n+1$ is the last iteration before exiting). If we were to solve the recurrence relation.
 
 $$T_{loop} = T(n+1) + O(1)$$
 $$T(n)= T(n) + O(1)  $$
