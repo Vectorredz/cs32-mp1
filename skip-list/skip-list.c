@@ -203,6 +203,7 @@ SkipNode *_getNode(SkipList *l, LENGTH target, bool fromSet, DATA v){
     LENGTH sumOffset = 0; // initialize the offset for the topmost
     if (header == NULL) return NULL;
     if (header->right == NULL) return NULL;
+    
     // sentinel phase
     while (header && header->isSentinel == true){
         // don't go right if it's tailSentinel
@@ -518,7 +519,6 @@ void push_right(SkipList *l, DATA v){
 bool pop_left(SkipList *l){
     return l->is_reversed == false ? _pop_left_base(l) : _pop_right_base(l);
 }
-
 bool pop_right(SkipList *l){
     return l->is_reversed == false ? _pop_right_base(l) : _pop_left_base(l);
 }

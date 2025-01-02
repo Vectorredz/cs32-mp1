@@ -78,7 +78,7 @@ Returns `List` once passed with arguments and called.
 
 ### Operation: `reverse(l)`
 Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\
-Instead this function will **toggle** the (`boolean`) field in `SkipList` called `reversed`.
+Instead this function will **toggle** the (`boolean`) field in `List` called `reversed`.
 It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
 
 ### Operation: `size(l) -> LENGTH`
@@ -94,18 +94,18 @@ It simply returns `bool` that checks whether the `list` has no elements or has `
 <summary>Getters/Setters</summary>
 
 ### Operation: `get(l, i) -> DATA`
-This operation traverses the `SkipList` from left to right until the target index `i` is found, returning the `DATA` of the `SkipNode` found.
+This operation traverses the `List` from left to right until the target index `i` is found, returning the `DATA` of the `ListNode` found.
 
 ### Operation: `set(l, i, v)`
-Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `SkipNode` found in the index `i` with `v`.
+Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `ListNode` found in the index `i` with `v`.
 
 ### Operation: `peek_left(l) -> DATA`
-This simply returns the leftmost `DATA` of the `SkipNode`.
-The leftmost is stored with the help of the `headSentinel`, the _dummy_ nodes at the very front of the `SkipList`.
+This simply returns the leftmost `DATA` of the `ListNode`.
+The leftmost is stored with the help of the `headSentinel`, the _dummy_ nodes at the very front of the `List`.
 
 ### Operation: `peek_right(l) -> DATA`
-This simply returns the rightmost `DATA` of the `SkipNode`.
-The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes at the very end of the `SkipList`.
+This simply returns the rightmost `DATA` of the `ListNode`.
+The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes at the very end of the `List`.
 
 <hr>
 </details>
@@ -114,16 +114,16 @@ The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes a
 <summary>Insertions/Deletions</summary>
 
 ### Operation: `pop_left(l) -> bool`
-This operation **deletes** the leftmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `headSentinel` to the `SkipNode` adjacent to the leftmost node. This updates the leftmost node.
+This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the `headSentinel` to the `ListNode` adjacent to the leftmost node. This updates the leftmost node.
 
 ### Operation: `pop_right(l) -> bool`
-This operation **deletes** the rightmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `tailSentinel` to the `SkipNode` adjacent to the rightmost node. This updates the rightmost node.
+This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the `tailSentinel` to the `ListNode` adjacent to the rightmost node. This updates the rightmost node.
 
 ### Operation: `push_left(l, v)`
-This operation **insert** a new `SkipNode` to the `SkipList` by reconnecting the `headSentinel` to the _newNode_ and pointing the _newNode_ to the current leftmost node. This updates the leftmost node.
+This operation **insert** a new `ListNode` to the `List` by reconnecting the `headSentinel` to the _newNode_ and pointing the _newNode_ to the current leftmost node. This updates the leftmost node.
 
 ### Operation: `push_right(l, v)`
-This operation **insert** a new `SkipNode` to the `SkipList` by reconnecting the `tailSentinel` to the _newNode_ and pointing the _newNode_ to the current rightmost node. This updates the rightmost node.
+This operation **insert** a new `ListNode` to the `List` by reconnecting the `tailSentinel` to the _newNode_ and pointing the _newNode_ to the current rightmost node. This updates the rightmost node.
 
 <hr>
 </details>
@@ -217,9 +217,15 @@ It iterates over the sequence and makes use of the function `push_right()` to in
 <summary>Flags/List Info</summary>
 
 ### Operation: `reverse(l)`
-This simply reverses the 
+Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\
+Instead this function will **toggle** the (`boolean`) field in `SkipList` called `reversed`.
+It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
+
 ### Operation: `size(l) -> LENGTH`
+It simply returns a `LENGTH` which is the current `size: n` of the `SkipList`.
+
 ### Operation: `empty(l) -> bool`
+It simply returns `bool` that checks whether the `SkipList` has no elements or has `size == 0`.
 
 <hr>
 </details>
@@ -228,6 +234,20 @@ This simply reverses the
 <summary>Getters/Setters</summary>
 
 ### Operation: `get(l, i) -> DATA`
+#### Helper: `_getNode(l, target, fromSet, v) -> SkipNode`
+This helper aims to search for the specific `SkipNode` at target index `i`.\
+It has two _(2)_ loop iteration:
+
+1. Sentinel Phase
+- This is the first while loop, it traverses the `SkipList` from `**HEADER**` until it gets out of the non-sentinel `SkipNode`.\
+
+2. Main Traversal Phase
+- This is the second while loop, once it gets out of the sentinel node, it will start traversing to the `SkipNodes` until the target `i` is found.\
+
+> [!NOTE]  
+> Q: _"Why do we need the `Sentinel Phase`?"_ 
+> A: In `Indexable SkipList` we only count the widths of the non-sentinel SkipNodes. Recall that sentinel nodes doesn't represent any meaningful data (can be `INT_MAX, INT_MIN, -1, +-inf, etc.`)and only acts as the "boundary" of a program.
+
 ### Operation: `set(l, i, v)`
 ### Operation: `peek_left(l) -> DATA`
 ### Operation: `peek_right(l) -> DATA`
