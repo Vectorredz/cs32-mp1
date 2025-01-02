@@ -569,7 +569,7 @@ Finally, it updates `leftmost` to the new value (and `rightmost` if the new `PTr
 
 #### Helper: `_push_right_base(list, v)`
 A mirror of `_push_left_base`.\
-This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
+This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
 It first calls `_constructZeroPTree` on the `DATA` value `v`, and pushes it to the tail (right) of the doubly-linked-list.\
 Then, it calls `_mergeNonDistinctPTreesToLeft` on the new tail of the list, to make sure it satisfies the required k-concatenation.\
 Finally, it updates `rightmost` to the new value (and `leftmost` if the new `PTree` is also the head).
