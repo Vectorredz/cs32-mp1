@@ -275,13 +275,43 @@ This simply returns the rightmost `DATA` of the `SkipNode`. If `reversed` is tog
 <details>
 <summary>Insertions/Deletions</summary>
 
-### Operation: `push_left(l, v)`
-#### Helpers: 
+### Operation: `PUSH_*`, `POP_*`
 
-### Operation: `push_right(l, v)`
+#### Helpers: `_flipCoin() -> bool`
+This simulates the flipping of the coin given that it has a probability of `p = frac{1}{2}`. It utilizes `rand()` function, the rand function will get random integer value from the max threshold `RAND_MAX = 2147483647`. the comparison is based off the following:
 
-### Operation: `pop_left(l) -> bool`
-### Operation: `pop_right(l) -> bool`
+1. **Heads**
+- If `rand() > RAND_MAX / 2` it will return `true`. 
+2. **Tails**
+- If `rand() <= RAND_MAX / 2` it will return `false`. 
+
+#### Helpers: `promoteLevel(l, fromRight) -> Level`
+Useful helper function that is called whenever inserting `SkipNodes` to the `SkipList`. 
+
+It has while loop that iterates as long as it satisfied the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make new Level above the current level whenever the flipping of coin lands heads otherwise it just maintains its current level.\
+Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only _makeLevel whenever your skipNode is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` whenever promoteLevel is called by `push_right`.
+
+After the first `if` condition it will now go update its pointers and go up to the newly created level. In this level you create newNode that will be inserted just above the current node. 
+
+
+
+#### Helpers: `_push_left_base(l, v)`
+#### Helpers: `_push_right_base(l, v)`
+#### Helpers: `_pop_left_base(l) -> bool`
+#### Helpers: `_pop_left_base(l) -> bool`
+
+
+#### Main: `push_left(list, v)`
+Calls `_push_left_base` (or `_push_right_base` if `reversed` flag is enabled.)
+
+#### Main: `push_right(list, v)`
+Calls `_push_right_base` (or `_push_left_base` if `reversed` flag is enabled.)
+
+#### Main: `pop_left(list)`
+Calls `_pop_left_base` (or `_pop_right_base` if `reversed` flag is enabled.)
+
+#### Main: `pop_right(list)`
+Calls `_pop_right_base` (or `_pop_left_base` if `reversed` flag is enabled.)
 
 <hr>
 </details>
