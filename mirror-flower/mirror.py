@@ -248,7 +248,7 @@ def WRITE(writer: DictWriter, checkForCorrectness: bool, mirror: Mirror, operati
         "RESULT": result
     })
 
-def WRITEMSG(arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
+def WRITEMSG(writer: DictWriter, arg1: str = "None", arg2: str = "None", RESULT: str = "None"):
     writer.writerow({
         "OPERATION": "MSG",
         "ARG1": arg1,
@@ -274,8 +274,10 @@ mirror: Mirror | None = None
 # ------------------------ LAYER 0: Initialize
 def LAYER0(writer: DictWriter):
     global mirror
-    
+
+
     # test make (0 -> 1000)
+    WRITEMSG(writer, "TEST", "make (consec)")
     for n in range(1000+1):
         seq = list[DATA]()
         for i in range(n):
@@ -289,6 +291,7 @@ def LAYER0(writer: DictWriter):
         })
 
     # test make (RANDOM_INTEGER(0, 1000))
+    WRITEMSG(writer, "TEST", "make (rand)")
     n = random.randint(0, 1000)
     seq = list[DATA]()
     for i in range(n):
@@ -308,12 +311,14 @@ def LAYER1(writer: DictWriter):
     global mirror
 
     # check initial indices
+    WRITEMSG(writer, "TEST", "indices")
     for i in range(mirror.size()):
         WRITE(writer, True, mirror, "get", i)
     for i in range(mirror.size()):
         WRITE(writer, True, mirror, "set", i, randomData())
 
     # check other operations
+    WRITEMSG(writer, "TEST", "basic (+ edge indices)")
     def _basicCheck(mirror: Mirror):
         for _ in range(2):
             WRITE(writer, True, mirror, "get", 0)
@@ -354,6 +359,7 @@ def LAYER1(writer: DictWriter):
     _basicCheck(mirror)
 
     # Combine with make (0 -> 1000)
+    WRITEMSG(writer, "TEST", "make (consec) + basic (+ edge indices)")
     for n in range(1000+1):
         seq = list[DATA]()
         for i in range(n):
@@ -387,21 +393,26 @@ def LAYER2(writer: DictWriter):
     global mirror
 
     # Consecutive Normal Pushes
+    WRITEMSG(writer, "TEST", "push_left (consec)")
     for i in range(random.randint(500, 1000)):
         WRITE(writer, True, mirror, "push_left", randomData())
 
     # Consecutive Normal Pops
+    WRITEMSG(writer, "TEST", "pop_left (consec)")
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_left")
         
 
     # Again.
+    WRITEMSG(writer, "TEST", "push_right (consec)")
     for i in range(random.randint(500, 1000)):
         WRITE(writer, True, mirror, "push_right", randomData())
+    WRITEMSG(writer, "TEST", "pop_right (consec)")
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_right")
 
     # Double Consecutive Normal Punch
+    WRITEMSG(writer, "TEST", "ins/del (rand)")
     for i in range(random.randint(500, 1000)):
         operations = ["push_left", "push_right", "pop_left", "pop_right"]
         chosen = operations[random.randint(0, len(operations)-1)]
@@ -417,6 +428,7 @@ def LAYER3(writer: DictWriter):
     global mirror
 
     # Serious Punch
+    WRITEMSG(writer, "TEST", "basic (rand)")
     for i in range(random.randint(5000, 10000)):
         r = random.randint(1, 4)
         if r == 1:
@@ -433,6 +445,7 @@ def LAYER3(writer: DictWriter):
         WRITE(writer, True, mirror, "size")
         WRITE(writer, True, mirror, "empty")
 
+    WRITEMSG(writer, "TEST", "ins/del (rand) + extra")
     operations = ["push_left", "push_right", "pop_left", "pop_right"]
     for i in range(random.randint(5000, 10000)):
         chosen = operations[random.randint(0, len(operations)-1)]
@@ -455,6 +468,7 @@ def LAYER4(writer: DictWriter):
     global mirror
 
     # 1: Breaker Test
+    WRITEMSG(writer, "TEST", "breaker")
     check = True
     lower, upper = 1000, 1500
 
@@ -503,6 +517,7 @@ def LAYER4(writer: DictWriter):
         
         WRITE(writer, check, mirror, "reverse")
     
+    WRITEMSG(writer, "TEST", "breaker2 (full interference execution)")
     operations = ["push_left", "push_right", "pop_left", "pop_right"]
     for i in range(random.randint(1000, 1500)):
         chosen = operations[random.randint(0, len(operations)-1)]
@@ -526,6 +541,7 @@ def LAYER4(writer: DictWriter):
 
 def LAYER5(writer: DictWriter):
     # 1: Finale Test
+    WRITEMSG(writer, "TEST", "random")
     lower, upper = 10000, 15000
     for i in range(random.randint(500, 1000)):
         WRITE(writer, True, mirror, "push_left", randomData())
@@ -576,9 +592,9 @@ for layer, func in tests.items():
         print("> Layer " + layer + "...")
 
     file, writer = MAKEFILE(directory)
-    WRITEMSG("LAYER", layerMsg)
+    WRITEMSG(writer, "LAYER", layerMsg)
     func(writer)
-    WRITEMSG("LAYERFIN", layerfinMsg)
+    WRITEMSG(writer, "LAYERFIN", layerfinMsg)
 
     # Remove extra line at end of file
     if file.tell() != 0:
