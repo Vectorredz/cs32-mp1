@@ -132,6 +132,8 @@ This operation **insert** a new `ListNode` to the `List` by reconnecting the `ta
 <hr>
 </details>
 
+<hr>
+<hr>
 
 <details>
 <summary>Dynamic Array</summary>
@@ -549,7 +551,7 @@ We know that only the leftmost (rightmost) leaf of the target `PTree` is the one
 So, its purpose is to "wrap open" the `PTree` back into a sequence of `PTrees`.\
 It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node sub-list.\
 Then the other leftover left (right) child is deallocated and removed from the list entirely.
-Each successive right (left) subtree is of type k-1 and l/2.\
+Each successive right (left) subtree is of type $$k-1$$ and $$l/2$$.\
 After everything, it gives the caller the appropriate sublist of right-child (left-child) `PTrees`, with its own `subHead` and `subTail`.
 
 #### Helper: `_peekABoo(list)`
