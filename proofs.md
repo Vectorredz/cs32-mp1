@@ -107,7 +107,7 @@ Both `get` and `set` are passed a list $l$ and index $i$ while `set` is also giv
 
 We can see that the operations done outside of the while-loop are a series of constant time operations. Thus, we can derive `get`and `set` to have recurrence relations of $T_{outer}=c$.
 
-Now, looking within the while loop, it is observed that if $i$ = $n$, where$n$ is the length of the list, the while loop runs at worst-case $O(n)$. For clarity, we can derive the recurrence relation to be $T_{loop} = T(n+1)+O(1)$, where $O(1)$ represents the constant time operations within the while-loop and $T(n+1)$ represent the time complexity of the number of iterations of the while-loop (Note that if given a size $n$ inclusive, the while-loop runs $n+1$ times where the $n+1$ is the last iteration before exiting). If we were to solve the recurrence relation.
+Now, looking within the while loop, it is observed that if $i$ = $n$, where $n$ is the length of the list, the while loop runs at worst-case $O(n)$. For clarity, we can derive the recurrence relation to be $T_{loop} = T(n+1)+O(1)$, where $O(1)$ represents the constant time operations within the while-loop and $T(n+1)$ represent the time complexity of the number of iterations of the while-loop (Note that if given a size $n$ inclusive, the while-loop runs $n+1$ times where the $n+1$ is the last iteration before exiting). If we were to solve the recurrence relation.
 
 $$T_{loop} = T(n+1) + O(1)$$
 $$T(n)= T(n) + O(1)  $$
@@ -380,7 +380,7 @@ As a result, since the expected iterations of `_flipCoin` to be in constant expe
 
 $$T_{promote}=O(1) \text{ expected}$$
 
-We can use the same logic for the while-loop inside `_push_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+We can use the same logic for the while-loop inside `_push_*_base` as it traverses vertically. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
@@ -418,7 +418,7 @@ As a result, since the expected iterations of `_flipCoin` to be a constant, `_de
 
 $$T_{demote} = O(1) \text{ expected}$$
 
-We can use the same logic for the while-loop inside `_pop_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+We can use the same logic for the while-loop inside `_pop_*_base` as it traverses vertically. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
@@ -464,14 +464,14 @@ Here, $\lg n + 1 > \lg n$ allowing us to make it the "simplified" time complexit
 
 $$T_{L1}=O(\lg n+1) = O(\log n)$$
 
-Now, for the second while-loop, $T_{L2}$ , the loop traverses through the list moving either rightwards or downwards until it finds the desired node. If we were to form a list and become *unlucky* such that no node beyond the lowest level, we would end up with a singly-linked list. This would cause the loop to iterate an $n$ amount of times worst case, resulting in $T_{L2}=O(n)$ worst case. However, because we are playing into chance, the probability of the worst case happening such that $n$ is large enough to affect the running time is very low. 
+Now, for the second while-loop, $T_{L2}$ , the loop traverses through the list moving either rightwards or downwards until it finds the desired node. If we were to form a list and become *unlucky* such that no node beyond the lowest level, we would end up with a doubly-linked list. This would cause the loop to iterate an $n$ amount of times worst case, resulting in $T_{L2}=O(n)$ worst case. However, because we are playing into chance, the probability of the worst case happening such that $n$ is large enough to affect the running time is very low. 
 
 We know that the loop depends on the total amount of times you move right or down. Since we have proved that in $T_{L1}$ ,  that the running time of downward movement is worst case $O(\log n)$. Now, all we need to prove rightward movement.
 
 For rightward movement, we know that the number of nodes decreases geometrically by a power of two, $2^k$. We can get the recurrence relation of the number of rightward movements per level to be the following:
 
 $$T(n) =T(n -2^{\lg n-1})+O(1)$$
-Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](#### constructPTrees)). Simplifying the recurrence relation we get the following:
+Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](proofs.md#constructptrees)). Simplifying the recurrence relation we get the following:
 
 $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
