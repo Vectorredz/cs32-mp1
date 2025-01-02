@@ -285,7 +285,7 @@ This simulates the flipping of the coin given that it has a probability of `p = 
 2. **Tails**
 - If `rand() <= RAND_MAX / 2` it will return `false`. 
 
-#### Helpers: `promoteLevel(l, fromRight) -> Level`
+#### Helpers: `_promoteLevel(l, fromRight) -> Level`
 Useful helper function that is called whenever inserting `SkipNodes` to the `SkipList`. 
 
 It has while loop that iterates as long as it satisfied the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make new Level above the current level whenever the flipping of coin lands heads otherwise it just maintains its current level.\
@@ -293,11 +293,27 @@ Inside the iteration, it checks first if the current level of the `SkipNode` is 
 
 After the first `if` condition it will now go update its pointers and go up to the newly created level. In this level you create newNode that will be inserted just above the current node. 
 
+#### Helpers: `_demoteLevel(l, currLevel, fromRight)`
+Unlike the` _promoteLevel` it will do the reverse of promoting the level by pruning the level instead, hence the name.
 
+Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or no. If it is empty it ill change the pointer of the current level and the next level before freeing the current topmost level, to safely update the status of skip-list.
 
 #### Helpers: `_push_left_base(l, v)`
+This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
+Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`.\
+It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
+
+ Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
+
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After insertin newNode to the **level 0** it calls promoteLevle to check whether the newly added node is applicable to increase level or no. After that it will update the level recorder to track the height of the nodes.
+
 #### Helpers: `_push_right_base(l, v)`
+A mirror of `_push_left_base`.\
+This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
+
+
 #### Helpers: `_pop_left_base(l) -> bool`
+
 #### Helpers: `_pop_left_base(l) -> bool`
 
 
