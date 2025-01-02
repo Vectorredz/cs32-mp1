@@ -146,9 +146,8 @@ TODO
 
 ### Summary
 
-`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Hence, are the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`.\
-Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. Normal Lane is just a `Doubly-linked list` that has **all** the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
-Express Lanes offers faster travesal given that it skips nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node, and flipping **tails** just _maintains_ its current height. 
+`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Hence, are the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`. Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is just a `Doubly-linked list` that has **all** the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
+`Express Lanes` offers faster travesal given that it skips nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node, and flipping **tails** just _maintains_ its current height. 
 
 <hr>
 
@@ -161,29 +160,28 @@ The bottommost level or the commonly known as the **Level 0** of the `SkipList` 
 
 #### Struct: `SkipNode`
 Represents the connected elements in the `SkipList`.\
-Each `SkipNode` has `left` pointer that references to the previous `existing node`, if there is no node in the left side then it will be connected to the `headSentinel` instead.\
-Its `right` pointer points to the `next` `existing node`, if no node then it will be connected to the `tailSentinel` instead.\
-It also has `below` pointer that points to the `existing node` beneath it.\
+Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.\
+Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.\
+It also has `below` pointer that points to the **existing node** beneath it.\
 Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool:` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.\
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
 
 #### Struct: `Levellist`
-Represents a `list` that stores each `levels` present in the `SkipList`.\
-To keep track of the `HEADER` (where the `SkipList` starts), it has `two (2)` pointers that points to the `top` and `bottom`.
+Represents a list that stores each `levels` present in the `SkipList`.\
+To keep track of the **`HEADER`** (where the `SkipList` starts), it has two _(2)_ pointers that points to the `top` and `bottom`.
 `top` level pertains to the topmost level and `bottom` level always pertains to the **Level 0**.
 
 #### Struct: `Level`
-It has `two (2)` pointers `up` and `down` that helps navigates the `succeeding` and `preceding` levels in vertical direction.\
+It has two _(2)_ pointers `up` and `down` that helps navigates the _succeeding_ and _preceeding_ levels in vertical direction.\
 Each levels have `SkipNode` fields `headSentinel` and `tailSentinel` representing the leftmost sentinel and rightmost sentinel respectively.\
-It also has field `cachedRightWidth` that stores the width of the right elements given that the `Indexable Skip-list` reads offset from left to right.\ 
+It also has field `cachedRightWidth` that stores the width of the right elements given that the _`Indexable Skip-list`_ reads offset from left to right.\ 
 
 #### Struct: `LevelRecordsList`
 It stores the `head` and `tail` of a `LevelRecord`.
 
 #### Struct: `LevelRecord`
 It is a doubly-linked list that keeps track of the level heights of each `SkipNode`.
-It has field `Level` `topLevel` that stores the highest level achieved by the nodes. 
-
+It has field `Level` named `topLevel` that stores the highest level achieved by the nodes. 
 
 <hr>
 </details>
@@ -193,9 +191,24 @@ It has field `Level` `topLevel` that stores the highest level achieved by the no
 
 ### Operation: `MAKE`
 #### Helper: `_makeNode(v) -> SkipNode`
+It initializes the newly created `SkipNode`.\
+It allocates memory for the **newNode** and initially points its `right`, `left`, and `below` pointers to **_NULL_**.\
+Make also sets the (`boolean`) `isSentinel` default to **false**, while `width` to **0** and `val` to the passed argument `v`.
+
 #### Helper: `_makeLevel() -> Level`
+It initializes a new `Level` once called.\
+It allocates memory for the **newLevel** and initially points its `up` and `down` pointers to **_NULL_**.\
+This also creates new sentinels for the specific level hence, allocating memory to `headSentinel` and `tailSentinel` while initializing its respective pointers.\
+
 #### Helper: `_initSkipList() -> SkipList`
+This initializes the `SkipList` proper.\
+It allocates memory for the fields `LevelList` and `LevelRecordsList` while also setting its pointers to **_NULL_**.\
+It initially sets the values of `leftmost`, `rightmost`, `currHeight`, and `size` to the `LENGTH: 0`. 
+
 #### Main: `make(n, seq) -> SkipList`
+This main operation aims to create a `SkipList` from a `sequence` with `size: n`.\
+In order to make the `rand()` work in probability for every run, it first calls `srand(time(NULL))` controlling the choice of seed.
+It iterates over the sequence and makes use of the function `push_right()` to insert the `SkipNodes` to the `SkipList`.
 
 <hr>
 </details>
@@ -204,6 +217,7 @@ It has field `Level` `topLevel` that stores the highest level achieved by the no
 <summary>Flags/List Info</summary>
 
 ### Operation: `reverse(l)`
+This simply reverses the 
 ### Operation: `size(l) -> LENGTH`
 ### Operation: `empty(l) -> bool`
 

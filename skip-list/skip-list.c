@@ -510,12 +510,15 @@ DATA peek_right(SkipList *l){
 void push_left(SkipList *l, DATA v){
     l->is_reversed == false ? _push_left_base(l, v) : _push_right_base(l, v);
 }
+
 void push_right(SkipList *l, DATA v){
     l->is_reversed == false ? _push_right_base(l, v) : _push_left_base(l, v);
 }
+
 bool pop_left(SkipList *l){
     return l->is_reversed == false ? _pop_left_base(l) : _pop_right_base(l);
 }
+
 bool pop_right(SkipList *l){
     return l->is_reversed == false ? _pop_right_base(l) : _pop_left_base(l);
 }
