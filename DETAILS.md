@@ -195,14 +195,17 @@ The group decides to dynamically resize the `maxHeight` of the SkipList based on
 
 > [!NOTE]  
 > Recall that the height of a skip list is $O(log2n)$. 
-$$h = \log_{1/p}(n)$$
-$$(1/p)^h = \frac{1}{p} \cdot \log_{1/p}(n)$$
-$$left(\frac{1}{1/2}\right)^h = n$$
-$$2^h = n$$
-$$Solving for \( h \)$$
-$$log_2(2^h) = \log_2(n)$$
-$$h = \log_2(n)$$
-$$text{Height} = O(\log_2(n))$$
+$$ h = \log_{1/p}(n) $$
+$$ (1/p)^h = \frac{1}{p} \cdot \log_{1/p}(n) $$
+
+### Substituting \( p = \frac{1}{2} \)
+$$ \left(\frac{1}{1/2}\right)^h = n $$
+$$ 2^h = n $$
+
+$$ \log_2(2^h) = \log_2(n) $$
+$$ h = \log_2(n) $$
+
+$$ \text{Height} = O(\log_2(n)) $$
 
 
 #### Helper: `_makeNode(v) -> SkipNode`
