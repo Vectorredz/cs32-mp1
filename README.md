@@ -222,7 +222,7 @@ The settings for the automatic tester.
 Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
-| IMPLEMENTATION | `DOUBLY_LINKED_LIST | DYNAMIC_ARRAY | SKIP_LIST | TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
+| IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
 | LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
