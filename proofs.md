@@ -380,7 +380,7 @@ As a result, since the expected iterations of `_flipCoin` to be in constant expe
 
 $$T_{promote}=O(1) \text{ expected}$$
 
-We can use the same logic for the while-loop inside `_push_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+We can use the same logic for the while-loop inside `_push_*_base` as it traverses vertically. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
@@ -418,7 +418,7 @@ As a result, since the expected iterations of `_flipCoin` to be a constant, `_de
 
 $$T_{demote} = O(1) \text{ expected}$$
 
-We can use the same logic for the while-loop inside `_pop_*_base`. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
+We can use the same logic for the while-loop inside `_pop_*_base` as it traverses vertically. According to the calculated iterations, the while-loop is expected to iterate a constant number of times making the time complexity of this while-loop, $T_{while}$ , to be $O(1)$ *expected*.
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
@@ -471,7 +471,7 @@ We know that the loop depends on the total amount of times you move right or dow
 For rightward movement, we know that the number of nodes decreases geometrically by a power of two, $2^k$. We can get the recurrence relation of the number of rightward movements per level to be the following:
 
 $$T(n) =T(n -2^{\lg n-1})+O(1)$$
-Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](#### constructPTrees)). Simplifying the recurrence relation we get the following:
+Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](proofs.md#constructptrees)). Simplifying the recurrence relation we get the following:
 
 $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
