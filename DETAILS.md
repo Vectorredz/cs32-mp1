@@ -190,6 +190,21 @@ It has field `Level` named `topLevel` that stores the highest level achieved by 
 <summary>Initializer</summary>
 
 ### Operation: `MAKE`
+#### Helper: `_capHeight(n) -> LENGTH`
+The group decides to dynamically resize the `maxHeight` of the SkipList based on the `size: n`. 
+
+> [!NOTE]  
+> Recall that the height of a skip list is $O(log2n)$. 
+$$h = \log_{1/p}(n)$$
+$$(1/p)^h = \frac{1}{p} \cdot \log_{1/p}(n)$$
+$$left(\frac{1}{1/2}\right)^h = n$$
+$$2^h = n$$
+$$Solving for \( h \)$$
+$$log_2(2^h) = \log_2(n)$$
+$$h = \log_2(n)$$
+$$text{Height} = O(\log_2(n))$$
+
+
 #### Helper: `_makeNode(v) -> SkipNode`
 It initializes the newly created `SkipNode`.\
 It allocates memory for the **newNode** and initially points its `right`, `left`, and `below` pointers to **_NULL_**.\
@@ -233,7 +248,8 @@ It simply returns `bool` that checks whether the `SkipList` has no elements or h
 <details>
 <summary>Getters/Setters</summary>
 
-### Operation: `get(l, i) -> DATA`
+### Operation: `GET/SET/PEEK_*`
+
 #### Helper: `_getNode(l, target, fromSet, v) -> SkipNode`
 This helper aims to search for the specific `SkipNode` at target index `i`.\
 It has two _(2)_ loop iteration:
@@ -244,13 +260,23 @@ It has two _(2)_ loop iteration:
 2. Main Traversal Phase
 - This is the second while loop, once it gets out of the sentinel node, it will start traversing to the `SkipNodes` until the target `i` is found.\
 
-> [!NOTE]  
-> Q: _"Why do we need the `Sentinel Phase`?"_ 
-> A: In `Indexable SkipList` we only count the widths of the non-sentinel SkipNodes. Recall that sentinel nodes doesn't represent any meaningful data (can be `INT_MAX, INT_MIN, -1, +-inf, etc.`)and only acts as the "boundary" of a program.
+> [WHY?]  
+> Q: _"Why do we need the `Sentinel Phase`?"_\
+> A: In `Indexable SkipList` we only count the widths of the non-sentinel SkipNodes. Recall that sentinel nodes doesn't represent any meaningful data (can be `INT_MAX`, `INT_MIN`, `-1`, `+-inf`, etc.) and only acts as the "boundary" of a program.
 
-### Operation: `set(l, i, v)`
-### Operation: `peek_left(l) -> DATA`
-### Operation: `peek_right(l) -> DATA`
+#### Main: `get(l, i) -> DATA`
+If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
+It utilizes the `_getNode`, once the `SkipNode` at target `i` is found it would read the `DATA` from it and returns the `val`.
+
+#### Main: `set(l, i, v)`
+If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
+It utilizes the `_getNode`, once the `SkipNode` at target `i` is found it would replace the `val` of `SkipNode` with `DATA: v`.
+
+#### Main: `peek_left(l) -> DATA`
+This simply returns the leftmost `DATA` of the `SkipNode`. If `reversed` is toggled **ON** it would return the rightmost `DATA` instead.
+
+#### Main: `peek_right(l) -> DATA`
+This simply returns the rightmost `DATA` of the `SkipNode`. If `reversed` is toggled **ON** it would return the leftmost `DATA` instead.
 
 <hr>
 </details>
@@ -258,10 +284,12 @@ It has two _(2)_ loop iteration:
 <details>
 <summary>Insertions/Deletions</summary>
 
+### Operation: `push_left(l, v)`
+
+### Operation: `push_right(l, v)`
+
 ### Operation: `pop_left(l) -> bool`
 ### Operation: `pop_right(l) -> bool`
-### Operation: `push_left(l, v)`
-### Operation: `push_right(l, v)`
 
 <hr>
 </details>
