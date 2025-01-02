@@ -102,7 +102,7 @@ Their text can be of the following:
 | empty | "**None**" | "**None**" | `returned bool` <br> "**0**" / "**1**" |
 | reverse | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | get | `LENGTH i` <br> number | "**None**" | `returned DATA` <br> number |
-| set | `LENGTH i` <br> number | `DATA v` <br> number | "**None**" |
+| set | `LENGTH i` <br> number | `DATA v` <br> number | `returned DATA` <br> number |
 | peek_left | "**None**" | "**None**" | `returned DATA` <br> number |
 | peek_right | "**None**" | "**None**" | `returned DATA` <br> number |
 | push_left | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
