@@ -43,15 +43,15 @@ Doubly-linked List is one of the most common data structures that offers advanta
 <summary>Structs</summary>
 
 #### Struct: `List`
-A doubly-linked list which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\
-The struct also have a field `size` that stores the size `n` of the list.\
-Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.\
+A **doubly-linked list** which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\
+The struct also have a field `size` that stores the size `n` of the list.
+Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.
 This property allows the implementation to have an $O(1)$ worst-case time complexity for its `reverse` operation.
 
 #### Struct: `ListNode`
-This represents the doubly-linked list node for the `List`.\
-It has pointer `left` that references to the previous `ListNode` and `right` which references to the next adjacent `ListNode`.\
-Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.\
+This represents the doubly-linked list node for the `List`.
+It has `left` pointer that references to the previous `ListNode` and `right` pointer which references to the next adjacent `ListNode`.
+Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores the value of the said node.
 
 <hr>
 </details>
@@ -63,11 +63,12 @@ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores t
 
 #### Helper: `initList()`
 It allocates memory for the `List` `l` using `malloc()`.\
- It initially points `head` and `tail` pointers  to `NULL`. Moreover, it sets `reversed` and `size` to `bool` false and `LENGTH` $0$ respectively.\
-  Lastly it returns the initialized `List` `L` to the caller.
+It initially points `head` and `tail` pointers  to `NULL`. Moreover, it sets `reversed` and `size` to `bool: false` and `LENGTH: 0`  respectively.\
+Lastly it returns the initialized `List` `l` to the caller.
 
 #### Main: `*make(n, seq) -> list`
-this is the main operation of `Make`
+This is the main operation of `Make`. It aims to create a working doubly-linked list out of a passed `sequence` with size `n`. 
+Returns `List` once passed with arguments and called.
 
 <hr>
 </details>
@@ -77,14 +78,14 @@ this is the main operation of `Make`
 
 ### Operation: `reverse(l)`
 Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\
- Instead this function will `toggle` the `bool` `field` in `SkipList` called `reversed`.\
- It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
+Instead this function will **toggle** the (`boolean`) field in `SkipList` called `reversed`.\
+It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
 
 ### Operation: `size(l) -> LENGTH`
-It simply returns a `LENGTH` which is the current `size` `n` of the `list`.\
+It simply returns a `LENGTH` which is the current `size` `n` of the `list`.
 
 ### Operation: `empty(l) -> bool`
-It simply returns `bool` that checks whether the `list` has no elements or has `size == 0`.\
+It simply returns `bool` that checks whether the `list` has no elements or has `size == 0`.
 
 <hr>
 </details>
@@ -93,18 +94,18 @@ It simply returns `bool` that checks whether the `list` has no elements or has `
 <summary>Getters/Setters</summary>
 
 ### Operation: `get(l, i) -> DATA`
-This operation traverses the `SkipList` from left to right until the target index `i` is found, returning the `DATA` element found.\ 
+This operation traverses the `SkipList` from left to right until the target index `i` is found, returning the `DATA` of the `SkipNode` found.
 
 ### Operation: `set(l, i, v)`
-Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `SkipNode` found in the index `i` with `v`.\
+Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `SkipNode` found in the index `i` with `v`.
 
 ### Operation: `peek_left(l) -> DATA`
-This simply returns the leftmost `DATA` of the `SkipNode`.\
- The leftmost is stored with the help of the `headSentinel`, the `dummy` nodes at the very front of the `SkipList`.\
+This simply returns the leftmost `DATA` of the `SkipNode`.
+The leftmost is stored with the help of the `headSentinel`, the _dummy_ nodes at the very front of the `SkipList`.
 
 ### Operation: `peek_right(l) -> DATA`
-This simply returns the rightmost `DATA` of the `SkipNode`.\
- The rightmost is stored with the help of the `tailSentinel`, the `dummy` nodes at the very end of the `SkipList`.\
+This simply returns the rightmost `DATA` of the `SkipNode`.
+The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes at the very end of the `SkipList`.
 
 <hr>
 </details>
@@ -113,20 +114,20 @@ This simply returns the rightmost `DATA` of the `SkipNode`.\
 <summary>Insertions/Deletions</summary>
 
 ### Operation: `pop_left(l) -> bool`
-This operation `deletes` the leftmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `headSentinel` to the `SkipNode` adjacent to the leftmost node.\
- This updates the leftmost node.\
+This operation **deletes** the leftmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `headSentinel` to the `SkipNode` adjacent to the leftmost node.\
+This updates the leftmost node.
 
 ### Operation: `pop_right(l) -> bool`
-This operation `deletes` the rightmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `tailSentinel` to the `SkipNode` adjacent to the rightmost node.\
- This updates the rightmost node.\
+This operation **deletes** the rightmost `SkipNode` of the `SkipList` by disconnecting the `SkipNode` at index `i = 0` and reconnecting the `tailSentinel` to the `SkipNode` adjacent to the rightmost node.\
+This updates the rightmost node.
 
 ### Operation: `push_left(l, v)`
-This operation `adds` a new `SkipNode` to the `SkipList` by reconnecting the `headSentinel` to the `newNode` and pointing the `newNode` to the current leftmost node.\
- This updates the leftmost node.\
+This operation **insert** a new `SkipNode` to the `SkipList` by reconnecting the `headSentinel` to the _newNode_ and pointing the _newNode_ to the current leftmost node.\
+This updates the leftmost node.
 
 ### Operation: `push_right(l, v)`
-This operation `adds` a new `SkipNode` to the `SkipList` by reconnecting the `tailSentinel` to the `newNode` and pointing the `newNode` to the current rightmost node.\
- This updates the rightmost node.\
+This operation **insert** a new `SkipNode` to the `SkipList` by reconnecting the `tailSentinel` to the _newNode_ and pointing the _newNode_ to the current rightmost node.\
+This updates the rightmost node.
 
 <hr>
 </details>
@@ -158,28 +159,33 @@ Skip List is a unique data structure that is a combintion of `List` and `Linked-
 
 #### Struct: `SkipList`
 Represents the main overarching list for this ADT.\
-The bottommost level or the commonly known as the `Level 0` of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, `Level 0` contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in `Level 0` varying dependent on the probability `p`.
+The bottommost level or the commonly known as the  of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, **Level 0** contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in **Level 0** varying dependent on the probability `p`.
 
 #### Struct: `SkipNode`
-Represents the connected elements in the `SkipList`.\ 
+Represents the connected elements in the `SkipList`.\
 Each `SkipNode` has `left` pointer that references to the previous `existing node`, if there is no node in the left side then it will be connected to the `headSentinel` instead.\
 Its `right` pointer points to the `next` `existing node`, if no node then it will be connected to the `tailSentinel` instead.\
 It also has `below` pointer that points to the `existing node` beneath it.\
-Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise./
+Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool:` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.\
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
 
 #### Struct: `Levellist`
 Represents a `list` that stores each `levels` present in the `SkipList`.\
 To keep track of the `HEADER` (where the `SkipList` starts), it has `two (2)` pointers that points to the `top` and `bottom`.
-`top` level pertains to the topmost level and `bottom` level always pertains to the `Level 0`.
-
+`top` level pertains to the topmost level and `bottom` level always pertains to the **Level 0**.
 
 #### Struct: `Level`
 It has `two (2)` pointers `up` and `down` that helps navigates the `succeeding` and `preceding` levels in vertical direction.\
-Each levellist  
+Each levels have `SkipNode` fields `headSentinel` and `tailSentinel` representing the leftmost sentinel and rightmost sentinel respectively.\
+It also has field `cachedRightWidth` that stores the width of the right elements given that the `Indexable Skip-list` reads offset from left to right.\ 
+
+#### Struct: `LevelRecordsList`
+It stores the `head` and `tail` of a `LevelRecord`.
 
 #### Struct: `LevelRecord`
-#### Struct: `LevelRecordsList`
+It is a doubly-linked list that keeps track of the level heights of each `SkipNode`.
+It has field `Level` `topLevel` that stores the highest level achieved by the nodes. 
+
 
 <hr>
 </details>
