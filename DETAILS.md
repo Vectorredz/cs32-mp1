@@ -296,25 +296,49 @@ After the first `if` condition it will now go update its pointers and go up to t
 #### Helpers: `_demoteLevel(l, currLevel, fromRight)`
 Unlike the` _promoteLevel` it will do the reverse of promoting the level by pruning the level instead, hence the name.
 
-Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or no. If it is empty it ill change the pointer of the current level and the next level before freeing the current topmost level, to safely update the status of skip-list.
+Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of skip-list.
 
 #### Helpers: `_push_left_base(l, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
-Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`.\
+Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
 It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
 
- Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
+Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After insertin newNode to the **level 0** it calls promoteLevle to check whether the newly added node is applicable to increase level or no. After that it will update the level recorder to track the height of the nodes.
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
 
 #### Helpers: `_push_right_base(l, v)`
-A mirror of `_push_left_base`.\
-This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
+A mirror of `_push_right_base`.\
+This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
+Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
+It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
+
+Before inserting, we must update the `width` of the rightmost node from **level 0** to the topmost. 
+
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
 
 
 #### Helpers: `_pop_left_base(l) -> bool`
+This is the "true" `pop_left` operation, unaffected by the `reversed` flag.\
+if the `size == 0` or `SkipList` is `empty` then it would immediately return `false` since we cannot pop an empty list. 
 
-#### Helpers: `_pop_left_base(l) -> bool`
+Before removing a `SkipNode` from the `SkipList`, the operation checks first and updates necessary variables including `size`. Since, removing an element decreases the size of the list it also calls the `_capHeight` function to dynamically resize. 
+
+After all the necessary updates, we will now call `_demoteLevel` to check whether we can prune the level or not.
+
+After that we will now finally update the `widths` in this case we are decrementing the width for the leftmost node. Finally, returns `true` if successfully popped an element.
+
+
+#### Helpers: `_pop_right_base(l) -> bool`
+A mirror of `_pop_right_base`.
+This is the "true" `pop_right` operation, unaffected by the `reversed` flag.\
+if the `size == 0` or `SkipList` is `empty` then it would immediately return `false` since we cannot pop an empty list. 
+
+Before removing a `SkipNode` from the `SkipList`, the operation checks first and updates necessary variables including `size`. Since, removing an element decreases the size of the list it also calls the `_capHeight` function to dynamically resize. 
+
+After all the necessary updates, we will now call `_demoteLevel` to check whether we can prune the level or not.
+
+After that we will now finally update the `cachedRightWidth` for the rightmost node. Finally, returns `true` if successfully popped an element.
 
 
 #### Main: `push_left(list, v)`
