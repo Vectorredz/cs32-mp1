@@ -1,180 +1,180 @@
 #include "dynamic_array.h"
 
 // helper functions
-void expand_array(dynamic_array *d)
+void _expandArray(dynamic_array *list)
 {
-    int64_t *temp_array = (int64_t*)malloc((d->size) * sizeof(int64_t));
+    DATA *temp_array = (DATA*)malloc((list->size) * sizeof(DATA));
 
         // copying the array properly into a temporary one for easier copying
-        for (int i=0; i<(d->elements); i++)
+        for (LENGTH i=0; i<(list->elements); i++)
         {
             // if the starting element is == size, it starts back at 0
-            // takes into account if d->start > 0
+            // takes into account if list->start > 0
             // this part also increments the start by 1 all in one operation
-            temp_array[i] = d->array[(d->start + i) % (d->size)];
+            temp_array[i] = list->array[(list->start + i) % (list->size)];
         }
 
-        free(d->array);
-        d->array = (int64_t*)malloc((2*(d->size)) * sizeof(int64_t));
+        free(list->array);
+        list->array = (DATA*)malloc((2*(list->size)) * sizeof(DATA));
         
         // fixing the index situation to start at 0 again
-        for (int i=0; i<(d->elements); i++)
+        for (LENGTH i=0; i<(list->elements); i++)
         {
-            d->array[i] = temp_array[i];
+            list->array[i] = temp_array[i];
         }
 
         // refreshing the variables
-        d->start = 0;
+        list->start = 0;
 
-        if(d->elements==1) d->last = 0;
-        else d->last = d->elements-1;
+        if(list->elements==1) list->last = 0;
+        else list->last = list->elements-1;
 
-        d->size = 2*(d->size); 
+        list->size = 2*(list->size); 
 
         free(temp_array);
 }
 
-void decrease_array(dynamic_array *d)
+void _decreaseArray(dynamic_array *list)
 {
-    if (d->elements == 0)   
+    if (list->elements == 0)   
     {
         // makes the size 1
-        free(d->array);
-        d->array = (int64_t*)malloc(sizeof(int64_t));
-        d->start = 0;
-        d->last = 0;
-        d->size = 1;
-        d->elements = 0;
-        d->reverse = false;
+        free(list->array);
+        list->array = (DATA*)malloc(sizeof(DATA));
+        list->start = 0;
+        list->last = 0;
+        list->size = 1;
+        list->elements = 0;
+        list->reverse = false;
     }
 
     else
     {
-        int64_t *temp_array = (int64_t*)malloc((d->elements) * sizeof(int64_t));
+        DATA *temp_array = (DATA*)malloc((list->elements) * sizeof(DATA));
 
         // copying the array properly into a temporary one for easier copying
-        for (int i=0; i<(d->elements); i++)
+        for (LENGTH i=0; i<(list->elements); i++)
         {
             // if the starting element is == size, it starts back at 0
-            // takes into account if d->start > 0
+            // takes into account if list->start > 0
             // this part also increments the start by 1 all in one operation
-            temp_array[i] = d->array[(d->start + i) % (d->size)];
+            temp_array[i] = list->array[(list->start + i) % (list->size)];
         }
 
-        free(d->array);
-        d->array = (int64_t*)malloc(((d->size)/2) * sizeof(int64_t));
-        for (int i=0; i<d->elements; i++)
+        free(list->array);
+        list->array = (DATA*)malloc(((list->size)/2) * sizeof(DATA));
+        for (LENGTH i=0; i<list->elements; i++)
         {
-            d->array[i] = temp_array[i];
+            list->array[i] = temp_array[i];
         }
 
         // refreshing the variables
-        d->start = 0;
-        if(d->elements == 1 || d->elements == 0) d->last = 0;
-        else d->last = d->elements-1;
-        d->size = (d->size)/2;
+        list->start = 0;
+        if(list->elements == 1 || list->elements == 0) list->last = 0;
+        else list->last = list->elements-1;
+        list->size = (list->size)/2;
 
         free(temp_array);
     }
 }
 
-dynamic_array *make(int n, int64_t *seq)
+dynamic_array *make(LENGTH n, DATA *seq)
 {
     // undefined behavior
     if (n<0) return NULL;
 
-    dynamic_array *d = (dynamic_array *)malloc(sizeof(dynamic_array));
+    dynamic_array *list = (dynamic_array *)malloc(sizeof(dynamic_array));
 
     // if given seq is empty, create an array with size 1
     if (n==0)
     {
         // creates an empty array of size 20 (the critical point for expanding and sparsing)
-        d->array = (int64_t*)malloc((1) * sizeof(int64_t)); // arbitrary number
-        d->start = 0;
-        d->last = 0;
-        d->size = 1;
-        d->elements = 0;
-        d->reverse = false;
+        list->array = (DATA*)malloc((1) * sizeof(DATA)); // arbitrary number
+        list->start = 0;
+        list->last = 0;
+        list->size = 1;
+        list->elements = 0;
+        list->reverse = false;
     }
 
     else
     {
         // dynamically allocating the array to be of size 2n 
-        d->array = (int64_t*)malloc((2*n) * sizeof(int64_t));
-        d->reverse = false;
+        list->array = (DATA*)malloc((2*n) * sizeof(DATA));
+        list->reverse = false;
 
         // setting the size of the array to 2n and keeping the current amount of elements in the list
-        d->size = 2*n;
-        d->elements = n; 
+        list->size = 2*n;
+        list->elements = n; 
 
         // setting the first and last index
-        d->last = n-1;
-        d->start = 0;
+        list->last = n-1;
+        list->start = 0;
 
         // copying the given sequence into the dynamic array
-        for (int i=0; i<n; i++)
+        for (LENGTH i=0; i<n; i++)
         {   
             // setting the values of each index
-            d->array[i] = seq[i];
+            list->array[i] = seq[i];
         }
     }
 
-    return d;
+    return list;
 }
 
-void push_left(dynamic_array *d, int64_t v)
+void push_left(dynamic_array *list, DATA v)
 {
-    if (!d->reverse)
+    if (!list->reverse)
     {
         // special case if empty list
-        if (d->elements == 0)
+        if (list->elements == 0)
         {
-            d->array[d->start] = v;
+            list->array[list->start] = v;
 
-            d->elements++;
+            list->elements++;
 
-            expand_array(d);
+            _expandArray(list);
         }
 
         else
         {
             // makes the last index of the array the first
-            if (d->start == 0) d->start = (d->size)-1;
-            else d->start--; // takes into account if d->start > 0 
+            if (list->start == 0) list->start = (list->size)-1;
+            else list->start--; // takes into account if list->start > 0 
 
             // appends the new value
-            d->array[d->start] = v;
+            list->array[list->start] = v;
 
             // increase to the size
-            d->elements++;
+            list->elements++;
 
             // if number of elements exceeds the size, it expands
-            if(d->elements == d->size) expand_array(d);
+            if(list->elements == list->size) _expandArray(list);
         }
     }
 
-    else // d->reverse == true
+    else // list->reverse == true
     {
         // important so it will do the push_right operation
-        d->reverse = !d->reverse;
-        push_right(d, v);
-        d->reverse = !d->reverse; // undo the first reverse
+        list->reverse = !list->reverse;
+        push_right(list, v);
+        list->reverse = !list->reverse; // undo the first reverse
     }
 }
 
-void push_right(dynamic_array *d, int64_t v)
+void push_right(dynamic_array *list, DATA v)
 {
-    if (!d->reverse)
+    if (!list->reverse)
     {
-        if (d->elements == 0)
+        if (list->elements == 0)
         {
             // adding the new element into an empty list
-            d->array[d->last] = v;
+            list->array[list->last] = v;
             
             // increasing the variable that keeps track of how many elements there are in the list
-            d->elements++;
+            list->elements++;
 
-            expand_array(d);
+            _expandArray(list);
         }
 
         else
@@ -182,225 +182,198 @@ void push_right(dynamic_array *d, int64_t v)
             
             // case when the array isn't full but the index exceeds the size, it means there's no index at 0
             // this part also increments by 1  in one operation 
-            d->last = (d->last+1) % d->size;
+            list->last = (list->last+1) % list->size;
+
+            if(list->last<0) list->last = list->size-1;
         
             //setting the variable and increasing the number of valid elements
-            d->array[d->last] = v;
-            d->elements++;
+            list->array[list->last] = v;
+            list->elements++;
 
             // if number of elements exceeds the size, it expands
-            if(d->elements == d->size) expand_array(d);
+            if(list->elements == list->size) _expandArray(list);
         }
     }
 
-    else // d->reverse == true
+    else // list->reverse == true
     {   
         // important so it will do the push_left operation
-        d->reverse = !d->reverse;
-        push_left(d, v); 
-        d->reverse = !d->reverse; // undo the first reverse
+        list->reverse = !list->reverse;
+        push_left(list, v); 
+        list->reverse = !list->reverse; // undo the first reverse
     }
 }
 
-bool pop_left(dynamic_array *d)
+bool pop_left(dynamic_array *list)
 {
-    if(d->reverse == false)
+    if(list->reverse == false)
     {
         // return false if empty
-        if (d->elements == 0 ) return false;
+        if (list->elements == 0 ) return false;
 
         // we aren't actually popping the element, we just change the index range
-        d->elements--;
-        d->start++;
+        list->elements--;
+        list->start++;
 
         // if the start index is not 0
-        if(d->start >= d->size) d->start = 0;
+        if(list->start >= list->size) list->start = 0;
 
-        if((d->elements) <= (d->size)/4) decrease_array(d); 
+        if((list->elements) <= (list->size)/4) _decreaseArray(list); 
 
         return true;
     }
 
-    else // d->reverse == true
+    else // list->reverse == true
     {
         // important so it will do the push_right operation
-        d->reverse = !d->reverse;
-        pop_right(d);
-        d->reverse = !d->reverse; // undo the first reverse
+        list->reverse = !list->reverse;
+        pop_right(list);
+        list->reverse = !list->reverse; // undo the first reverse
     }
 }
 
-bool pop_right(dynamic_array *d)
+bool pop_right(dynamic_array *list)
 {
-    if (d->reverse == false)
+    if (list->reverse == false)
     {
         // return false if empty
-        if (d->elements == 0 ) return false;
+        if (list->elements == 0 ) return false;
 
         // we aren't actually popping the element, we just change the index range
-        d->elements--;
-        d->array[d->last] = 0;
-        d->last--;
+        list->elements--;
 
-        // if last index is >= 0
-        if ((d->last) < 0) d->last = (d->size)-1;
+
+        if ((list->last) == 0) list->last = (list->size)-1;
+        else list->last--;
         
 
-        if((d->elements) <= (d->size)/4) decrease_array(d); 
+        if((list->elements) <= (list->size)/4) _decreaseArray(list); 
     
         return true;
     }
 
-    else // d->reverse == true
+    else // list->reverse == true
     {
         // important so it will do the push_right operation
-        d->reverse = !d->reverse;
-        pop_left(d);
-        d->reverse = !d->reverse; // undo the first reverse
+        list->reverse = !list->reverse;
+        pop_left(list);
+        list->reverse = !list->reverse; // undo the first reverse
     }
 }
 
-int64_t peek_left(dynamic_array *d)
+DATA peek_left(dynamic_array *list)
 {
     //returns leftmost element, return rightmost if reversed
-    if (d->reverse) return d->array[d->last];
-    return d->array[d->start];
+    if (list->reverse) return list->array[list->last];
+    return list->array[list->start];
 }
 
-int64_t peek_right(dynamic_array *d)
+DATA peek_right(dynamic_array *list)
 {
     // returns rightmost element, return leftmost if reversed 
-    if (d->reverse) return d->array[d->start];
-    return d->array[d->last];
+    if (list->reverse) return list->array[list->start];
+    return list->array[list->last];
 }
 
-int size(dynamic_array *d) 
+LENGTH size(dynamic_array *list) 
 {
     // returns size
-    return d->elements;
+    return list->elements;
 }
 
-bool empty(dynamic_array *d)
+bool empty(dynamic_array *list)
 {
     // if size=0 then it is empty, otherwise its not empty
-    if ((d->elements) == 0) return true;
+    if ((list->elements) == 0) return true;
     return false;
 }
 
-int64_t get(dynamic_array *d, int i)
+DATA get(dynamic_array *list, LENGTH i)
 {   
     // add indexing error
-    if (!(0 <= i && i < d->elements))
+    if (!(0 <= i && i < list->elements))
     {
         fprintf(stderr, "IndexError: list index out of range\n");
         exit(1);
     }
 
     // the actual getting algorithm
-    if (d->reverse == false)
+    if (list->reverse == false)
     {
-        // returns the i-th element in terms of d->start (fixing the indexing)
-        int new_i = (d->start + i) % d->size;
+        // returns the i-th element in terms of list->start (fixing the indexing)
+        LENGTH new_i = (list->start + i) % list->size;
 
-        return d->array[new_i];
+        return list->array[new_i];
     } 
 
-    else // d->reverse == true
+    else // list->reverse == true
     {
         // reverses the index 
-        int reverse_index = (d->start + d->last) - i;
+        LENGTH reverse_index = (list->start + (list->elements -1 -i)) % list->size;
         
-        return d->array[reverse_index];
+        return list->array[reverse_index];
     }
 }
 
-void set(dynamic_array *d, int i, int64_t v)
+void set(dynamic_array *list, LENGTH i, DATA v)
 {
     // add indexing error
-    if (!(0 <= i && i < d->elements))
+    if (!(0 <= i && i < list->elements))
     {
         fprintf(stderr, "IndexError: list index out of range\n");\
         exit(1);\
     }
 
-    if (d->reverse == false)
+    if (list->reverse == false)
     {
-        // returns the i-th element in terms of d->start (fixing the indexing)
-        int new_i = d->start + i;
-        
-        // if d->start > d->last due to circular indexing
-        if (new_i >= d->size) new_i -= d->size;
+        // returns the i-th element in terms of list->start (fixing the indexing)
+        // includes circular indexing
+        LENGTH new_i = (list->start + i) % list-> size;
+    
 
         // sets the i-th element as v
-        d->array[new_i] = v;
+        list->array[new_i] = v;
     }
 
-    else // d->reverse == true
+    else // list->reverse == true
     {
 
         // reverses the index 
-        int reverse_index = (d->start + d->last) - i;
-        d->array[reverse_index] = v;
+        LENGTH reverse_index = (list->start + (list->elements -1 -i)) % list->size;
+        list->array[reverse_index] = v;
     }   
 }
 
-void reverse(dynamic_array *d)
+void reverse(dynamic_array *list)
 {
     // sets the bool into the opposite of what it currently is
-    d->reverse = !d->reverse;
+    list->reverse = !list->reverse;
 }
 
-// for the unit testing
-DATA* TEST_elements(dynamic_array* list, LENGTH* nRef, DATA* seqRef){
-  LENGTH n = list->elements;
-  DATA* seq = (DATA*) malloc(n * sizeof(DATA));
 
-  get(list, nRef);
-  
-  *nRef = n;
-  *seqRef = n;
+
+// TEST FUNCTIONS
+
+void TEST_elements(dynamic_array* list, LENGTH* nRef, DATA** seqRef){
+    DATA* seq = (DATA*) malloc((list->elements)*sizeof(DATA));
+    
+    // insert elements from left to right into seq here
+
+    for (LENGTH i=0; i<list->elements; i++)
+    {
+        LENGTH new_i = (list->start + i) % list->size;
+        seq[i] = list->array[new_i];
+    }
+
+    *nRef = list->elements;
+    *seqRef = seq;
 }
 
 bool TEST_internal(dynamic_array* list){
-  // do stuff
-  return true;
+    // put own tests here, return false if it failed to satisfy
+    return true;
 }
-
-/*
-
-    reversing the index mini proof
-
-    0 1 2 3 4 5
-
-    size = 6
-
-    index 5 is 0 on reverse, (size-1) - index => 5 - 5 = 0
-    index 4 is 1 on reverse, (size-1) - index => 5 - 4 = 1
-    index 3 is 2 on reverse, (size-1) - index => 5 - 3 = 2
-    index 2 is 3 on reverse, (size-1) - index => 5 - 2 = 3
-    index 1 is 4 on reverse, (size-1) - index => 5 - 1 = 4
-    index 0 is 5 on reverse, (size-1) - index => 5 - 0 = 5
-
-    ////
-
-    0 
-    
-    size = 1
-
-    index 0 is 0 on reverse, (size-1) - index => 0 - 0 = 0
-
-
-    special indexing due to circular reasons:
-
-    0 1 2 3 start(4) 5
-    4 + (i=3) (wants the 4th element or index 3 in terms of 0 indexing)
-    7 - size = 7 - 6 = 1;
-
-    0:4, 1:5, 2:0, 3:1
-    1 is the 4th element or theoretically at index 3
-
-
-    start(5) 6 0 1 2 3 last(4)
-    4 - (i=5) = -1
-    2 - (size=7) = 1
-*/
+bool TEST_reversed(dynamic_array* list){
+    // make it return if list is reversed here
+    return list->reverse;
+}

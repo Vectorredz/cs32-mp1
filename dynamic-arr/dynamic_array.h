@@ -6,11 +6,11 @@
 
 typedef struct dynamic_array 
 {
-    int64_t *array; // array
-    int last; // last valid element's index
-    int start; // first valid element's index 
-    int elements; // number of valid elements (n)
-    int size; // size of the array (2n) or upper bound of the array
+    DATA *array; // array
+    LENGTH last; // last valid element's index
+    LENGTH start; // first valid element's index 
+    LENGTH elements; // number of valid elements (n)
+    LENGTH size; // size of the array (2n) or upper bound of the array
     bool reverse; // used to make O(1) reversal of list
 } dynamic_array;
 
@@ -19,15 +19,15 @@ typedef struct dynamic_array
 void expand_array(dynamic_array *d);
 void decrease_array(dynamic_array *d);
 
-dynamic_array *make(int n, int64_t *seq);
-void push_left(dynamic_array *d, int64_t v);
-void push_right(dynamic_array *d, int64_t v);
+dynamic_array *make(LENGTH n, DATA *seq);
+void push_left(dynamic_array *d, DATA v);
+void push_right(dynamic_array *d, DATA v);
 bool pop_left(dynamic_array *d);
 bool pop_right(dynamic_array *d);
-int64_t peek_left(dynamic_array *d); 
-int64_t peek_right(dynamic_array *d); 
-int size(dynamic_array *d); 
+DATA peek_left(dynamic_array *d); 
+DATA peek_right(dynamic_array *d); 
+LENGTH size(dynamic_array *d); 
 bool empty(dynamic_array *d); 
-int64_t get(dynamic_array *d, int i); 
-void set(dynamic_array *d, int i, int64_t v); 
+DATA get(dynamic_array *d, LENGTH i); 
+void set(dynamic_array *d, LENGTH i, DATA v); 
 void reverse(dynamic_array *d); 
