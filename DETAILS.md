@@ -245,10 +245,10 @@ It simply returns `bool` that checks whether the `SkipList` has no elements or h
 This helper aims to search for the specific `SkipNode` at target index `i`.\
 It has two _(2)_ loop iteration:
 
-1. Sentinel Phase
+1. **Sentinel Phase**
 - This is the first while loop, it traverses the `SkipList` from `**HEADER**` until it gets out of the non-sentinel `SkipNode`.\
 
-2. Main Traversal Phase
+2. **Main Traversal Phase**
 - This is the second while loop, once it gets out of the sentinel node, it will start traversing to the `SkipNodes` until the target `i` is found.\
 
 > [WHY?]  
@@ -276,6 +276,7 @@ This simply returns the rightmost `DATA` of the `SkipNode`. If `reversed` is tog
 <summary>Insertions/Deletions</summary>
 
 ### Operation: `push_left(l, v)`
+#### Helpers: 
 
 ### Operation: `push_right(l, v)`
 
