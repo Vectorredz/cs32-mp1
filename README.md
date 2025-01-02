@@ -232,7 +232,7 @@ Included as a C header by the tester.
 
 <br>
 
-*The tester's directly includes a source file based on **IMPLEMENTATION**. I believe it may be an unorthodox way of testing, though it has helped us simplify things in the meantime.*
+*The tester directly includes a source file based on **IMPLEMENTATION**. I believe it may be an unorthodox way of testing, though it has helped us simplify things in the meantime.*
 
 <br>
 
