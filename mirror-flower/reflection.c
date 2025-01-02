@@ -392,6 +392,8 @@ int main(){
                 } else if (strcmp(arg1, "LAYERFIN") == 0){
                     printf("!! LAYER %s Passed. !!\n", arg2);
 
+                } else if (strcmp(arg1, "TEST") == 0){
+                    printf("%s\n", arg2);
                 }
                 continue;
             }
