@@ -464,7 +464,7 @@ Here, $\lg n + 1 > \lg n$ allowing us to make it the "simplified" time complexit
 
 $$T_{L1}=O(\lg n+1) = O(\log n)$$
 
-Now, for the second while-loop, $T_{L2}$ , the loop traverses through the list moving either rightwards or downwards until it finds the desired node. If we were to form a list and become *unlucky* such that no node beyond the lowest level, we would end up with a singly-linked list. This would cause the loop to iterate an $n$ amount of times worst case, resulting in $T_{L2}=O(n)$ worst case. However, because we are playing into chance, the probability of the worst case happening such that $n$ is large enough to affect the running time is very low. 
+Now, for the second while-loop, $T_{L2}$ , the loop traverses through the list moving either rightwards or downwards until it finds the desired node. If we were to form a list and become *unlucky* such that no node beyond the lowest level, we would end up with a doubly-linked list. This would cause the loop to iterate an $n$ amount of times worst case, resulting in $T_{L2}=O(n)$ worst case. However, because we are playing into chance, the probability of the worst case happening such that $n$ is large enough to affect the running time is very low. 
 
 We know that the loop depends on the total amount of times you move right or down. Since we have proved that in $T_{L1}$ ,  that the running time of downward movement is worst case $O(\log n)$. Now, all we need to prove rightward movement.
 
