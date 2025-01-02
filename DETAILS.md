@@ -525,7 +525,7 @@ Returns `rightmost`, or `leftmost` if `reversed` flag is enabled.
 ### Operation: `PUSH_*`, `POP_*`
 
 #### Helper: `_constructZeroPTree(v) -> tree`
-The purpose of this helper function is to construct a `PTree` of type $0$, with the given DATA value as its root (leaf)'s value.\
+The purpose of this helper function is to construct a `PTree` of type $0$, with the given `DATA` value as its root (leaf)'s value.\
 This is useful for pushing a new value into the list.
 
 #### Helpers:
