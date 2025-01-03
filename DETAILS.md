@@ -24,6 +24,9 @@ For this reason, the implementer must absolutely make sure that it works correct
 This is used by the Unit Tester to check if any internal testing was successful. The implementer of the list can put any test within this function, as long as it returns either `true` or `false` to determine if the test was successful or not.\
 For example, the Sequence of Trees implementation tests for the required sequence of k's for each tree to be a concatenation of strictly increasing, and then strictly decreasing types. It will return `false` if it fails to satisfy this test at any point.
 
+#### Function: `TEST_reversed(list) -> bool`
+This is used by the Unit Tester to check if the list is reversed. The implementer must return their reversal flag in this function. Since all lists aim for $$O(1)$$ time complexity for `reverse`, this can apply to all lists.
+
 </details>
 
 <hr>
