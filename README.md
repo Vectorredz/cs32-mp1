@@ -2,8 +2,8 @@
 
 
 ## Contributors
-Angchua, Jerwyn
-Paragas, Glenn
+Angchua, Jerwyn\
+Paragas, Glenn\
 Vilar, Louise
 
 ## Repository Contents
