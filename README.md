@@ -223,12 +223,10 @@ Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
 | IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
-| LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
+| LINE_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.txt` |
-| TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 
 <br>
 
@@ -255,8 +253,8 @@ The settings for the graph tester.
 Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
-| IMPLEMENTATION | `DOUBLY_LINKED_LIST | DYNAMIC_ARRAY | SKIP_LIST | TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
-| OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `inputs` |
+| IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
+| OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `outputs` |
 
 ### [C] Grapher (Generator): *[graph.c](mirror-flower/graph.c)*
 A specialized generator which tests the list against large inputs, without checking for correctness.\
