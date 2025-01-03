@@ -471,13 +471,13 @@ def LAYER4(writer: DictWriter):
     WRITEMSG(writer, "TEST", "breaker")
     check = True
     lower, upper = 1000, 1500
-    
+
     while (mirror.size() > 0):
         WRITE(writer, check, mirror, "pop_left")
 
     for _ in range(2):
-        WRITE(writer, True, mirror, "size")
-        WRITE(writer, True, mirror, "empty")
+        WRITE(writer, check, mirror, "size")
+        WRITE(writer, check, mirror, "empty")
         
         for i in range(random.randint(lower, upper)):
             WRITE(writer, check, mirror, "push_left", randomData())
