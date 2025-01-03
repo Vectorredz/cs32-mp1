@@ -34,10 +34,10 @@
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 #if IMPLEMENTATION == DOUBLY_LINKED_lIST
-    #include "../doubly-linked-list/d-linked-list.c"
+    #include "../doubly-linked-list/d_linked_list.c"
     typedef list Reflection;
 #elif IMPLEMENTATION == DYNAMIC_ARRAY
-    #include "../dynamic-arr/dynamic-array.c"
+    #include "../dynamic-array/dynamic_array.c"
     typedef dynamic_array Reflection;
 #elif IMPLEMENTATION == SKIP_LIST
     #include "../skip-list/skip-list.c"
