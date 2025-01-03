@@ -558,7 +558,7 @@ Each successive right (left) subtree is of type $$k-1$$ and $$l/2$$.\
 After everything, it gives the caller the appropriate sublist of right-child (left-child) `PTrees`, with its own `subHead` and `subTail`.
 
 #### Helper: `_peekABoo(list)`
-A useful helper function for updating the `leftmost`/rightmost value after a modification of the list.\
+A useful helper function for updating the `leftmost`/`rightmost` value after a modification of the list.\
 It is useful for peek_left/peek_right operations.\
 It does this by getting the leftmost (rightmost) `PTree` and traversing all the way to the leftmost (rightmost) leaf node, and finally updating the appropriate value.\
 It does this for both `leftmost` and `rightmost` in each call.
