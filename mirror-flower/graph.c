@@ -29,7 +29,7 @@
     #include "../doubly-linked-list/d-linked-list.c"
     typedef list Reflection;
 #elif IMPLEMENTATION == DYNAMIC_ARRAY
-    #include "../dynamic-arr/dynamic-array.c"
+    #include "../dynamic-array/dynamic-array.c"
     typedef dynamic_array Reflection;
 #elif IMPLEMENTATION == SKIP_LIST
     #include "../skip-list/skip-list.c"
@@ -210,16 +210,13 @@ int main(){
 
     // Write which implementation is currently used
     FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
-    if (strcmp(IMPLEMENTATION, "DOUBLY_LINKED_LIST") == 0){
+    if (IMPLEMENTATION == DOUBLY_LINKED_LIST){
         fprintf(implementation, "DOUBLY_LINKED_LIST");
-    }
-    if (strcmp(IMPLEMENTATION, "DYNAMIC_ARRAY") == 0){
+    } else if (IMPLEMENTATION == DYNAMIC_ARRAY){
         fprintf(implementation, "DYNAMIC_ARRAY");
-    }
-    if (strcmp(IMPLEMENTATION, "SKIP_LIST") == 0){
+    } else if (IMPLEMENTATION == SKIP_LIST){
         fprintf(implementation, "SKIP_LIST");
-    }
-    if (strcmp(IMPLEMENTATION, "TREE_SEQUENCE") == 0){
+    } else if (IMPLEMENTATION == TREE_SEQUENCE){
         fprintf(implementation, "TREE_SEQUENCE");
     }
 
@@ -265,16 +262,17 @@ int main(){
     Reflection* list;
 
     // Make Test
-    for (int n = 0; n < 10001; n++){
+    for (LENGTH n = 0; n < 5000; n++){
         DATA* seq = (DATA*) malloc(n*sizeof(DATA));
-        for (int i = 0; i < n; i++){
-            seq[i] = (LENGTH) rand();
+        for (LENGTH i = 0; i < n; i++){
+            seq[i] = rand();
         }
         RECORDED_TIME _rec, rec;
         _TIME(&_rec);
         list = make(n, seq);
         _TIME(&rec);
         EXPORT_DELTA_TIME(output, NEW_WRITE("make", n, _PROCESSTIME(_rec, rec)), false);
+        free(seq);
     }
     list = make(0, NULL);
 
