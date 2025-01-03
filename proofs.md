@@ -471,7 +471,7 @@ We know that the loop depends on the total amount of times you move right or dow
 For rightward movement, we know that the number of nodes decreases geometrically by a power of two, $2^k$. We can get the recurrence relation of the number of rightward movements per level to be the following:
 
 $$T(n) =T(n -2^{\lg n-1})+O(1)$$
-Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](proofs.md#constructptrees)). Simplifying the recurrence relation we get the following:
+Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](PROOFS.md#constructptrees)). Simplifying the recurrence relation we get the following:
 
 $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
