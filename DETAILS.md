@@ -1,5 +1,3 @@
-
-
 # Implementation Details
 
 <details>
@@ -46,7 +44,7 @@ This is used by the Unit Tester to check if the list is reversed. The implemente
 <summary>Structs</summary>
 
 #### Struct: `List`
-A **doubly-linked list** which is an extension of the singly-linked list with the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.\
+A **doubly-linked list** being an extension of the singly-linked list inherits the same pointer referencing to `head` but with additional `tail` which is the leftmost `ListNode` and rightmost `ListNode` respectively.
 The struct also have a field `size` that stores the size `n` of the list.
 Lastly, the struct also have a (`boolean`) field `reversed` that flags whether the `reverse` function is called.
 This property allows the implementation to have an $O(1)$ worst-case time complexity for its `reverse` operation.
@@ -80,7 +78,7 @@ Returns `List` once passed with arguments and called.
 <summary>Flags/List Info</summary>
 
 ### Operation: `reverse(l)`
-Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\
+Reversing a `list` with `n` elements will take time complexity of $O(n)$. Hence, the group found an elegant way of achieving the `reverse` operation at $O(1)$.\
 Instead this function will **toggle** the (`boolean`) field in `List` called `reversed`.
 It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
 
@@ -97,18 +95,17 @@ It simply returns `bool` that checks whether the `list` has no elements or has `
 <summary>Getters/Setters</summary>
 
 ### Operation: `get(l, i) -> DATA`
-This operation traverses the `List` from left to right until the target index `i` is found, returning the `DATA` of the `ListNode` found.
+This operation traverses the `List` from left to right until the target index `i` is found, returning the `DATA` of the `ListNode` found. If reversed it will the `head` will be the right and `tail` will be the left, hence right to left traversal.
 
 ### Operation: `set(l, i, v)`
-Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `ListNode` found in the index `i` with `v`.
+Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `ListNode` found in the index `i` with `v`. If reversed it will the `head` will be the right and `tail` will be the left, hence right to left traversal.
+
 
 ### Operation: `peek_left(l) -> DATA`
-This simply returns the leftmost `DATA` of the `ListNode`.
-The leftmost is stored with the help of the `headSentinel`, the _dummy_ nodes at the very front of the `List`.
+This simply returns the leftmost `DATA` of the `ListNode`. If reversed it will return the rightmost `DATA` of the `ListNode` instead.
 
 ### Operation: `peek_right(l) -> DATA`
-This simply returns the rightmost `DATA` of the `ListNode`.
-The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes at the very end of the `List`.
+This simply returns the rightmost `DATA` of the `ListNode`. If reversed it will return the leftmost `DATA` of the `ListNode` instead.
 
 <hr>
 </details>
@@ -117,16 +114,21 @@ The rightmost is stored with the help of the `tailSentinel`, the _dummy_ nodes a
 <summary>Insertions/Deletions</summary>
 
 ### Operation: `pop_left(l) -> bool`
-This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the `headSentinel` to the `ListNode` adjacent to the leftmost node. This updates the leftmost node.
+This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **next node** left pointer to NULL. It will also update the `head` of the `List` hence making **next node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
 
 ### Operation: `pop_right(l) -> bool`
 This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the `tailSentinel` to the `ListNode` adjacent to the rightmost node. This updates the rightmost node.
 
 ### Operation: `push_left(l, v)`
-This operation **insert** a new `ListNode` to the `List` by reconnecting the `headSentinel` to the _newNode_ and pointing the _newNode_ to the current leftmost node. This updates the leftmost node.
+This operation **insert** a new `ListNode` to the `List` by updating the left pointer of the leftmost node to the **new node** and updating it as the new `head` of the list. If reversed, it will update the right pointer of the righmost node and change its new `tail` to the **new node**.
 
 ### Operation: `push_right(l, v)`
-This operation **insert** a new `ListNode` to the `List` by reconnecting the `tailSentinel` to the _newNode_ and pointing the _newNode_ to the current rightmost node. This updates the rightmost node.
+This operation **insert** a new `ListNode` to the `List` by updating the right pointer of the rightmost node to the **new node** and updating it as the new `tail` of the list. If reversed, it will update the left pointer of the leftmost node and change its new `head` to the **new node**.
+
+> [!NOTE]
+> `node *store = !(l->reversed) ? curr->right : curr->left; `
+> `curr->right` pertains to **next node**
+> `curr->left` pertains to **prev node**
 
 <hr>
 </details>
@@ -151,7 +153,7 @@ TODO
 
 ### Summary
 
-`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Hence, are the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`. Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is just a `Doubly-linked list` that has **all** the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
+`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Namely, the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`. Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is just a `Doubly-linked list` that has **all** the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
 `Express Lanes` offers faster travesal given that it skips nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node, and flipping **tails** just _maintains_ its current height. 
 
 <hr>
@@ -160,15 +162,15 @@ TODO
 <summary>Structs</summary>
 
 #### Struct: `SkipList`
-Represents the main overarching list for this ADT.\
+Represents the main overarching list for this ADT.
 The bottommost level or the commonly known as the **Level 0** of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, **Level 0** contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in **Level 0** varying dependent on the probability `p`.
 
 #### Struct: `SkipNode`
-Represents the connected elements in the `SkipList`.\
-Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.\
-Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.\
+Represents the connected elements in the `SkipList`.
+Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.
+Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.
 It also has `below` pointer that points to the **existing node** beneath it.\
-Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool:` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.\
+Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool:` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
 
 #### Struct: `Levellist`
