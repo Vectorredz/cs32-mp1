@@ -16,7 +16,9 @@
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include "../H_global.h"
 // --------------------------------------------------------- >>
 /* ----------------------------------------- <<
 
@@ -141,6 +143,7 @@ void EXPORT_DELTA_TIME(FILE **output, WriteData wd, bool newLine){
     }
     if (strcmp(wd.operation, "size") == 0){
         fprintf(output[11], "%zu | %lf", wd.n, wd.c);
+        if (newLine) fprintf(output[11], "\n");
     }
 
 }
@@ -199,7 +202,7 @@ void OPERATION(FILE** output, Reflection* list, char* operation){
         pop_right(list);
         _TIME(&rec);
     }
-    EXPORT_DELTA_TIME(output, NEW_WRITE(operation, n, _PROCESSTIME(_rec, rec)), false);
+    EXPORT_DELTA_TIME(output, NEW_WRITE(operation, n, _PROCESSTIME(_rec, rec)), true);
 }
 
 int main(){
@@ -271,7 +274,7 @@ int main(){
         _TIME(&_rec);
         list = make(n, seq);
         _TIME(&rec);
-        EXPORT_DELTA_TIME(output, NEW_WRITE("make", n, _PROCESSTIME(_rec, rec)), false);
+        EXPORT_DELTA_TIME(output, NEW_WRITE("make", n, _PROCESSTIME(_rec, rec)), true);
         free(seq);
     }
     list = make(0, NULL);
