@@ -293,7 +293,7 @@ With that, the steps are as follows:
 ## Sources
 
 ### Doubly Linked List
-
+- [Wikipedia: Skip list](https://en.wikipedia.org/wiki/Doubly_linked_list)
 
 <br>
 
@@ -304,6 +304,8 @@ With that, the steps are as follows:
 
 ### Skip List
 - [Wikipedia: Skip list](https://en.wikipedia.org/wiki/Skip_list)
+- [Skip Lists - Algorithms Lab](https://youtu.be/NDGpsfwAaqo?si=c4kY60b6UQ9rTAFk)
+- [A Skip Lists Cookbook - William P.](https://webdiis.unizar.es/asignaturas/APD/skip_list_cookbook.pdf)
 
 <br>
 

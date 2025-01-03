@@ -471,7 +471,7 @@ We know that the loop depends on the total amount of times you move right or dow
 For rightward movement, we know that the number of nodes decreases geometrically by a power of two, $2^k$. We can get the recurrence relation of the number of rightward movements per level to be the following:
 
 $$T(n) =T(n -2^{\lg n-1})+O(1)$$
-Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](proofs.md#constructptrees)). Simplifying the recurrence relation we get the following:
+Where $T(n -2^{\lg n})$ to represent the the amount times a level with the power of two will be formed and $O(1)$ represents the arithmetic work to increment a counter variable (for more information on this recurrence relation and its solution, see [constructPTrees](PROOFS.md#constructptrees)). Simplifying the recurrence relation we get the following:
 
 $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
@@ -494,9 +494,9 @@ $$T_{L2}=O(\log n) \text{ expected}$$
 Thus, the total time complexity of `_getNode` is the following:
 
 $$T(n)=T_{L1}+T_{L2}$$
-$$=O(\log n) +O(\log n)$$
+$$=O(\log n) +O(\log n) $$
 
-Simplifying this further, since $T_{L2}$ is somewhat of an upper bound of $T_{L1}$ due to its *expected* behavior, we can get the following:
+Simplifying this further, since $T_{L2}$ is somewhat of an upper bound of $T_{L1}$ due to its *expected* behavior, by definition of big O, we get the following:
 
 $$T(n) = O(\log n) \text{ expected}$$
 
@@ -743,3 +743,56 @@ The implementation lies on the boolean `list->reversed`, where $l$ is the list p
 As observed, because there is a singular statement, that is the negation. The time complexity of `reverse` lies on the time complexity of the negation. Since the negation is a constant time operation, it runs at $O(1)$. As a result, `reverse` also runs at $O(1)$.
 
 Thus, we have proven that `reverse` runs at $O(1)$ worst case.
+
+***
+
+### Memory Complexity
+***
+#### Doubly Linked List
+**Proof**: A doubly linked list has a memory complexity of $O(n)$ worst case because its memory usage grows linearly to the amount of nodes present. All operations aside from `make` take constant memory cost, $O(1)$; `make`, on the other hand, take $O(n)$ memory cost since it does the, `push` operation which is $O(1)$, an $n$ amount of times.
+
+Thus, the doubly linked list has a memory complexity of $O(n)$ worst case.
+***
+#### Dynamic Array
+**Proof**: A dynamic array has a memory complexity of $O(n)$ worst case because its memory usage grows linearly to the size of the array. All operations aside from `make` take constant memory cost, $O(1)$; `make`, on the other hand, take $O(n)$ memory cost since it does the `push` operation, which is $O(1)$, an $n$ amount of times. Moreover, resizing operations only differ by a constant of $2$ or $\frac{1}{4}$ as it resizes the array into either $2\cdot\text{size}$ or $\frac{1}{4} \cdot \text{size}$. 
+
+Thus, the dynamic array has a memory complexity of $O(n)$ worst case.
+***
+#### Skip List
+**Proof**: A skip list has a memory complexity of $O(n \log n)$ worst case. This is assuming each node is present until the highest possible level. However, because the probability of the skip list achieving that behavior is so low, its memory complexity only differs by a constant. This is calculated by the following:
+
+$$\text{expected probability} = \frac{1}{p}= \frac{1}{0.5}=2$$
+Where $p$ is the probability that a node would be promoted to a higher level. Because of this, we can simplify the skip list to have the following *expected* memory complexity:
+
+$$S(n)=O(n \log n)=O(2n)=O(n)$$
+Since the times of nodes present can be simplified to a constant due to its probabilistic behavior, it now has a memory complexity of $O(n)$ expected. Moreover, if operations were to be done, even if it were to visit all possible nodes, due to its *expected* behavior, all operations would at most have a memory complexity of $O(n)$ expected.
+
+Thus, we have proven that a skip list has a memory complexity of $O(n)$ expected.
+
+***
+#### Sequence of Trees
+**Proof**: The memory complexity required to store data in the sequence of trees data structure is $O(2^k)$ worst case. This is because each tree in the sequence is a perfect binary tree which is of the form $2^k$. We can visualize it to be the following, where $l$ is the total number of leaf nodes and $q$ is the total number of nodes.
+
+$$\{l\}_{k}=2^{k_1}+2^{k_2} + \dots$$
+$$\{q\}_{k}=(2^{k_1+1}-1)+(2^{k_2+1}-1) + \dots$$
+Thus, we can write the total number of nodes, $n$, in terms of total number of leaf nodes, $l$, to have the following memory complexities:
+
+$$\{q\}_l=(2l_1-1)+(2l_2-1)+...$$
+
+So, if we were to write the memory complexity in terms of the given size of the sequence, $n$, it would have the following:
+
+$$S(n)=(2l_1-1)+(2l_2-1)+\dots$$
+$$=2(l_1+l_2+\dots)+(1+1+\dots)$$
+$$S(n)=O(2l)=O(2n)$$
+
+
+This is because in the sequence of trees, the leaf nodes represent all the elements present in the given sequence. Thus, $l=n$.
+
+Simplifying the memory complexity further since there exists a constant $C\ge2c$ for all $n \ge 0$, by definition of big O, we can simplify it to the following:
+
+$$S(n) = O(n)$$
+Note that all operations either take $O(1)$ or $O(n)$ worst case space. This is because if we were to do the other operations that add new trees, it would still be accounted for in the sequences above.
+
+Thus, we have proven that the sequence of trees has a memory complexity of $O(n)$ worst case.
+***
+<div style="text-align: center;"> End. </div>
