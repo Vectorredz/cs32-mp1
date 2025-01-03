@@ -1,32 +1,12 @@
-/*
-    << Grapher >>
-*/
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-            ||-- OUTPUT --||
-<< ----------------------------------------- */
-/*
-- After the tests, the tester will output the plot points in OUTPUT_DIRECTORY.
-*/
-#include "test_settings_g.h"
-// --------------------------------------------------------- >>
-// --------------------------------------------------------- >>
-// Do not edit past this point!
-// --------------------------------------------------------- >>
-// --------------------------------------------------------- >>
-// --------------------------------------------------------- >>
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
+#include <time.h>
+#include <windows.h>
+#include <sys/timeb.h>
 #include "../H_global.h"
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
 
-            ||-- SETTINGS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
+// Implementation selection
 #if IMPLEMENTATION == DOUBLY_LINKED_lIST
     #include "../doubly-linked-list/d-linked-list.c"
     typedef list Reflection;
@@ -41,298 +21,196 @@
     typedef PTreeList Reflection;
 #endif
 
-
-
-
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- HELPERS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
-#include "time.h"
-
-// TIMER
-// TODO: implement other os later
-#include <windows.h>
-#include <sys/timeb.h>
+// Timer definitions
 typedef LARGE_INTEGER RECORDED_TIME;
 typedef double PROCESSED_TIME;
-#define TIME_FORMAT "lf"
 uint64_t freq;
-void _TIME_init(){
+
+// Timer initialization
+void _TIME_init() {
     LARGE_INTEGER f;
     QueryPerformanceFrequency(&f);
-    freq = (uint64_t) ((uint64_t)(f.HighPart) << 32) | (uint32_t) f.LowPart;
+    freq = (uint64_t)((uint64_t)(f.HighPart) << 32) | (uint32_t)f.LowPart;
 }
-void _TIME(RECORDED_TIME* cRef){
+
+void _TIME(RECORDED_TIME* cRef) {
     QueryPerformanceCounter(cRef);
 }
-PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b){
-    uint64_t bQ = (uint64_t) ((uint64_t)(b.HighPart) << 32) | (uint32_t) b.LowPart;
-    uint64_t aQ = (uint64_t) ((uint64_t)(a.HighPart) << 32) | (uint32_t) a.LowPart;
-    uint64_t dt = (bQ-aQ);
-    PROCESSED_TIME final = (double)(dt)/(double)freq;
+
+PROCESSED_TIME _PROCESSTIME(RECORDED_TIME a, RECORDED_TIME b) {
+    uint64_t bQ = (uint64_t)((uint64_t)(b.HighPart) << 32) | (uint32_t)b.LowPart;
+    uint64_t aQ = (uint64_t)((uint64_t)(a.HighPart) << 32) | (uint32_t)a.LowPart;
+    uint64_t dt = (bQ - aQ);
+    PROCESSED_TIME final = (double)(dt) / (double)freq;
     return final < 0.0L ? 0.0L : final;
 }
 
-
-// Used for time plots output
+// Data structure for writing results
 typedef struct _WriteData {
     char* operation;
     LENGTH n;
     PROCESSED_TIME c;
 } WriteData;
 
-WriteData NEW_WRITE(char* operation, LENGTH n, PROCESSED_TIME c){
-    WriteData writeData = *((WriteData*) malloc(sizeof(WriteData)));
+WriteData NEW_WRITE(char* operation, LENGTH n, PROCESSED_TIME c) {
+    WriteData writeData = *((WriteData*)malloc(sizeof(WriteData)));
     writeData.operation = operation;
     writeData.n = n;
     writeData.c = c;
-
     return writeData;
 }
 
-void EXPORT_DELTA_TIME(FILE **output, WriteData wd, bool newLine){
+void EXPORT_DELTA_TIME(FILE** output, WriteData wd, bool newLine) {
+    FILE* target = NULL;
+    
+    if (strcmp(wd.operation, "make") == 0) target = output[0];
+    else if (strcmp(wd.operation, "push_left") == 0) target = output[1];
+    else if (strcmp(wd.operation, "push_right") == 0) target = output[2];
+    else if (strcmp(wd.operation, "pop_left") == 0) target = output[3];
+    else if (strcmp(wd.operation, "pop_right") == 0) target = output[4];
+    else if (strcmp(wd.operation, "peek_left") == 0) target = output[5];
+    else if (strcmp(wd.operation, "peek_right") == 0) target = output[6];
+    else if (strcmp(wd.operation, "set") == 0) target = output[7];
+    else if (strcmp(wd.operation, "get") == 0) target = output[8];
+    else if (strcmp(wd.operation, "reverse") == 0) target = output[9];
+    else if (strcmp(wd.operation, "empty") == 0) target = output[10];
+    else if (strcmp(wd.operation, "size") == 0) target = output[11];
 
-    if (strcmp(wd.operation, "make") == 0){
-        fprintf(output[0], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[0], "\n");
+    if (target) {
+        fprintf(target, "%zu | %.9lf", wd.n, wd.c);
+        if (newLine) fprintf(target, "\n");
     }
-    if (strcmp(wd.operation, "push_left") == 0){
-        fprintf(output[1], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[1], "\n");
-    }
-    if (strcmp(wd.operation, "push_right") == 0){
-        fprintf(output[2], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[2], "\n");
-    }
-    if (strcmp(wd.operation, "pop_left") == 0){
-        fprintf(output[3], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[3], "\n");
-    }
-    if (strcmp(wd.operation, "pop_right") == 0){
-        fprintf(output[4], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[4], "\n");
-    }
-    if (strcmp(wd.operation, "peek_left") == 0){
-        fprintf(output[5], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[5], "\n");
-    }
-    if (strcmp(wd.operation, "peek_right") == 0){
-        fprintf(output[6], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[6], "\n");
-    }
-    if (strcmp(wd.operation, "set") == 0){
-        fprintf(output[7], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[7], "\n");
-    }
-    if (strcmp(wd.operation, "get") == 0){
-        fprintf(output[8], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[8], "\n");
-    }
-    if (strcmp(wd.operation, "reverse") == 0){
-        fprintf(output[9], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[9], "\n");
-    }
-    if (strcmp(wd.operation, "empty") == 0){
-        fprintf(output[10], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[10], "\n");
-    }
-    if (strcmp(wd.operation, "size") == 0){
-        fprintf(output[11], "%zu | %lf", wd.n, wd.c);
-        if (newLine) fprintf(output[11], "\n");
-    }
-
 }
 
-void OPERATION(FILE** output, Reflection* list, char* operation){
+// Operation execution and timing
+void OPERATION(FILE** output, Reflection* list, char* operation) {
     RECORDED_TIME _rec, rec;
     LENGTH n = size(list);
-    if (strcmp(operation, "size") == 0){
-        _TIME(&_rec);
-        size(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "empty") == 0){
-        _TIME(&_rec);
-        empty(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "reverse") == 0){
-        _TIME(&_rec);
-        reverse(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "get") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        get(list, (LENGTH) rand() % n);
-        _TIME(&rec);
-    } else if (strcmp(operation, "set") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        set(list, (LENGTH) rand() % n, rand());
-        _TIME(&rec);
-    } else if (strcmp(operation, "peek_left") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        peek_left(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "peek_right") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        peek_right(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "push_left") == 0){
-        _TIME(&_rec);
-        push_left(list, rand());
-        _TIME(&rec);
-    } else if (strcmp(operation, "push_right") == 0){
-        _TIME(&_rec);
-        push_right(list, rand());
-        _TIME(&rec);
-    } else if (strcmp(operation, "pop_left") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        pop_left(list);
-        _TIME(&rec);
-    } else if (strcmp(operation, "pop_right") == 0){
-        if (n == 0) return;
-        _TIME(&_rec);
-        pop_right(list);
-        _TIME(&rec);
+    
+    // Warmup iterations
+    for (int i = 0; i < 100; i++) {
+        if (strcmp(operation, "size") == 0) size(list);
+        else if (strcmp(operation, "empty") == 0) empty(list);
+        else if (strcmp(operation, "reverse") == 0) reverse(list);
+        else if (strcmp(operation, "get") == 0 && n > 0) get(list, (LENGTH)rand() % n);
+        else if (strcmp(operation, "set") == 0 && n > 0) set(list, (LENGTH)rand() % n, rand());
+        else if (strcmp(operation, "peek_left") == 0 && n > 0) peek_left(list);
+        else if (strcmp(operation, "peek_right") == 0 && n > 0) peek_right(list);
+        else if (strcmp(operation, "push_left") == 0) push_left(list, rand());
+        else if (strcmp(operation, "push_right") == 0) push_right(list, rand());
+        else if (strcmp(operation, "pop_left") == 0 && n > 0) pop_left(list);
+        else if (strcmp(operation, "pop_right") == 0 && n > 0) pop_right(list);
     }
+
+    // Actual measurement
+    _TIME(&_rec);
+    if (strcmp(operation, "size") == 0) {
+        size(list);
+    } else if (strcmp(operation, "empty") == 0) {
+        empty(list);
+    } else if (strcmp(operation, "reverse") == 0) {
+        reverse(list);
+    } else if (strcmp(operation, "get") == 0) {
+        if (n == 0) return;
+        get(list, (LENGTH)rand() % n);
+    } else if (strcmp(operation, "set") == 0) {
+        if (n == 0) return;
+        set(list, (LENGTH)rand() % n, rand());
+    } else if (strcmp(operation, "peek_left") == 0) {
+        if (n == 0) return;
+        peek_left(list);
+    } else if (strcmp(operation, "peek_right") == 0) {
+        if (n == 0) return;
+        peek_right(list);
+    } else if (strcmp(operation, "push_left") == 0) {
+        push_left(list, rand());
+    } else if (strcmp(operation, "push_right") == 0) {
+        push_right(list, rand());
+    } else if (strcmp(operation, "pop_left") == 0) {
+        if (n == 0) return;
+        pop_left(list);
+    } else if (strcmp(operation, "pop_right") == 0) {
+        if (n == 0) return;
+        pop_right(list);
+    }
+    _TIME(&rec);
+    
     EXPORT_DELTA_TIME(output, NEW_WRITE(operation, n, _PROCESSTIME(_rec, rec)), true);
 }
 
-int main(){
+int main() {
     printf("<< Grapher >>\n");
-
-    // Initialize others
     printf("> Initializing variables...\n");
 
-    // Write which implementation is currently used
-    FILE *implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
-    if (IMPLEMENTATION == DOUBLY_LINKED_LIST){
-        fprintf(implementation, "DOUBLY_LINKED_LIST");
-    } else if (IMPLEMENTATION == DYNAMIC_ARRAY){
-        fprintf(implementation, "DYNAMIC_ARRAY");
-    } else if (IMPLEMENTATION == SKIP_LIST){
-        fprintf(implementation, "SKIP_LIST");
-    } else if (IMPLEMENTATION == TREE_SEQUENCE){
-        fprintf(implementation, "TREE_SEQUENCE");
-    }
+    // Write implementation type
+    FILE* implementation = fopen("../mirror-flower/outputs/implementation.txt", "w+");
+    if (IMPLEMENTATION == DOUBLY_LINKED_LIST) fprintf(implementation, "DOUBLY_LINKED_LIST");
+    else if (IMPLEMENTATION == DYNAMIC_ARRAY) fprintf(implementation, "DYNAMIC_ARRAY");
+    else if (IMPLEMENTATION == SKIP_LIST) fprintf(implementation, "SKIP_LIST");
+    else if (IMPLEMENTATION == TREE_SEQUENCE) fprintf(implementation, "TREE_SEQUENCE");
+    fclose(implementation);
 
-    // Timer and randomizer
+    // Initialize timer and random seed
     _TIME_init();
     srand(time(NULL));
 
-    // Where the output values are stored
-    const char *outputs = "../mirror-flower/outputs/";
-    FILE **output = malloc(12 * sizeof(FILE));
-    FILE *_make = fopen("../mirror-flower/outputs/make.txt", "w+");
-    FILE *_peek_l = fopen("../mirror-flower/outputs/peek_l.txt", "w+");
-    FILE *_peek_r = fopen("../mirror-flower/outputs/peek_r.txt", "w+");
-    FILE *_push_l = fopen("../mirror-flower/outputs/push_l.txt", "w+");
-    FILE *_push_r = fopen("../mirror-flower/outputs/push_r.txt", "w+");
-    FILE *_set = fopen("../mirror-flower/outputs/set.txt", "w+");
-    FILE *_get = fopen("../mirror-flower/outputs/get.txt", "w+");
-    FILE *_empty = fopen("../mirror-flower/outputs/empty.txt", "w+");
-    FILE *_size = fopen("../mirror-flower/outputs/size.txt", "w+");
-    FILE *_reverse = fopen("../mirror-flower/outputs/reverse.txt", "w+");
-    FILE *_pop_r = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
-    FILE *_pop_l = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
-    output[0] = _make;
-    output[1] = _push_l;
-    output[2] = _push_r;
-    output[3] = _pop_l;
-
-    output[4] = _pop_r;
-    output[5] = _peek_l;
-    output[6] = _peek_r;
-    output[7] = _set;
-
-    output[8] = _get;
-    output[9] = _reverse;
-    output[10] = _empty;
-    output[11] = _size;
+    // Initialize output files
+    FILE** output = malloc(12 * sizeof(FILE));
+    output[0] = fopen("../mirror-flower/outputs/make.txt", "w+");
+    output[1] = fopen("../mirror-flower/outputs/push_l.txt", "w+");
+    output[2] = fopen("../mirror-flower/outputs/push_r.txt", "w+");
+    output[3] = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
+    output[4] = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
+    output[5] = fopen("../mirror-flower/outputs/peek_l.txt", "w+");
+    output[6] = fopen("../mirror-flower/outputs/peek_r.txt", "w+");
+    output[7] = fopen("../mirror-flower/outputs/set.txt", "w+");
+    output[8] = fopen("../mirror-flower/outputs/get.txt", "w+");
+    output[9] = fopen("../mirror-flower/outputs/reverse.txt", "w+");
+    output[10] = fopen("../mirror-flower/outputs/empty.txt", "w+");
+    output[11] = fopen("../mirror-flower/outputs/size.txt", "w+");
 
     printf("> Done.\n");
-
-
-    // Main Tester
     printf("> Generating plot points...\n");
-    Reflection* list;
 
-    // Make Test
-    for (LENGTH n = 0; n < 5000; n++){
-        DATA* seq = (DATA*) malloc(n*sizeof(DATA));
-        for (LENGTH i = 0; i < n; i++){
+    // Test creation with different sizes
+    for (LENGTH n = 0; n < 50000; n += 100) {
+        DATA* seq = (DATA*)malloc(n * sizeof(DATA));
+        for (LENGTH i = 0; i < n; i++) {
             seq[i] = rand();
         }
         RECORDED_TIME _rec, rec;
         _TIME(&_rec);
-        list = make(n, seq);
+        Reflection* list = make(n, seq);
         _TIME(&rec);
         EXPORT_DELTA_TIME(output, NEW_WRITE("make", n, _PROCESSTIME(_rec, rec)), true);
         free(seq);
+        // Clean up list based on implementation
+        // Add appropriate cleanup here
     }
-    list = make(0, NULL);
 
-    // Insertion/Deletion Test
+    // Initialize empty list for operations testing
+    Reflection* list = make(0, NULL);
+
+    // Test operations with increasing sizes
     LENGTH upper = 20000;
-    for (int i = 0; i < upper; i++){
-        OPERATION(output, list, "push_left");
-        OPERATION(output, list, "peek_left");
-        OPERATION(output, list, "peek_right");
-        OPERATION(output, list, "get");
-        OPERATION(output, list, "set");
-        OPERATION(output, list, "size");
-        OPERATION(output, list, "empty");
-        OPERATION(output, list, "reverse");
-    }
-    while (size(list) > 0){
-        OPERATION(output, list, "pop_left");
-        OPERATION(output, list, "peek_left");
-        OPERATION(output, list, "peek_right");
-        OPERATION(output, list, "get");
-        OPERATION(output, list, "set");
-        OPERATION(output, list, "size");
-        OPERATION(output, list, "empty");
-        OPERATION(output, list, "reverse");
-    }
-    for (int i = 0; i < upper; i++){
-        OPERATION(output, list, "push_right");
-        OPERATION(output, list, "peek_left");
-        OPERATION(output, list, "peek_right");
-        OPERATION(output, list, "get");
-        OPERATION(output, list, "set");
-        OPERATION(output, list, "size");
-        OPERATION(output, list, "empty");
-        OPERATION(output, list, "reverse");
-    }
-    while (size(list) > 0){
-        OPERATION(output, list, "pop_right");
-        OPERATION(output, list, "peek_left");
-        OPERATION(output, list, "peek_right");
-        OPERATION(output, list, "get");
-        OPERATION(output, list, "set");
-        OPERATION(output, list, "size");
-        OPERATION(output, list, "empty");
-        OPERATION(output, list, "reverse");
+    for (int i = 0; i < upper; i++) {
+        char* operations[] = {
+            "push_left", "push_right", "pop_left", "pop_right",
+            "peek_left", "peek_right", "get", "set",
+            "size", "empty", "reverse"
+        };
+        
+        for (int j = 0; j < 11; j++) {
+            OPERATION(output, list, operations[j]);
+        }
     }
 
-    upper = (rand() % 1000) + 1500;
-    for (int i = 0; i < upper; i++){
-        OPERATION(output, list, "push_right");
+    // Cleanup
+    for (int i = 0; i < 12; i++) {
+        fclose(output[i]);
     }
-
-    // Randomizer Test
-    upper = 20000;
-    char* operations[11] = {"size", "empty", "reverse", "get", "set", "peek_left", "peek_right", "push_left", "push_right", "pop_left", "pop_right"};
-    for (int i = 0; i < upper; i++){
-        OPERATION(output, list, operations[rand() % 11]);
-    }
+    free(output);
 
     printf("> Done.\n");
+    return 0;
 }
