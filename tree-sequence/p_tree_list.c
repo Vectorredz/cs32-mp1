@@ -664,14 +664,14 @@ PTreeList* make(LENGTH n, DATA* seq){
     PTreeListNode* tail = NULL;
     if (n > 0){
         _constructPTrees(n, seq, &head, &tail);
+        list->leftmost = seq[0];
+        list->rightmost = seq[n-1];
     }
 
     list->n = n;
     list->head = head;
     list->tail = tail;
     list->reversed = false;
-    list->leftmost = seq[0];
-    list->rightmost = seq[n-1];
     return list;
 }
 

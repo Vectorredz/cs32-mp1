@@ -203,6 +203,7 @@ SkipNode *_getNode(SkipList *l, LENGTH target, bool fromSet, DATA v){
     LENGTH sumOffset = 0; // initialize the offset for the topmost
     if (header == NULL) return NULL;
     if (header->right == NULL) return NULL;
+    
     // sentinel phase
     while (header && header->isSentinel == true){
         // don't go right if it's tailSentinel
@@ -510,12 +511,15 @@ DATA peek_right(SkipList *l){
 void push_left(SkipList *l, DATA v){
     l->is_reversed == false ? _push_left_base(l, v) : _push_right_base(l, v);
 }
+
 void push_right(SkipList *l, DATA v){
     l->is_reversed == false ? _push_right_base(l, v) : _push_left_base(l, v);
 }
+
 bool pop_left(SkipList *l){
     return l->is_reversed == false ? _pop_left_base(l) : _pop_right_base(l);
 }
+
 bool pop_right(SkipList *l){
     return l->is_reversed == false ? _pop_right_base(l) : _pop_left_base(l);
 }
@@ -635,28 +639,3 @@ bool TEST_internal(SkipList* l){
 bool TEST_reversed(SkipList* l){
   return (l->is_reversed);
 }
-
-// int main(){
-//     // srand(time(NULL));
-//     int n = 1;
-//     DATA *array = (DATA*) malloc(n * sizeof(DATA));
-//     for (int i = 0; i < n; i++){
-//         array[i] = i;
-//     }
-//     SkipList *l = make(n, array);
-//     displayWidth(l);
-//     push_right(l, 1);
-//     // push_right(l, 2);
-//     // push_right(l, 3);
-//     // push_left(l, 4);
-//     // push_left(l, 5);
-//     // push_left(l, 6);
-//     // push_left(l, 7);
-//     // push_left(l, 7);
-//     // displayWidth(l);
-//     // push_right(l, 8);
-//     // displayWidth(l);
-    
-
-
-// }

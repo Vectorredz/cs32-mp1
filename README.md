@@ -2,6 +2,9 @@
 
 
 ## Contributors
+Angchua, Jerwyn\
+Paragas, Glenn\
+Vilar, Louise
 
 ## Repository Contents
 
@@ -29,7 +32,7 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 *\* This directory contains all files relevant for testing.*\
 *\* Please see **[Unit Test](#unit-test)** for more details.*
 
-**[mirror-flower](mirror-flower)**\
+**[mirror-flower](mirror-flower)**
 
 <br>
 
@@ -43,7 +46,7 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 
 ## Implementation of Code
 For the list implementations, we used the references and concepts provided by the MP1 document for each of the implementations to implement our own version of each Abstract Data Type of a list.\
-All lists are pointers of a `struct`, and any members for a `struct` are `pointers` to that `struct` as well, so that we only use the arrow `->` operations for all lists for consistency.\
+All lists are pointers of a `struct`, and any members for a `struct` are `pointers` to that `struct` as well, so that we only use the arrow `->` sugar operations for all lists for consistency.\
 We also have the global types `LENGTH` (`size_t`) and `DATA` (`int64_t`) to represent values based on the length of the list and data values, respectively.
 
 ***[DETAILS.md](DETAILS.md)** holds more details on each of the list's implementations.*
@@ -65,12 +68,12 @@ It is divided into the **Python-side**, and the **C-side**.
 [reflection.c](mirror-flower/reflection.c) - Tester
 
 [test_settings_r.h](mirror-flower/test_settings_r.h) - Grapher (settings)\
-[graph.c](mirror-flower/graph.c) - Grapher Generator
+[graph.c](mirror-flower/graph.c) - Grapher Generator\
 [graph.py](mirror-flower/graph.py) - Grapher Display
 
 [inputs](mirror-flower/inputs) - Test inputs (operations)\
 [outputs](mirror-flower/outputs) - Graph plot points\
-[inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - For testing the tester itself\
+[inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) - For testing the tester itself
 
 <br>
 
@@ -84,8 +87,6 @@ Imported as a Python module by the generator.
 | SEED | `any supported by random.seed` <br> The randomizer seed. | `None` |
 
 <br>
-
-<hr>
 
 ### [PYTHON] Mirror: *[mirror.py](mirror-flower/mirror.py)*
 **[Python-side.]**\
@@ -101,10 +102,10 @@ Their text can be of the following:
 | :-------- | :--- | :--- | :----- |
 | make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | size | "**None**" | "**None**" | `returned LENGTH` <br> number |
-| empty | "**None**" | "**None**" | `returned bool` <br> "0" / "1" |
+| empty | "**None**" | "**None**" | `returned bool` <br> "**0**" / "**1**" |
 | reverse | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | get | `LENGTH i` <br> number | "**None**" | `returned DATA` <br> number |
-| set | `LENGTH i` <br> number | `DATA v` <br> number | "**None**" |
+| set | `LENGTH i` <br> number | `DATA v` <br> number | `returned DATA` <br> number |
 | peek_left | "**None**" | "**None**" | `returned DATA` <br> number |
 | peek_right | "**None**" | "**None**" | `returned DATA` <br> number |
 | push_left | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
@@ -117,6 +118,7 @@ Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check fo
 Note also that **RESULT** can be set to "**X**" to disable checking for correctness at that line's execution. This is mainly for operations that are provided large inputs, and where checking for correctness is too expensive and takes too long.\
 *\*Please see [inputs/test_input_0.txt](mirror-flower/inputs/test_input_0.txt) for a complete example.*
 
+Lastly, by specifying **OPERATION** to be "**MSG**", the tester can send custom messages to the output stream using the other three columns, such as telling the user the current set of test types currently being performed, as it reads the .txt file line-by-line, or the beginning and end of a **Layer**.
 
 <br>
 
@@ -198,7 +200,7 @@ It features more detailed basic operation tests, as well as more insertion/delet
     - Along with all other OPERATIONS throughout (to test for UB)
 ```
 Attempts to shatter the Reflection, one last time, with testing all operations alongside a continuous insertion/deletion operation, for a large amount of times, to test for edge cases and UB. If a list was not caught broken before, it will be now.\
-It throws everything it can towards the list. Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.\
+It throws everything it can towards the list. Even the most precise implemented lists with a couple of uncaught possible errors may have a difficult time passing this layer without catching any wrong edge cases.
 
 <br>
 
@@ -223,21 +225,17 @@ The settings for the automatic tester.
 Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
-| IMPLEMENTATION | `DOUBLY_LINKED_LIST | DYNAMIC_ARRAY | SKIP_LIST | TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
-| LIST_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
+| IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
+| LINE_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-| OUTPUT_FILE | `string` <br> The test outputs' file directory. | `test_output.txt` |
-| TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 
 <br>
 
-*The tester's directly includes a source file based on **IMPLEMENTATION**. I believe it may be an unorthodox way of testing, though it has helped us simplify things in the meantime.*
+*The tester directly includes a source file based on **IMPLEMENTATION**. I believe it may be an unorthodox way of testing, though it has helped us simplify things in the meantime.*
 
 <br>
-
-<hr>
 
 ### [C] Reflection: *[reflection.c](mirror-flower/reflection.c)*
 **[C-side.]**\
@@ -249,14 +247,17 @@ The tester also uses special test functions for its testing. These are global te
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
+<br>
+
+<hr>
 
 ### [C] Grapher (settings): *[test_settings_g.h](mirror-flower/test_settings_g.h)*
 The settings for the graph tester.
 Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
-| IMPLEMENTATION | `DOUBLY_LINKED_LIST | DYNAMIC_ARRAY | SKIP_LIST | TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
-| OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `inputs` |
+| IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
+| OUTPUT_DIRECTORY | `string` <br> The graph outputs' file directory. | `outputs` |
 
 ### [C] Grapher (Generator): *[graph.c](mirror-flower/graph.c)*
 A specialized generator which tests the list against large inputs, without checking for correctness.\
@@ -325,4 +326,4 @@ With that, the steps are as follows:
 <br>
 <br>
 
-砕けろ, 鏡花水月.
+砕けろ、鏡花水月。

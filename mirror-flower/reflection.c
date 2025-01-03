@@ -34,10 +34,10 @@
 << ----------------------------------------- */
 // --------------------------------------------------------- >>
 #if IMPLEMENTATION == DOUBLY_LINKED_lIST
-    #include "../doubly-linked-list/d-linked-list.c"
+    #include "../doubly-linked-list/d_linked_list.c"
     typedef list Reflection;
 #elif IMPLEMENTATION == DYNAMIC_ARRAY
-    #include "../dynamic-arr/dynamic-array.c"
+    #include "../dynamic-array/dynamic_array.c"
     typedef dynamic_array Reflection;
 #elif IMPLEMENTATION == SKIP_LIST
     #include "../skip-list/skip-list.c"
@@ -411,8 +411,10 @@ int main(){
             if (strcmp(operation, "make") == 0){
                 // Get n and seq args for make() function (seq is delimeted by ",")
                 n = strToLength(arg1);
-                DATA* seq = (DATA*) malloc(n*sizeof(DATA));
+                DATA* seq;
                 if (n > 0){
+                    seq = (DATA*) malloc(n*sizeof(DATA));
+                    
                     char* token = strtok(arg2, ",");
                     size_t i = 0;
                     while (token != NULL){
@@ -420,6 +422,8 @@ int main(){
                         i++;
                         token = strtok(NULL, ",");
                     }
+                } else {
+                    seq = NULL;
                 }
 
                 _TIME(&_rec);

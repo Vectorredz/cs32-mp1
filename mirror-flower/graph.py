@@ -174,44 +174,44 @@ def graph_settings():
     axes1[1, 1].grid()
     axes1[1, 1].legend()
 
-    axes1[1, 2].plot(total_size[2],total_deltaTime[2],label=complexitiesPerOperation["pop_right"][status.value])
+    axes1[1, 2].plot(total_size[4],total_deltaTime[4],label=complexitiesPerOperation["pop_right"][status.value])
     axes1[1, 2].set_title("Operation: pop_right")
     axes1[1, 2].grid()
     axes1[1, 2].legend()
 
-    axes1[1, 0].plot(total_size[3],total_deltaTime[3],label=complexitiesPerOperation["reverse"][status.value])
+    axes1[1, 0].plot(total_size[5],total_deltaTime[5],label=complexitiesPerOperation["reverse"][status.value])
     axes1[1, 0].set_title("Operation: reverse")
     axes1[1, 0].grid()
     axes1[1, 0].legend()
 
     
     fig, axes2 =  plt.subplots(2, 3)
-    axes2[0, 0].plot(total_size[0],total_deltaTime[0],label=complexitiesPerOperation["peek_left"][status.value])
+    axes2[0, 0].plot(total_size[6],total_deltaTime[6],label=complexitiesPerOperation["peek_left"][status.value])
     axes2[0, 0].set_title("Operation: peek_left")
     axes2[0, 0].grid()
     axes2[0, 0].legend()
 
-    axes2[0, 1].plot(total_size[1],total_deltaTime[1],label=complexitiesPerOperation["peek_right"][status.value])
+    axes2[0, 1].plot(total_size[7],total_deltaTime[7],label=complexitiesPerOperation["peek_right"][status.value])
     axes2[0, 1].set_title("Operation: peek_right")
     axes2[0, 1].grid()
     axes2[0, 1].legend()
 
-    axes2[0, 2].plot(total_size[0],total_deltaTime[0],label=complexitiesPerOperation["size"][status.value])
+    axes2[0, 2].plot(total_size[8],total_deltaTime[8],label=complexitiesPerOperation["size"][status.value])
     axes2[0, 2].set_title("Operation: size")
     axes2[0, 2].grid()
     axes2[0, 2].legend()
 
-    axes2[1, 0].plot(total_size[1],total_deltaTime[1],label=complexitiesPerOperation["get"][status.value])
+    axes2[1, 0].plot(total_size[9],total_deltaTime[9],label=complexitiesPerOperation["get"][status.value])
     axes2[1, 0].set_title("Operation: get")
     axes2[1, 0].grid()
     axes2[1, 0].legend()
 
-    axes2[1, 1].plot(total_size[2],total_deltaTime[2],label=complexitiesPerOperation["set"][status.value])
+    axes2[1, 1].plot(total_size[10],total_deltaTime[10],label=complexitiesPerOperation["set"][status.value])
     axes2[1, 1].set_title("Operation: set")
     axes2[1, 1].grid()
     axes2[1, 1].legend()
 
-    axes2[1, 2].plot(total_size[3],total_deltaTime[3],label=complexitiesPerOperation["empty"][status.value])
+    axes2[1, 2].plot(total_size[11],total_deltaTime[11],label=complexitiesPerOperation["empty"][status.value])
     axes2[1, 2].set_title("Operation: empty")
     axes2[1, 2].grid()
     axes2[1, 2].legend()
