@@ -167,7 +167,7 @@ The **Level 0** of the `SkipList` is just a `Linked-list` where in our use-case 
 Represents the connected elements in the `SkipList`.
 Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.
 Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.
-It also has `below` pointer that points to the **existing node** beneath it.\
+It also has `below` pointer that points to the **existing node** beneath it else NULL.
 Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field (`boolean`) field `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
 
@@ -228,7 +228,7 @@ It iterates over the sequence and makes use of the function `push_right()` to in
 <summary>Flags/List Info</summary>
 
 ### Operation: `reverse(l)`
-Reversing a `list` with `n` elements will take time complexity of $O(1)$. Hence, the group found an elegant way of achieving the `reverse`.\
+Reversing a `list` with `n` elements will take time complexity of $O(n)$. Hence, the group found an elegant way of achieving the `reverse`.\
 Instead this function will **toggle** the (`boolean`) field in `SkipList` called `reversed`.
 It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.\
 
@@ -251,7 +251,7 @@ This helper aims to search for the specific `SkipNode` at target index `i`.\
 It has two _(2)_ loop iteration:
 
 1. **Sentinel Phase**
-- This is the first while loop, it traverses the `SkipList` from `**HEADER**` until it gets out of the non-sentinel `SkipNode`.\
+- This is the first while loop, it traverses the `SkipList` from `**HEADER**` until it gets out and lands on a non-sentinel `SkipNode`.\
 
 2. **Main Traversal Phase**
 - This is the second while loop, once it gets out of the sentinel node, it will start traversing to the `SkipNodes` until the target `i` is found.\
@@ -293,15 +293,15 @@ This simulates the flipping of the coin given that it has a probability of `p = 
 #### Helpers: `_promoteLevel(l, fromRight) -> Level`
 Useful helper function that is called whenever inserting `SkipNodes` to the `SkipList`. 
 
-It has while loop that iterates as long as it satisfied the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make new Level above the current level whenever the flipping of coin lands heads otherwise it just maintains its current level.\
-Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only _makeLevel whenever your skipNode is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` whenever promoteLevel is called by `push_right`.
+It has while loop that iterates as long as it satisfied the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
+Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` whenever `_promoteLevel` is called by `push_right`.
 
-After the first `if` condition it will now go update its pointers and go up to the newly created level. In this level you create newNode that will be inserted just above the current node. 
+After the first `if` condition it will now go update its pointers and settle to the newly created level. In this level you create a **newNode** that will be inserted just above the **current node**. 
 
 #### Helpers: `_demoteLevel(l, currLevel, fromRight)`
-Unlike the` _promoteLevel` it will do the reverse of promoting the level by pruning the level instead, hence the name.
+Unlike the` _promoteLevel` it will do the reverse of promoting the level hence, by pruning the level instead.
 
-Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of skip-list.
+Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of `SkipList`.
 
 #### Helpers: `_push_left_base(l, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
@@ -310,7 +310,7 @@ It updates the maxHeight by calling `_capHeight` given that inserting an element
 
 Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
 
 #### Helpers: `_push_right_base(l, v)`
 A mirror of `_push_right_base`.\
