@@ -153,7 +153,7 @@ TODO
 
 ### Summary
 
-`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Namely, the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`. Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is just a `Doubly-linked list` that has **all** the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
+`Skip List` is a unique data structure that is a combination of a `List` and `Linked-list`. With this, it benefits from the advantages of the two data structures. Namely, the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of $O(logn)$ from a `List`. Its bottomost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is just a `Doubly-linked list` that has **all** of the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
 `Express Lanes` offers faster travesal given that it skips nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node, and flipping **tails** just _maintains_ its current height. 
 
 <hr>

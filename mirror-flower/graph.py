@@ -163,6 +163,8 @@ def graph_settings():
     axes1[0, 1].set_title("Operation: push_left")
     axes1[0, 1].grid()
     axes1[0, 1].legend()
+    axes1[0, 1].set_xscale('log')
+    axes1[0, 1].set_yscale('log')
 
     axes1[0, 2].plot(total_size[2],total_deltaTime[2],label=complexitiesPerOperation["push_right"][status.value])
     axes1[0, 2].set_title("Operation: push_right")
