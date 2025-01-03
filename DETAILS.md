@@ -13,7 +13,6 @@ This type is used for values that represent the length of something, whether it 
 #### Type: `DATA` (`int64_t`)
 This type is used for values that represent the data that the list holds.
 
-
 #### Function: `TEST_elements(list) -> n, seq`
 This is used by the Unit Tester to check for correctness against the true raw sequence of `DATA` values of the list (unaffected by reversal flags), WITHOUT using `get` or any other operation.\
 For this reason, the implementer must absolutely make sure that it works correctly for any `n` and `seq`, so that there is no confusion on if it's the executed operation that failed, or if it's `TEST_elements` that's the culprit.
@@ -63,7 +62,7 @@ Moreover, each `ListNode` has its corresponding `DATA` field `val` that stores t
 ### Operation: `MAKE`
 
 #### Helper: `initList()`
-It allocates memory for the `List: l` using `malloc()`.\
+It allocates memory for the `List: l` using `malloc()`.
 It initially points `head` and `tail` pointers  to `NULL`. Moreover, it sets `reversed` and `size` to `bool: false` and `LENGTH: 0`  respectively.\
 Lastly it returns the initialized `List: l` to the caller.
 
@@ -100,7 +99,6 @@ This operation traverses the `List` from left to right until the target index `i
 ### Operation: `set(l, i, v)`
 Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `ListNode` found in the index `i` with `v`. If reversed it will the `head` will be the right and `tail` will be the left, hence right to left traversal.
 
-
 ### Operation: `peek_left(l) -> DATA`
 This simply returns the leftmost `DATA` of the `ListNode`. If reversed it will return the rightmost `DATA` of the `ListNode` instead.
 
@@ -117,7 +115,7 @@ This simply returns the rightmost `DATA` of the `ListNode`. If reversed it will 
 This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **next node** left pointer to NULL. It will also update the `head` of the `List` hence making **next node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
 
 ### Operation: `pop_right(l) -> bool`
-This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the `tailSentinel` to the `ListNode` adjacent to the rightmost node. This updates the rightmost node.
+This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **prev node** right pointer to NULL. It will also update the `tail` of the `List` hence making **prev node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
 
 ### Operation: `push_left(l, v)`
 This operation **insert** a new `ListNode` to the `List` by updating the left pointer of the leftmost node to the **new node** and updating it as the new `head` of the list. If reversed, it will update the right pointer of the righmost node and change its new `tail` to the **new node**.
@@ -163,14 +161,14 @@ TODO
 
 #### Struct: `SkipList`
 Represents the main overarching list for this ADT.
-The bottommost level or the commonly known as the **Level 0** of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, **Level 0** contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in **Level 0** varying dependent on the probability `p`.
+The **Level 0** of the `SkipList` is just a `Linked-list` where in our use-case is a `Doubly-linked list`. In addition, it contains all elements in the `SkipList` while the succeeding levels above it is the subset of the elements found in **Level 0** varying dependent on the probability `p`.
 
 #### Struct: `SkipNode`
 Represents the connected elements in the `SkipList`.
 Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.
 Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.
 It also has `below` pointer that points to the **existing node** beneath it.\
-Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field `bool:` `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.
+Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional field (`boolean`) field `isSentinel` that is set `false` if it is not pertaining to the sentinels and `true` otherwise.
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and `LENGTH` field `width` that acts as the offset from left to right.
 
 #### Struct: `Levellist`
@@ -181,14 +179,14 @@ To keep track of the **`HEADER`** (where the `SkipList` starts), it has two _(2)
 #### Struct: `Level`
 It has two _(2)_ pointers `up` and `down` that helps navigates the _succeeding_ and _preceeding_ levels in vertical direction.\
 Each levels have `SkipNode` fields `headSentinel` and `tailSentinel` representing the leftmost sentinel and rightmost sentinel respectively.\
-It also has field `cachedRightWidth` that stores the width of the right elements given that the _`Indexable Skip-list`_ reads offset from left to right.\ 
+It also has field `cachedRightWidth` that stores the width of the right elements given that the _`Indexable Skip-list`_ reads offset each nodes from left to right.\ 
 
 #### Struct: `LevelRecordsList`
 It stores the `head` and `tail` of a `LevelRecord`.
 
 #### Struct: `LevelRecord`
 It is a doubly-linked list that keeps track of the level heights of each `SkipNode`.
-It has field `Level` named `topLevel` that stores the highest level achieved by the nodes. 
+It has field `Level` named `topLevel` that stores the highest level achieved by each node. 
 
 <hr>
 </details>
@@ -560,6 +558,7 @@ Each successive right (left) subtree is of type $$k-1$$ and $$l/2$$.\
 After everything, it gives the caller the appropriate sublist of right-child (left-child) `PTrees`, with its own `subHead` and `subTail`.
 
 #### Helper: `_peekABoo(list)`
+A useful helper function for updating the `leftmost`/`rightmost` value after a modification of the list.\
 A useful helper function for updating the `leftmost`/`rightmost` value after a modification of the list.\
 It is useful for peek_left/peek_right operations.\
 It does this by getting the leftmost (rightmost) `PTree` and traversing all the way to the leftmost (rightmost) leaf node, and finally updating the appropriate value.\
