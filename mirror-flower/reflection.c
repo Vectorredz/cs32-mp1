@@ -411,8 +411,10 @@ int main(){
             if (strcmp(operation, "make") == 0){
                 // Get n and seq args for make() function (seq is delimeted by ",")
                 n = strToLength(arg1);
-                DATA* seq = (DATA*) malloc(n*sizeof(DATA));
+                DATA* seq;
                 if (n > 0){
+                    seq = (DATA*) malloc(n*sizeof(DATA));
+                    
                     char* token = strtok(arg2, ",");
                     size_t i = 0;
                     while (token != NULL){
@@ -420,6 +422,8 @@ int main(){
                         i++;
                         token = strtok(NULL, ",");
                     }
+                } else {
+                    seq = NULL;
                 }
 
                 _TIME(&_rec);
