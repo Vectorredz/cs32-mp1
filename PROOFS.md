@@ -776,6 +776,7 @@ Thus, we have proven that a skip list has a memory complexity of $O(n)$ expected
 
 $$\{l\}_{k}=2^{k_1}+2^{k_2} + \dots$$
 $$\{q\}_{k}=(2^{k_1+1}-1)+(2^{k_2+1}-1) + \dots$$
+
 Thus, we can write the total number of nodes, $n$, in terms of total number of leaf nodes, $l$, to have the following memory complexities:
 
 $$\{q\}_l=(2l_1-1)+(2l_2-1)+...$$
