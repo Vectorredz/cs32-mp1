@@ -395,6 +395,7 @@ Since $T_{push}=O(1)$ expected, $T_{init} = O(1)$ worst case, and $T_{loop} =O(\
 $$T_{make} = T_{init} + T_{outer}+T_{loop}\cdot T_{push}$$
 $$= O(1) + O(1) + O(\mathscr{l})\cdot O(1)$$
 $$T_{make} = O(l) \text{ expected}$$
+
 $T_{loop}$ is multiplied to $T_{push}$ because for every iteration of $T_{loop}$ , `push` is called, thus the cost for each iteration of the loop to be $T_{push}$.
 
 Thus, we have proven that the time complexity of `make` is $O(\mathscr{l})$ expected.
@@ -791,6 +792,7 @@ This is because in the sequence of trees, the leaf nodes represent all the eleme
 Simplifying the memory complexity further since there exists a constant $C\ge2c$ for all $n \ge 0$, by definition of big O, we can simplify it to the following:
 
 $$S(n) = O(n)$$
+
 Note that all operations either take $O(1)$ or $O(n)$ worst case space. This is because if we were to do the other operations that add new trees, it would still be accounted for in the sequences above.
 
 Thus, we have proven that the sequence of trees has a memory complexity of $O(n)$ worst case.
