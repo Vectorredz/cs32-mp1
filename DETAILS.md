@@ -305,7 +305,7 @@ Once called it starts from **HEADER** and traverse from up to down. It has a con
 
 #### Helpers: `_push_left_base(l, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
-Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
+Before inserting the newNode, it undergoes a series of check to update the variables relating to the `size` and `width` of the `SkipList`\
 It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
 
 Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
@@ -318,9 +318,9 @@ This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
 Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
 It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
 
-Before inserting, we must update the `width` of the rightmost node from **level 0** to the topmost. 
+Before inserting, we must update the `cachedRightWidth` instead of the `width` since we are pushing to the right of `SkipList`.
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and the progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
 
 
 #### Helpers: `_pop_left_base(l) -> bool`
