@@ -774,9 +774,9 @@ Thus, we have proven that a skip list has a memory complexity of $O(n)$ expected
 #### Sequence of Trees
 **Proof**: The memory complexity required to store data in the sequence of trees data structure is $O(2^k)$ worst case. This is because each tree in the sequence is a perfect binary tree which is of the form $2^k$. We can visualize it to be the following, where $l$ is the total number of leaf nodes and $q$ is the total number of nodes.
 
-$$\{l\}_{k}=2^{k_1}+2^{k_2} + \dots$$
+$$\text{{}l\text{}}_{k}=2^{k_1}+2^{k_2} + \dots$$
 
-$$\{q\}_{k}=(2^{k_1+1}-1)+(2^{k_2+1}-1) + \dots$$
+$$\text{{}q\text{}}_{k}=(2^{k_1+1}-1)+(2^{k_2+1}-1) + \dots$$
 
 
 
