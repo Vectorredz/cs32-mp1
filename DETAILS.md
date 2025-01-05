@@ -291,12 +291,12 @@ This simulates the flipping of the coin given that it has a probability of `p = 
 - If `rand() <= RAND_MAX / 2` it will return `false`. 
 
 #### Helpers: `_promoteLevel(l, fromRight) -> Level`
-Useful helper function that is called whenever inserting `SkipNodes` to the `SkipList`. 
+Useful helper function that is called whenever inserting a `SkipNode` to a `SkipList`. 
 
-It has while loop that iterates as long as it satisfied the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
-Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` whenever `_promoteLevel` is called by `push_right`.
+It has a while loop that iterates as long as it satisfies the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make a new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
+Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` everytime `_promoteLevel` is called by `push_right`.
 
-After the first `if` condition it will now go update its pointers and settle to the newly created level. In this level you create a **newNode** that will be inserted just above the **current node**. 
+After the first `if` condition it will now go update its pointers and settle to the newly created level. In this level you allocate memory for a **newNode** that will be inserted just above the **current node**. 
 
 #### Helpers: `_demoteLevel(l, currLevel, fromRight)`
 Unlike the` _promoteLevel` it will do the reverse of promoting the level hence, by pruning the level instead.
@@ -406,8 +406,6 @@ With `leaf` it uses `union` to determine whether it holds a `DATA` value and not
 
 <hr>
 </details>
-
-
 
 
 <details>
@@ -604,13 +602,8 @@ Calls `_pop_left_base` (or `_pop_right_base` if `reversed` flag is enabled.)
 #### Main: `pop_right(list)`
 Calls `_pop_right_base` (or `_pop_left_base` if `reversed` flag is enabled.)
 
-
-
 <hr>
 </details>
-
-
-
 
 </details>
 
