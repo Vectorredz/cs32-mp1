@@ -804,5 +804,6 @@ $$S(n) = O(n)$$
 Note that all operations either take $O(1)$ or $O(n)$ worst case space. This is because if we were to do the other operations that add new trees, it would still be accounted for in the sequences above.
 
 Thus, we have proven that the sequence of trees has a memory complexity of $O(n)$ worst case.
-***
-<div style="text-align: center;"> End. </div>
+*** 
+
+<p align="center"> End. </p>
