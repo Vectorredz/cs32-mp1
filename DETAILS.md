@@ -294,19 +294,19 @@ This simulates the flipping of the coin given that it has a probability of `p = 
 Useful helper function that is called whenever inserting a `SkipNode` to a `SkipList`. 
 
 It has a while loop that iterates as long as it satisfies the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make a new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
-Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. Moreover, it also updates the `cachedRightWidth` everytime `_promoteLevel` is called by `push_right`.
+Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. 
 
-After the first `if` condition it will now go update its pointers and settle to the newly created level. In this level you allocate memory for a **newNode** that will be inserted just above the **current node**. 
+Moreover, it has a (`boolean`) parameter **fromRight** that is passed as **true** if it was called by the `push_right` and **false** if the argument was from `push_left`. If it's **fromRight** then the promotion of newNode will happen on the inserted node at the right. If it's **!(fromRight)** then the promotion will happen on the leftmost while also updating its `cachedRightWidth`. 
 
 #### Helpers: `_demoteLevel(l, currLevel, fromRight)`
 Unlike the` _promoteLevel` it will do the reverse of promoting the level hence, by pruning the level instead.
 
-Once called it starts from **HEADER** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of `SkipList`.
+Once called it starts from **`HEADER`** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of `SkipList`.
 
 #### Helpers: `_push_left_base(l, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
-Before inserting the newNode, it undergoes a series of check to update the variables relating to the `size` and `width` of the `SkipList`\
-It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
+Before inserting the newNode, it undergoes a series of check to update the variables relating to the `size` and `width` of the `SkipList`
+It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.
 
 Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
 
@@ -314,13 +314,13 @@ It will restart to **level 0**, and allocate memory for the newNode. Recall that
 
 #### Helpers: `_push_right_base(l, v)`
 A mirror of `_push_right_base`.\
-This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
-Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
-It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.\
+This is the "true" `push_right` operation, unaffected by the `reversed` flag.
+Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`
+It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.
 
-Before inserting, we must update the `cachedRightWidth` instead of the `width` since we are pushing to the right of `SkipList`.
+Before inserting, we must update the `cachedRightWidth` since we are pushing to the right of `SkipList`.
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the level recorder to track the height attained by the newNode.
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
 
 
 #### Helpers: `_pop_left_base(l) -> bool`

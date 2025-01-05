@@ -128,7 +128,6 @@ Level *_promoteLevel(SkipList *l, bool fromRight){
         belowNode = newPrevNode;
 
         if (!fromRight){
-            
             // left
             newPrevNode->right = sentinel->right; // curr leftmost
             sentinel->right->left = newPrevNode;
