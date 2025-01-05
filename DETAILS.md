@@ -35,7 +35,7 @@ This is used by the Unit Tester to check if the list is reversed. The implemente
 ## Doubly Linked List
 
 ### Summary
-`Doubly-linked List` is one of the most common data structures that offers advantages over the others. It is an extension to `Singly-linked List` but instead of being a one-way traversal, doubly-linked List provides a two-way connection from front to back and vice-versa.
+`Doubly Linked List` is one of the most common data structures that offers advantages over the others. It is an extension to `Singly-linked List` but instead of being a one-way traversal, doubly-linked List provides a two-way connection from front to back and vice-versa.
 
 <hr>
 
@@ -140,8 +140,138 @@ This operation **insert** a new `ListNode` to the `List` by updating the right p
 
 <details>
 <summary>Dynamic Array</summary>
-TODO
+
+## Dynamic Array
+
+### Summary
+The implemented `Dynamic Array` is a variation of the array data structure. Unlike a standard array, which has a fixed size and lacks flexibility, the Dynamic Array can automatically resize itself, providing flexibility optimizing both efficiency and memory usage. This was successfully implemented using a circular indexing system to allow for quicker insertion and remove operations.
+<hr>
+
+<details>
+<summary>Structs</summary>
+
+#### Struct: `dynamic_array`
+
+The first field is essential for implementing a working array data structure,
+
+`DATA *array` : This field stores elements of the given sequence into an array
+
+The following fields are used to store the first and last elements' indexes of the array. This is important because the array implements a circular indexing system.
+
+`LENGTH start` : This field saves the index of the first element
+
+`LENGTH last` : This field saves the index of the last element
+
+The following fields are used to store anything size-related informations. This is important because the size of the array is not equal to the amount of elements stored inside it.
+
+`LENGTH elements` : This field saves the current amount of elements stored in the array
+
+`LENGTH size` : This field saves the current size of the array
+
+Lastly, the following field was implemented to complete the reverse operation in constant time, $O(1)$.
+
+`bool reverse` : This field tells us whether or not the current list is reversed.
+
+<hr>
 </details>
+
+<details>
+<summary>Initializer</summary>
+
+### Operation: `MAKE`
+
+#### Main: `*make(n, seq) -> dynamic_array`
+This is the main operation of `make`. It creates a dynamic array and returns the said array.
+
+It initalizes all fields of the data structure by creating `array` of size $2\mathscr{l}$, where $l$ is the size of the given sequence. It stores $2l$ and $l$ into `elements` and `size` respectively. Moreover, it saves the indexes of the first and last element as `start = 0` and `last = l - 1`. Lastly, since the given sequence is not reversed, it sets the boolean, `reverse = false`, and copies the elements of the given sequence into `array` in the exact same order starting with index $0$.
+
+<hr>
+</details>
+
+<details>
+<summary>Flags/List Info</summary>
+
+### Operation: `reverse(l)`
+Reversing the `array` with `n` elements will take time complexity of $O(n)$. Hence, the group found an elegant way of achieving the `reverse` operation at $O(1)$.
+
+Instead this function will **toggle** the (`boolean`) field in `array` called `reversed`.
+It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.
+
+### Operation: `size(l) -> LENGTH`
+It simply returns a `LENGTH` which is the current `l->elements` of the `list`.
+
+### Operation: `empty(l) -> bool`
+It simply returns `bool` that checks whether the `array` has no elements or has `l->elements == 0`.
+
+<hr>
+</details>
+
+<details>
+<summary>Getters/Setters</summary>
+
+### Operation: `get(l, i) -> DATA`
+This operation returns the `i`-th element of the array at constant time, $O(1)$. This is the normal time complexity of `get` in a standard array. However, since the group used a circular indexing system, it uses a formula to calculate the `new_i` with respect to the current `l->start` and `l->last` of the array. Moreover, if `l->reverse == true`, it would also find `reverse_index`. This allows the operation `reverse` to run in constant time, $O(1)$.
+
+### Operation: `set(l, i, v)`
+Similar to `get`, instead of just returning the element of the given index `i`, it would set a new value `v` to index `i`. That is shown by `l->array[new_i] = v` or `l->array[reverse_index]` if `l->reverse == true`.
+
+### Operation: `peek_left(l) -> DATA`
+This simply returns the leftmost element of the `dynamic_array`. If `l->reverse == true`, it will return the rightmost element of the `dynamic_array` instead. The operation utilizes `l->start` and `l->last` to return the leftmost and the rightmost element respectively.
+
+### Operation: `peek_right(l) -> DATA`
+This simply returns the rightmost element of the `dynamic_array`. If `l->reverse == true`, it will return the leftmost element of the `dynamic_array` instead. The operation utilizes `l->start` and `l->last` to return the leftmost and the rightmost element respectively.
+
+<hr>
+</details>
+
+<details>
+<summary>Insertions/Deletions</summary>
+
+### Helper: `_expandArray(l) -> dynamic_array`
+
+This operation doubles the current capacity of the `dynamic_array` if the current array is full. This is achieved by copying `l->array` into a temporary array `temp`. This resets the current indexing system of the array into a zero based indexing system.
+
+After, the current `l->array` is deleted and then recreated, now with double the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->size` is also doubled. Lastly, `temp` is then copied into the new `l->array`.
+
+### Helper: `_decreaseArray(l) -> dynamic_array`
+
+This operation halves the current capacity of the `dynamic_array` if the current array is a quarter of `l->size`. This is achieved by copying `l->array` into a temporary array `temp`. This resets the current indexing system of the array into a zero based indexing system.
+
+After, the current `l->array` is deleted and then recreated, now with half the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->size` is also halved. Lastly, `temp` is then copied into the new `l->array`.
+
+Lastly, if the size of `l->size` reaches 0, it creates an empty array with `l->size = 1` with all the fields of the `dynamic_array` set to default.
+
+### Operation: `pop_left(l) -> bool`
+This operation, instead of deleting, just moves `l->start` to the next index which should be the second element of the list. By doing so, `l->start` is incremented by 1 and `l->elements` is decremented by 1.
+
+Note that if the array is too sparsed, it will run the operation `_decreaseArray(l)`. Moreover, if `l->reversed == true`, it will run the `pop_right(l)` operation instead. 
+
+### Operation: `pop_right(l) -> bool`
+This operation, instead of deleting, just moves `l->last` to the index before it which should be the second to the last element of the list. By doing so, `l->last` and `l->elements` are decremented by 1.
+
+Note that if the array is *too sparsed*, it will run the operation `_decreaseArray(l)`. Moreover, if `l->reversed == true`, it will run the `pop_left(l)` operation instead. 
+
+### Operation: `push_left(l, v)`
+This operation **inserts** a new value `v` to the left side of the list now becoming the first element of the list. Because the array uses a circular indexing system, we are able to `push` an element to the left of an `array` at $O(1)$ by wrapping around the array when `l->start == 0`.
+
+As a result, if `l->start == 0` and the array is not yet *too full*, `l->start = l->size - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->start != 0`, the index will just decrement by 1.
+
+Note that if the array is *too full*, it will run the operation `_expandArray(l)`. Moreover, if `l->reversed == true`, it will run the `push_right(l, v)` operation instead.
+
+### Operation: `push_right(l, v)`
+This operation **inserts** a new value `v` to the right side of the list now becoming the last element of the list. Because the array uses a circular indexing system, we are able to `push` an element to the right of an `array` at $O(1)$ by wrapping around the array when `l->last == l->size - 1`.
+
+As a result, if `l->last == d->size - 1` and the array is not yet *too sparsed*, `l->last = l->size - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->last != d->size - 1`, the index will just increment by 1.
+
+Note that if the array is *too full*, it will run the operation `_expandArray(l)`. Moreover, if `l->reversed == true`, it will run the `push_left(l, v)` operation instead.
+
+<hr>
+</details>
+
+
+<hr>
+</details>
+
 
 <hr>
 <hr>
