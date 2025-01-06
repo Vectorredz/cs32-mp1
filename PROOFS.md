@@ -173,7 +173,8 @@ Each of the operations involved that were done outside of the for-loop run at co
 Now, focusing on the for-loop, we can see that within the for-loop are a combination of the operations aforementioned. Moreover, due to the nature of the for-loop, the operations within the for-loop run for a total of $\mathscr{l}$ times, where $\mathscr{l}$ is the length of the given sequence. For clarity, let's solve for the recurrence relation of the for-loop $T_{loop}$ .
 
 $$T(\mathscr{l}) = T(\mathscr{l}-1) + c $$
-$$T(\mathscr{l}-1) = T(\mathscr{l}-2) + c$$$$ \vdots$$
+$$T(\mathscr{l}-1) = T(\mathscr{l}-2) + c$$
+$$ \vdots$$
 $$T(1) = c$$
 
 
@@ -202,7 +203,8 @@ $$
 Finally, combining all the solved recurrence relations, we get, 
 
 $$T(n) = T_{outer}+T_{loop} $$
-$$= O(1) + O(\mathscr{l}) $$$$= O(\mathscr{l})$$
+$$= O(1) + O(\mathscr{l}) $$
+$$= O(\mathscr{l})$$
 
 Thus proving that `make` runs at $O(\mathscr{l})$ worst case. 
 
