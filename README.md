@@ -47,7 +47,8 @@ Each contain their own **header** and **source** file, as well as a `test.c` fil
 ## Implementation of Code
 For the list implementations, we used the references and concepts provided by the MP1 document for each of the implementations to implement our own version of each Abstract Data Type of a list.\
 All lists are pointers of a `struct`, and any members for a `struct` are `pointers` to that `struct` as well, so that we only use the arrow `->` sugar operations for all lists for consistency.\
-We also have the global types `LENGTH` (`size_t`) and `DATA` (`int64_t`) to represent values based on the length of the list and data values, respectively.
+We also have the global types `LENGTH` (`size_t`) and `DATA` (`int64_t`) to represent values based on the length of the list and data values, respectively.\
+Lastly, we aimed for $O(1)$ worst case for all lists' `reverse` operations.
 
 ***[DETAILS.md](DETAILS.md)** holds more details on each of the list's implementations.*
 
@@ -241,9 +242,9 @@ Included as a C header by the tester.
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
 It first obtains each line of the .txt and stores it in an array.\
-Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**.
+Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**. It also tests for its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)
 
-The tester also uses special test functions for its testing. These are global test operations that must be implemented for each list. They can be viewed in the **Global** section of **[DETAILS.md](DETAILS.md)**. In particular, it also verifies for the test operation `TEST_internal` to verify the internal tests, along with its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)
+The tester also uses special test functions for its testing. These are global test operations that must be implemented for each list. They can be viewed in the **Global** section of **[DETAILS.md](DETAILS.md)**. In particular, it also verifies for the test operation `TEST_internal` to verify the internal tests.
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
 
@@ -327,5 +328,8 @@ With that, the steps are as follows:
 
 <br>
 <br>
+<br>
 
 砕けろ、鏡花水月。
+<br>
+<img src="https://drive.google.com/uc?export=view&id=1syDlPK6MJZfg5Y34IGWfgWkQ1NwiRBq3" width="854" height="auto" title="RORRIM______Our Reflection.">
