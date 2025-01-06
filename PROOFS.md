@@ -765,6 +765,7 @@ Thus, the dynamic array has a memory complexity of $O(n)$ worst case.
 **Proof**: A skip list has a memory complexity of $O(n \log n)$ worst case. This is assuming each node is present until the highest possible level. However, because the probability of the skip list achieving that behavior is so low, its memory complexity only differs by a constant. This is calculated by the following:
 
 $$\text{expected probability} = \frac{1}{p}= \frac{1}{0.5}=2$$
+
 Where $p$ is the probability that a node would be promoted to a higher level. Because of this, we can simplify the skip list to have the following *expected* memory complexity:
 
 $$S(n)=O(n \log n)=O(2n)=O(n)$$
