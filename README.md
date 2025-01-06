@@ -332,4 +332,4 @@ With that, the steps are as follows:
 
 砕けろ、鏡花水月。
 <br>
-<img src="https://drive.google.com/uc?export=view&id=1syDlPK6MJZfg5Y34IGWfgWkQ1NwiRBq3" width="50%" height="50%" title="RORRIM______Our Reflection.">
+<img src="https://drive.google.com/uc?export=view&id=1syDlPK6MJZfg5Y34IGWfgWkQ1NwiRBq3" width="75%" height="75%" title="RORRIM______Our Reflection.">
