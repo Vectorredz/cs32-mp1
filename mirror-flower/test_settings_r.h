@@ -18,13 +18,13 @@
     SKIP_LIST
     TREE_SEQUENCE
 */
-#define IMPLEMENTATION DOUBLY_LINKED_LIST
+#define IMPLEMENTATION SKIP_LIST
 
 
 // TYPE: boolean
 // Set to true if you would like the current line being executed to be displayed
 // This is useful for segfaults where the tester abruptly stops and the faulty line is unknown
-#define LINE_DISPLAY false
+#define LINE_DISPLAY true
 
 // TYPE: boolean
 // Set to true if you want to check for efficiency (TLE)

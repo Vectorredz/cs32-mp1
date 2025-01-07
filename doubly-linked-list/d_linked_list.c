@@ -68,10 +68,6 @@ void reverse(list *l){
 }
 
 LENGTH size(list *l){
-    if (l->size < 0){
-        fprintf(stderr, "\nIndexError: invalid size\n");
-        exit(1);\
-    }
     return l->size;
 }
 
@@ -83,10 +79,6 @@ bool empty(list *l){
 DATA get(list *l, LENGTH i){
     node *curr = l->reversed ? l->tail : l->head;
     // raise an exception
-    if (i < 0){
-        fprintf(stderr, "\nIndexError: list index out of range\n");\
-        exit(1);\
-    }
     if (i >= size(l)){
         fprintf(stderr, "\nIndexError: list index out of range\n");\
         exit(1);\
@@ -106,10 +98,6 @@ DATA get(list *l, LENGTH i){
 
 void set(list *l, LENGTH i, DATA v){
     node *curr = l->reversed ? l->tail : l->head;
-    if (i < 0){
-        fprintf(stderr, "IndexError: list index out of range\n");\
-        exit(1);\
-    }
     if (i >= size(l)){
         fprintf(stderr, "IndexError: list index out of range\n");\
         exit(1);\
@@ -182,6 +170,7 @@ void push_right(list *l, DATA v){
     //empty_list case
 
     if (!(curr)) l->head = l->tail = newNode;
+
     else {
         if (l->reversed){
             newNode->right = l->head;
@@ -200,7 +189,6 @@ void push_right(list *l, DATA v){
 bool pop_left(list *l){
     // empty-list
     if (!(l->head) && !(l->tail)){
-        fprintf(stderr, "\nIndexError: Pop From Empty List\n");
         return false;
     };
 
@@ -234,7 +222,6 @@ bool pop_left(list *l){
 bool pop_right(list *l){
     // empty_list
     if (!(l->head) && !(l->tail)){
-        fprintf(stderr, "\nIndexError: Pop From Empty List\n");
         return false;
     };
 
