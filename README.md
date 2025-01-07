@@ -103,7 +103,7 @@ Their text can be of the following:
 | :-------- | :--- | :--- | :----- |
 | make | `LENGTH n` <br> number | `DATA *seq` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | size | "**None**" | "**None**" | `returned LENGTH` <br> number |
-| empty | "**None**" | "**None**" | `returned bool` <br> "**0**" / "**1**" |
+| empty | "**None**" | "**None**" | `returned bool` <br> "**f**" / "**t**" |
 | reverse | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | get | `LENGTH i` <br> number | "**None**" | `returned DATA` <br> number |
 | set | `LENGTH i` <br> number | `DATA v` <br> number | `returned DATA` <br> number |
@@ -111,8 +111,8 @@ Their text can be of the following:
 | peek_right | "**None**" | "**None**" | `returned DATA` <br> number |
 | push_left | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
 | push_right | `DATA v` <br> number | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| pop_left | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
-| pop_right | "**None**" | "**None**" | `raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**") |
+| pop_left | "**None**" | "**None**" | `returned bool` with (`raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**")) <br> EXAMPLE: <br> "**f,EMPTY**" <br> "**t,100,200,300**" |
+| pop_right | "**None**" | "**None**" | `returned bool` with (`raw list sequence` <br> "**EMPTY**" <br> OR <br> number sequence, <br> separated by comma <br> (e.g. "**100,200,300**")) <br> EXAMPLE: <br> "**f,EMPTY**" <br> "**t,100,200,300**" |
 
 Note that an empty number sequence is represented by "**EMPTY**".\
 Note that **make**, **reverse**, **push_\***, and **pop_\*** operations check for correctness on the entire list every time. This is to absolutely make sure that everything is working as expected within the actual list.\
@@ -146,6 +146,8 @@ This layer tests for the `make` operation, as well as the list's ability to hold
 >> BASIC OPERATIONS TEST
     - GET (Random Index)
     - SET (Random Index and Random Data)
+    - GET (Edge Indices)
+    - SET (Edge Indices and Random Data)
     - PEEK_*
     - SIZE
     - EMPTY
@@ -228,7 +230,7 @@ Included as a C header by the tester.
 | :------ | :------- | :------ |
 | IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
 | LINE_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
-| CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `true` |
+| CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `false` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
 

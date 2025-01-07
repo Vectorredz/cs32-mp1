@@ -16,8 +16,10 @@ LAYER 0:
 LAYER 1:
     >> BASIC OPERATIONS TEST
         * Gazes at:
-            - GET (Random Index) (2 -> 924)
-            - SET (Random Index and Random Data) (925 -> 1847)
+            - GET (Random Index)
+            - SET (Random Index and Random Data)
+            - GET (Edge Indices)
+            - SET (Edge Indices and Random Data)
             - PEEK_*
             - SIZE
             - EMPTY
@@ -174,7 +176,7 @@ def listToResult(seq: Sequence):
 def RESULT_size(mirror: Mirror):
     return str(mirror.size())
 def RESULT_empty(mirror: Mirror):
-    return "0" if mirror.empty() == False else "1"
+    return "f" if mirror.empty() == False else "t"
 def RESULT_reverse(mirror: Mirror):
     mirror.reverse()
     return listToResult(mirror.TEST_elements())
@@ -196,11 +198,9 @@ def RESULT_push_right(mirror: Mirror, v: DATA):
     mirror.push_right(v)
     return listToResult(mirror.TEST_elements())
 def RESULT_pop_left(mirror: Mirror):
-    mirror.pop_left()
-    return listToResult(mirror.TEST_elements())
+    return ("f" if mirror.pop_left() == False else "t") + "," + listToResult(mirror.TEST_elements())
 def RESULT_pop_right(mirror: Mirror):
-    mirror.pop_right()
-    return listToResult(mirror.TEST_elements())
+    return ("f" if mirror.pop_right() == False else "t") + "," + listToResult(mirror.TEST_elements())
 
 OPERATIONS = dict()
 OPERATIONS["size"] = RESULT_size
@@ -612,6 +612,6 @@ for layer, func in tests.items():
 
 
 print("Tests successfully initialized.")
-print("Test operations can be found in (({I:s}))\n".format(I=str(INPUT_DIRECTORY)))
+print("Test operations can be found in (( {I:s} ))\n".format(I=str(INPUT_DIRECTORY)))
 
 print("Will you look into the Mirror once more?")

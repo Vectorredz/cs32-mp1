@@ -1,7 +1,7 @@
 make|1|5|5
 push_right|3|None|5,3
 size|None|None|2
-empty|None|None|0
+empty|None|None|f
 get|0|None|5
 set|1|69|69
 reverse|None|None|69,5
@@ -9,5 +9,9 @@ peek_left|None|None|69
 peek_right|None|None|5
 push_left|50|None|50,69,5
 push_right|60|None|50,69,5,60
-pop_left|None|None|69,5,60
-pop_right|None|None|69,5
+pop_left|None|None|t,69,5,60
+pop_right|None|None|t,69,5
+pop_right|None|None|t,69
+pop_right|None|None|t,EMPTY
+pop_right|None|None|f,EMPTY
+pop_left|None|None|f,EMPTY

@@ -256,43 +256,69 @@ char* dataToStr(DATA data){
 }
 char* boolToStr(bool b){
     char* boolStr = (char*) malloc(2*sizeof(char));
-    boolStr[0] = b == false ? '0' : '1';
+    boolStr[0] = b == false ? 'f' : 't';
     boolStr[1] = '\0';
     return boolStr;
 }
 
 // TODO: use function pointers instead for getting mRESULT? idk
-void DISPLAY_LOGS(Reflection* list, char* operation, char* extraOperation){
-    if (extraOperation == NULL){
-        fprintf(stderr, ":: operation: %s\n", operation);
-    } else {
-        fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
-    }
-    fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
-    fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n------\n", listToResult(list, false));
-    fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
-}
-void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char* RESULT, char* mRESULT, double dt, char* extraOperation, bool checkForEfficiency){
+void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char* RESULT, char* mRESULT, char* extraOperation, bool checkForEfficiency, double dt){
     if (strcmp(mRESULT, RESULT) != 0){
-        fprintf(stderr, "(( %s ))\n", path);
-        fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", testNum, dt);
-        fprintf(stderr, "!! Failed Operation !!\n");
-        
         size_t i = 0;
         while (RESULT[i] == mRESULT[i] && RESULT[i] != '\0' && mRESULT[i] != '\0'){
             i++;
         }
-        DISPLAY_LOGS(list, operation, extraOperation);
-        fprintf(stderr, ":: line %zu\n:: column %zu (char CORRECT: \"%c\", FAULT: \"%c\")\n", testNum, i, RESULT[i], mRESULT[i]);
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n", listToResult(list, false));
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, "---------------------------------------------------------\n");
+
         fprintf(stderr, ":: FAULTY OUTPUT -> %s\n", mRESULT);
+        fprintf(stderr, "---------------------------------------------------------\n");
         fprintf(stderr, ":: SUPPOSED OUTPUT -> %s\n", RESULT);
+        fprintf(stderr, "---------------------------------------------------------\n");
+        fprintf(stderr, "---------------------------------------------------------\n");
+
+        fprintf(stderr, "(( %s ))\n", path);
+        fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", testNum, dt);
+        fprintf(stderr, "!! Failed Operation !!\n");
+        fprintf(stderr, ":: line %zu\n:: column %zu (char FAULT: \"%c\", CORRECT: \"%c\")\n", testNum, i, RESULT[i], mRESULT[i]);
+        if (extraOperation == NULL){
+            fprintf(stderr, ":: operation: %s\n", operation);
+        } else {
+            fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
+        }
+        fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+
+        fprintf(stderr, "\n? Ah, it shattered... . .  .\n", RESULT);
         exit(1);
     }
     if (checkForEfficiency == true){
         if (dt > TLE_BOUND){
+            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stderr, ":: RAW SEQUENCE (reverse is ignored) -> %s\n------\n", listToResult(list, false));
+            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stderr, ":: RAW SEQUENCE (with reverse) -> %s\n", listToResult(list, true));
+            fprintf(stderr, "---------------------------------------------------------\n");
+            fprintf(stderr, "---------------------------------------------------------\n");
+
             fprintf(stderr, "(( %s ))\n", path);
             fprintf(stderr, "[+] [line %zu]: TLE [%lfms (> %lf ms)]\n", testNum, dt, TLE_BOUND);
-            DISPLAY_LOGS(list, operation, extraOperation);
+            fprintf(stderr, "!! Too Long Operation !!\n");
+            if (extraOperation == NULL){
+                fprintf(stderr, ":: operation: %s\n", operation);
+            } else {
+                fprintf(stderr, ":: operation: %s -> %s\n", operation, extraOperation);
+            }
+            fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
+
+            fprintf(stderr, "\n? Ah, it shattered... . .  .\n", RESULT);
             exit(1);
         }
     }
@@ -519,29 +545,51 @@ int main(){
 
             } else if (strcmp(operation, "pop_left") == 0){
                 _TIME(&_rec);
-                pop_left(list);
+                bool popped = pop_left(list);
                 _TIME(&rec);
                 
                 extraOperation = "TEST_elements";
-                mRESULT = listToResult(list, true);
+                
+                char* b = boolToStr(popped);
+                char* numSeq = listToResult(list, true);
+                
+                mRESULT = (char*) malloc((strlen(b) + strlen(",") + strlen(numSeq) + 1) * sizeof(char));
+                strcpy(mRESULT, b);
+                strcat(mRESULT, ",");
+                strcat(mRESULT, numSeq);
+                free(b);
+                free(numSeq);
 
             } else if (strcmp(operation, "pop_right") == 0){
                 _TIME(&_rec);
-                pop_right(list);
+                bool popped = pop_right(list);
                 _TIME(&rec);
                 
                 extraOperation = "TEST_elements";
-                mRESULT = listToResult(list, true);
+
+                char* b = boolToStr(popped);
+                char* numSeq = listToResult(list, true);
+
+                mRESULT = (char*) malloc((strlen(b) + strlen(",") + strlen(numSeq) + 1) * sizeof(char));
+                strcpy(mRESULT, b);
+                strcat(mRESULT, ",");
+                strcat(mRESULT, numSeq);
+                free(b);
+                free(numSeq);
 
             }
 
-            PROCESSED_TIME dt = _PROCESSTIME(_rec, rec) * 1000.0;
-
             // For internal tests
-            VERIFY(list, path, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", dt, "TEST_internal", false);
+            VERIFY(list, path, testNum+1, operation, "success", TEST_internal(list) == true ? "success" : "fail", "TEST_internal", false, 0);
 
             // Verify the output
-            VERIFY(list, path, testNum+1, operation, RESULT, mRESULT, dt, extraOperation, true);
+            PROCESSED_TIME dt;
+            if (CHECK_FOR_EFFICIENCY == true){
+                dt = _PROCESSTIME(_rec, rec) * 1000.0;
+            } else {
+                dt = 0;
+            }
+            VERIFY(list, path, testNum+1, operation, RESULT, mRESULT, extraOperation, CHECK_FOR_EFFICIENCY, dt);
 
             if (LINE_DISPLAY == true){
                 printf("[O] [line %zu]: AC [%lfms]\n", testNum+1, dt);
