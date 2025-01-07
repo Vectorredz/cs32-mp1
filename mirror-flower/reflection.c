@@ -294,7 +294,7 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
         }
         fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
 
-        fprintf(stderr, "\n? Ah, it shattered... . .  .\n", RESULT);
+        fprintf(stderr, "\n? Ah, it shattered... .  .   .\n", RESULT);
         exit(1);
     }
     if (checkForEfficiency == true){
@@ -318,7 +318,7 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
             }
             fprintf(stderr, ":: List is reversed? -> %s\n", TEST_reversed(list) == false ? "false" : "true");
 
-            fprintf(stderr, "\n? Ah, it shattered... . .  .\n", RESULT);
+            fprintf(stderr, "\n? Ah, it shattered... .  .   .\n", RESULT);
             exit(1);
         }
     }
