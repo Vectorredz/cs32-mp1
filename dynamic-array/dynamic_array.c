@@ -206,11 +206,11 @@ void push_right(dynamic_array *list, DATA v)
 
 bool pop_left(dynamic_array *list)
 {
+    // return false if empty
+    if (list->elements == 0 ) return false;
+
     if(list->reverse == false)
     {
-        // return false if empty
-        if (list->elements == 0 ) return false;
-
         // we aren't actually popping the element, we just change the index range
         list->elements--;
         list->start++;
@@ -234,11 +234,11 @@ bool pop_left(dynamic_array *list)
 
 bool pop_right(dynamic_array *list)
 {
+    // return false if empty
+    if (list->elements == 0 ) return false;
+
     if (list->reverse == false)
     {
-        // return false if empty
-        if (list->elements == 0 ) return false;
-
         // we aren't actually popping the element, we just change the index range
         list->elements--;
 
