@@ -227,9 +227,7 @@ def WRITE(writer: DictWriter, checkForCorrectness: bool, mirror: Mirror, operati
         if operation == "get" \
             or operation == "set" \
             or operation == "peek_left" \
-            or operation == "peek_right" \
-            or operation == "pop_left" \
-            or operation == "pop_right":
+            or operation == "peek_right":
             return
     result = ""
 
@@ -401,6 +399,12 @@ def LAYER2(writer: DictWriter):
     WRITEMSG(writer, "TEST", "pop_left (consec)")
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_left")
+    
+    # (n=0 pop test)
+    WRITE(writer, True, mirror, "pop_left")
+    WRITE(writer, True, mirror, "pop_right")
+    WRITE(writer, True, mirror, "size")
+    WRITE(writer, True, mirror, "empty")
         
 
     # Again.
@@ -410,6 +414,13 @@ def LAYER2(writer: DictWriter):
     WRITEMSG(writer, "TEST", "pop_right (consec)")
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_right")
+    
+    # (n=0 pop test)
+    WRITE(writer, True, mirror, "pop_left")
+    WRITE(writer, True, mirror, "pop_right")
+    WRITE(writer, True, mirror, "size")
+    WRITE(writer, True, mirror, "empty")
+
 
     # Double Consecutive Normal Punch
     WRITEMSG(writer, "TEST", "ins/del (rand)")
@@ -476,6 +487,9 @@ def LAYER4(writer: DictWriter):
         WRITE(writer, check, mirror, "pop_left")
 
     for _ in range(2):
+        # (n=0 pop test)
+        WRITE(writer, True, mirror, "pop_left")
+        WRITE(writer, True, mirror, "pop_right")
         WRITE(writer, check, mirror, "size")
         WRITE(writer, check, mirror, "empty")
         
@@ -500,6 +514,12 @@ def LAYER4(writer: DictWriter):
             WRITE(writer, check, mirror, "size")
             WRITE(writer, check, mirror, "empty")
 
+        # (n=0 pop test)
+        WRITE(writer, True, mirror, "pop_left")
+        WRITE(writer, True, mirror, "pop_right")
+        WRITE(writer, check, mirror, "size")
+        WRITE(writer, check, mirror, "empty")
+
         for i in range(random.randint(lower, upper)):
             WRITE(writer, check, mirror, "push_right", randomData())
             WRITE(writer, check, mirror, "peek_left")
@@ -521,6 +541,12 @@ def LAYER4(writer: DictWriter):
             WRITE(writer, check, mirror, "size")
             WRITE(writer, check, mirror, "empty")
         
+        # (n=0 pop test)
+        WRITE(writer, True, mirror, "pop_left")
+        WRITE(writer, True, mirror, "pop_right")
+        WRITE(writer, check, mirror, "size")
+        WRITE(writer, check, mirror, "empty")
+
         WRITE(writer, check, mirror, "reverse")
     
     WRITEMSG(writer, "TEST", "breaker2 (full interference execution)")
@@ -568,6 +594,12 @@ def LAYER5(writer: DictWriter):
     # empty
     while (mirror.size() > 0):
         WRITE(writer, True, mirror, "pop_right")
+    
+    # (n=0 pop test)
+    WRITE(writer, True, mirror, "pop_left")
+    WRITE(writer, True, mirror, "pop_right")
+    WRITE(writer, True, mirror, "size")
+    WRITE(writer, True, mirror, "empty")
 
 
 print("> Initializing tests...")
