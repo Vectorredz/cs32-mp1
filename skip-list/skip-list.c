@@ -18,7 +18,8 @@ LENGTH ceil_lg(LENGTH n) {
 }
 
 LENGTH _cap_height(LENGTH n){
-    return (LENGTH)ceil_lg(n); // ceil up
+    // return ceil_lg(n); // ceil up
+    return (LENGTH)(log2(n));
 }
 
 bool _flip_coin(){
