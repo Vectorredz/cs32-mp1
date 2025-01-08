@@ -9,8 +9,8 @@ typedef struct dynamic_array
     DATA *array; // array
     LENGTH last; // last valid element's index
     LENGTH start; // first valid element's index 
-    LENGTH elements; // number of valid elements (n)
-    LENGTH size; // size of the array (2n) or upper bound of the array
+    LENGTH size; // number of valid elements inside the array
+    LENGTH capacity; // capacity of the array 
     bool reverse; // used to make O(1) reversal of list
 } dynamic_array;
 

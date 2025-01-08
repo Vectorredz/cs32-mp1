@@ -5,24 +5,13 @@
 
 ### Global Implementation
 
-Global types and functions were used to make certain conventions consistent across all the list types.
+Global types were used to make certain conventions consistent across all the list types.
 
 #### Type: `LENGTH` (`size_t`)
 This type is used for values that represent the length of something, whether it be the size of the list, an index, or a counter based on the size/index.
 
 #### Type: `DATA` (`int64_t`)
 This type is used for values that represent the data that the list holds.
-
-#### Function: `TEST_elements(list) -> n, seq`
-This is used by the Unit Tester to check for correctness against the true raw sequence of `DATA` values of the list (unaffected by reversal flags), WITHOUT using `get` or any other operation.\
-For this reason, the implementer must absolutely make sure that it works correctly for any `n` and `seq`, so that there is no confusion on if it's the executed operation that failed, or if it's `TEST_elements` that's the culprit.
-
-#### Function: `TEST_internal(list) -> bool`
-This is used by the Unit Tester to check if any internal testing was successful. The implementer of the list can put any test within this function, as long as it returns either `true` or `false` to determine if the test was successful or not.\
-For example, the Sequence of Trees implementation tests for the required sequence of k's for each tree to be a concatenation of strictly increasing, and then strictly decreasing types. It will return `false` if it fails to satisfy this test at any point.
-
-#### Function: `TEST_reversed(list) -> bool`
-This is used by the Unit Tester to check if the list is reversed. The implementer must return their reversal flag in this function. Since all lists aim for $$O(1)$$ time complexity for `reverse`, this can apply to all lists.
 
 </details>
 
@@ -93,17 +82,23 @@ It simply returns `bool` that checks whether the `list` has no elements or has `
 <details>
 <summary>Getters/Setters</summary>
 
-### Operation: `get(l, i) -> DATA`
-This operation traverses the `List` from left to right until the target index `i` is found, returning the `DATA` of the `ListNode` found. If reversed it will the `head` will be the right and `tail` will be the left, hence right to left traversal.
+#### Helper: `_get_node(l, i, from_set, v) -> DATA`
+This is a helper function that once called, traverses the `List` from left to right until the target index `i` is found, returning the `DATA` of the `ListNode` found. If the (`boolean`) field `from_set` is `true` means that the helper is called by the `set` operation then instead of just return the val at target i, it would also change it's val to `v`. 
 
-### Operation: `set(l, i, v)`
-Similar traversal with the `get(l, i)` operation but instead of returning a `DATA`, it will change the current `value` of the `ListNode` found in the index `i` with `v`. If reversed it will the `head` will be the right and `tail` will be the left, hence right to left traversal.
+### Helper: `_peek(l, from_right) -> DATA`
+Helper function that reduces the __code duplication__ between the two (2) `peek_?` operations. 
 
-### Operation: `peek_left(l) -> DATA`
-This simply returns the leftmost `DATA` of the `ListNode`. If reversed it will return the rightmost `DATA` of the `ListNode` instead.
+#### Main: `get(l, i) -> DATA`
+it calls the helper `_get_node` and returns the `DATA` of the `ListNode` found at target `i`. 
 
-### Operation: `peek_right(l) -> DATA`
-This simply returns the rightmost `DATA` of the `ListNode`. If reversed it will return the leftmost `DATA` of the `ListNode` instead.
+#### Main: `set(l, i, v)`
+it calls the helper `_get_node` and changes the `DATA` of the `ListNode` found at target `i` with `DATA` passed`v`. 
+
+#### Main: `peek_left(l) -> DATA`
+This simply returns the leftmost `DATA` of the `ListNode`. If `reversed` is toggled **ON** it would return the rightmost `DATA` instead.
+
+#### Main: `peek_right(l) -> DATA`
+This simply returns the rightmost `DATA` of the `ListNode`. If `reversed` is toggled **ON** it would return the leftmost `DATA` instead.
 
 <hr>
 </details>
@@ -111,17 +106,34 @@ This simply returns the rightmost `DATA` of the `ListNode`. If reversed it will 
 <details>
 <summary>Insertions/Deletions</summary>
 
-### Operation: `pop_left(l) -> bool`
-This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **next node** left pointer to NULL. It will also update the `head` of the `List` hence making **next node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
-
-### Operation: `pop_right(l) -> bool`
-This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **prev node** right pointer to NULL. It will also update the `tail` of the `List` hence making **prev node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
-
-### Operation: `push_left(l, v)`
+### Helper: `push_left_base(l, current_node, v)`
+This is the "true" `push_left` operation. 
 This operation **insert** a new `ListNode` to the `List` by updating the left pointer of the leftmost node to the **new node** and updating it as the new `head` of the list. If reversed, it will update the right pointer of the righmost node and change its new `tail` to the **new node**.
 
-### Operation: `push_right(l, v)`
+### Helper: `push_right_base(l, current_node, v)`
+This is the "true" `push_right` operation.
 This operation **insert** a new `ListNode` to the `List` by updating the right pointer of the rightmost node to the **new node** and updating it as the new `tail` of the list. If reversed, it will update the left pointer of the leftmost node and change its new `head` to the **new node**.
+
+### Helper: `pop_left_base(l, current_node)`
+This is the "true" `pop_left` operation.
+This operation **deletes** the leftmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **next node** left pointer to NULL. It will also update the `head` of the `List` hence making **next node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
+
+### Helper: `pop_right_base(l) -> bool`
+This is the "true" `pop_right` operation.
+This operation **deletes** the rightmost `ListNode` of the `List` by disconnecting the `ListNode` at index `i = 0` and reconnecting the **prev node** right pointer to NULL. It will also update the `tail` of the `List` hence making **prev node** be the new leftmost `ListNode`. If reversed it will make use of **prev node** instead and update the `tail` of the `List`.
+
+#### Main: `push_left(l, v)`
+Calls `_push_left_base` (or `_push_right_base` if `reversed` flag is enabled.)
+
+#### Main: `push_right(l, v)`
+Calls `_push_right_base` (or `_push_left_base` if `reversed` flag is enabled.)
+
+#### Main: `pop_left(l) -> bool`
+Calls `_pop_left_base` (or `_pop_right_base` if `reversed` flag is enabled.)
+
+
+#### Main: `pop_left(l) -> bool`
+Calls `_pop_right_base` (or `_pop_left_base` if `reversed` flag is enabled.)
 
 > [!NOTE]
 > `node *store = !(l->reversed) ? curr->right : curr->left; `\
@@ -164,9 +176,9 @@ The following fields are used to store the first and last elements' indexes of t
 
 The following fields are used to store anything size-related informations. This is important because the size of the array is not equal to the amount of elements stored inside it.
 
-`LENGTH elements` : This field saves the current amount of elements stored in the array
+`LENGTH size` : This field saves the current amount of elements stored in the array
 
-`LENGTH size` : This field saves the current size of the array
+`LENGTH capacity` : This field saves the current capacity of the array
 
 Lastly, the following field was implemented to complete the reverse operation in constant time, $O(1)$.
 
@@ -183,7 +195,7 @@ Lastly, the following field was implemented to complete the reverse operation in
 #### Main: `*make(n, seq) -> dynamic_array`
 This is the main operation of `make`. It creates a dynamic array and returns the said array.
 
-It initalizes all fields of the data structure by creating `array` of size $2\mathscr{l}$, where $l$ is the size of the given sequence. It stores $2l$ and $l$ into `elements` and `size` respectively. Moreover, it saves the indexes of the first and last element as `start = 0` and `last = l - 1`. Lastly, since the given sequence is not reversed, it sets the boolean, `reverse = false`, and copies the elements of the given sequence into `array` in the exact same order starting with index $0$.
+It initalizes all fields of the data structure by creating `array` of size $2\ell$, where $\ell$ is the size of the given sequence. It stores $2\ell$ and $\ell$ into `capacity` and `size` respectively. Moreover, it saves the indexes of the first and last element as `start = 0` and `last = l - 1`. Lastly, since the given sequence is not reversed, it sets the boolean, `reverse = false`, and copies the elements of the given sequence into `array` in the exact same order starting with index $0$.
 
 <hr>
 </details>
@@ -198,10 +210,10 @@ Instead this function will **toggle** the (`boolean`) field in `array` called `r
 It simply flips the `reversed` flag for the other operations to appropriately use, resulting in $O(1)$ worst case time complexity for this operation.
 
 ### Operation: `size(l) -> LENGTH`
-It simply returns a `LENGTH` which is the current `l->elements` of the `list`.
+It simply returns a `LENGTH` which is the current `l->size` of the `list`.
 
 ### Operation: `empty(l) -> bool`
-It simply returns `bool` that checks whether the `array` has no elements or has `l->elements == 0`.
+It simply returns `bool` that checks whether the `array` has no elements or has `l->size == 0`.
 
 <hr>
 </details>
@@ -227,43 +239,43 @@ This simply returns the rightmost element of the `dynamic_array`. If `l->reverse
 <details>
 <summary>Insertions/Deletions</summary>
 
-### Helper: `_expandArray(l) -> dynamic_array`
+### Helper: `_expand_array(l) -> dynamic_array`
 
 This operation doubles the current capacity of the `dynamic_array` if the current array is full. This is achieved by copying `l->array` into a temporary array `temp`. This resets the current indexing system of the array into a zero based indexing system.
 
-After, the current `l->array` is deleted and then recreated, now with double the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->size` is also doubled. Lastly, `temp` is then copied into the new `l->array`.
+After, the current `l->array` is deleted and then recreated, now with double the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->capacity` is also doubled. Lastly, `temp` is then copied into the new `l->array`.
 
-### Helper: `_decreaseArray(l) -> dynamic_array`
+### Helper: `_decrease_array(l) -> dynamic_array`
 
 This operation halves the current capacity of the `dynamic_array` if the current array is a quarter of `l->size`. This is achieved by copying `l->array` into a temporary array `temp`. This resets the current indexing system of the array into a zero based indexing system.
 
-After, the current `l->array` is deleted and then recreated, now with half the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->size` is also halved. Lastly, `temp` is then copied into the new `l->array`.
+After, the current `l->array` is deleted and then recreated, now with half the size using `malloc`. `l->start` and `l->last` are then reset using the current indexing system. `l->capacity` is also halved. Lastly, `temp` is then copied into the new `l->array`.
 
-Lastly, if the size of `l->size` reaches 0, it creates an empty array with `l->size = 1` with all the fields of the `dynamic_array` set to default.
+Lastly, if the size of `l->size` reaches 0, it creates an empty array with `l->capacity = 1` with all the fields of the `dynamic_array` set to default.
 
 ### Operation: `pop_left(l) -> bool`
-This operation, instead of deleting, just moves `l->start` to the next index which should be the second element of the list. By doing so, `l->start` is incremented by 1 and `l->elements` is decremented by 1.
+This operation, instead of deleting, just moves `l->start` to the next index which should be the second element of the list. By doing so, `l->start` is incremented by 1 and `l->size` is decremented by 1.
 
-Note that if the array is too sparsed, it will run the operation `_decreaseArray(l)`. Moreover, if `l->reversed == true`, it will run the `pop_right(l)` operation instead. 
+Note that if the array is too sparsed, it will run the operation `_decrease_array(l)`. Moreover, if `l->reversed == true`, it will run the `pop_right(l)` operation instead. 
 
 ### Operation: `pop_right(l) -> bool`
 This operation, instead of deleting, just moves `l->last` to the index before it which should be the second to the last element of the list. By doing so, `l->last` and `l->elements` are decremented by 1.
 
-Note that if the array is *too sparsed*, it will run the operation `_decreaseArray(l)`. Moreover, if `l->reversed == true`, it will run the `pop_left(l)` operation instead. 
+Note that if the array is *too sparsed*, it will run the operation `_decrease_array(l)`. Moreover, if `l->reversed == true`, it will run the `pop_left(l)` operation instead. 
 
 ### Operation: `push_left(l, v)`
 This operation **inserts** a new value `v` to the left side of the list now becoming the first element of the list. Because the array uses a circular indexing system, we are able to `push` an element to the left of an `array` at $O(1)$ by wrapping around the array when `l->start == 0`.
 
-As a result, if `l->start == 0` and the array is not yet *too full*, `l->start = l->size - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->start != 0`, the index will just decrement by 1.
+As a result, if `l->start == 0` and the array is not yet *too full*, `l->start = l->capacity - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->start != 0`, the index will just decrement by 1.
 
-Note that if the array is *too full*, it will run the operation `_expandArray(l)`. Moreover, if `l->reversed == true`, it will run the `push_right(l, v)` operation instead.
+Note that if the array is *too full*, it will run the operation `_expand_array(l)`. Moreover, if `l->reversed == true`, it will run the `push_right(l, v)` operation instead.
 
 ### Operation: `push_right(l, v)`
 This operation **inserts** a new value `v` to the right side of the list now becoming the last element of the list. Because the array uses a circular indexing system, we are able to `push` an element to the right of an `array` at $O(1)$ by wrapping around the array when `l->last == l->size - 1`.
 
-As a result, if `l->last == d->size - 1` and the array is not yet *too sparsed*, `l->last = l->size - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->last != d->size - 1`, the index will just increment by 1.
+As a result, if `l->last == d->size - 1` and the array is not yet *too sparsed*, `l->last = l->capacity - 1`, wrapping around the index of into the other side of the array and then pushing the new value `v`. However, if `l->last != d->size - 1`, the index will just increment by 1.
 
-Note that if the array is *too full*, it will run the operation `_expandArray(l)`. Moreover, if `l->reversed == true`, it will run the `push_left(l, v)` operation instead.
+Note that if the array is *too full*, it will run the operation `_expand_array(l)`. Moreover, if `l->reversed == true`, it will run the `push_left(l, v)` operation instead.
 
 <hr>
 </details>
@@ -282,7 +294,7 @@ Note that if the array is *too full*, it will run the operation `_expandArray(l)
 ### Summary
 
 `Skip List` is a unique data structure that is a combination of a `List` and a `Linked-list`. With this, it benefits from the advantages of the both data structures. Namely, the `update` operation of a `Linked-List` with time complexity of $O(1)$ and a search operation of a `List` with $O(logn)$ . Its bottommost level or commonly known as **Level 0** is the `Normal Lane`. `Normal Lane` is simply a `Doubly-linked list` that has **all** of the elements in list of `size: n` while the levels above it is the `Express Lane` that contains **only the subset** of elements below it.\
-`Express Lanes` offers faster travesal given that it skip nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node's level, and flipping **tails** just _maintains_ its current level, hence its maxHeight. 
+`Express Lanes` offers faster travesal given that it skip nodes per level. Its level promotion is dependent on the probability `p` which in our case is `1/2`, flipping **heads** _promotes_ the current node's level, and flipping **tails** just _maintains_ its current level, hence its max_height. 
 
 <hr>
 
@@ -295,10 +307,10 @@ The **Level 0** of the `SkipList` is just a `Linked-list` where in our use-case 
 
 #### Struct: `SkipNode`
 Represents the connected elements in the `SkipList`.
-Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `headSentinel` instead.
-Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tailSentinel` instead.
+Each `SkipNode` has `left` pointer that references to the previous **existing node**, if there is no node in the left side then it will be connected to the `head_sentinel` instead.
+Its `right` pointer points to the `next` **existing node**, if no node then it will be connected to the `tail_sentinel` instead.
 It also has `below` pointer that points to the **existing node** beneath it otherwise, it connects to NULL.
-Moreover, since the sentinels, `headSentinel` and `tailSentinel` are also `SkipNodes` there is an additional (`boolean`) field `isSentinel` that is set to `false` if it is not pertaining to the sentinels and `true` otherwise.
+Moreover, since the sentinels, `head_sentinel` and `tail_sentinel` are also `SkipNodes` there is an additional (`boolean`) field `is_sentinel` that is set to `false` if it is not pertaining to the sentinels and `true` otherwise.
 Lastly, each `SkipNode` have `DATA` field that stores the value of the node, and (`LENGTH`) field `width` that acts as the offset from left to right.
 
 #### Struct: `Levellist`
@@ -308,8 +320,8 @@ To keep track of the **`HEADER`** (where the `SkipList` starts), it has two _(2)
 
 #### Struct: `Level`
 It has two _(2)_ pointers `up` and `down` that helps navigates the _succeeding_ and _preceeding_ levels in vertical direction.\
-Each levels have `SkipNode` fields `headSentinel` and `tailSentinel` representing the leftmost sentinel and rightmost sentinel respectively.\
-It also has field `cachedRightWidth` that stores the width of the right elements given that the _`Indexable Skip-list`_ reads offset of each nodes from left to right.
+Each levels have `SkipNode` fields `head_sentinel` and `tail_sentinel` representing the leftmost sentinel and rightmost sentinel respectively.\
+It also has field `cached_right_width` that stores the width of the right elements given that the _`Indexable Skip-list`_ reads offset of each nodes from left to right.
 
 #### Struct: `LevelRecordsList`
 It stores the `head` and `tail` of a `LevelRecord`.
@@ -325,26 +337,32 @@ It has field `Level` named `topLevel` that stores the highest level achieved by 
 <summary>Initializer</summary>
 
 ### Operation: `MAKE`
-#### Helper: `_capHeight(n) -> LENGTH`
-The group decides to dynamically resize the `maxHeight` of the SkipList based on the `size: n`. `_capHeight` will always be called whenever you _insert_ or _delete_ a `SkipNode` from the `SkipList`. To make sure that it satisfies the $$O(\log_2(n))$$, the function will return `(LENGTH)ceil(log2(n))` it has `LENGTH` typecast in order to prevent it from being a `non-integer`. 
+
+#### Helper: `_ceil_lg(n) -> LENGTH`
+This function makes use of the built-in function `__builtin_clz` that returns the count of the leading zeroes.
+`__builtin_clz(0LL)` returns the total number of bits in `LENGTH` and subtracts it to `__builtin_clz(n-1)` which is the number of leading zeroes of the passed number - 1. by subtracting 1 to n it will effectively calculate the ceil. 
+
+
+#### Helper: `_cap_height(n) -> LENGTH`
+The group decides to dynamically resize the `max_height` of the SkipList based on the `size: n`. `_cap_height` will always be called whenever you _insert_ or _delete_ a `SkipNode` from the `SkipList`. It calls the `_ceil_lg` that effectively gets the `log2` of the `n` and `ceils` it up. This operation takes $O(1)$.
 
 > [!NOTE]  
 > Recall that the height of a skip list is $$O(\log_2(n))$$.
 
-#### Helper: `_makeNode(v) -> SkipNode`
+#### Helper: `_make_node(v) -> SkipNode`
 It initializes the newly created `SkipNode`.\
 It allocates memory for the **newNode** and initially points its `right`, `left`, and `below` pointers to **_NULL_**.\
-Make also sets the (`boolean`) `isSentinel` default to **false**, while `width` to **0** and `val` to the passed argument `v`.
+Make also sets the (`boolean`) `is_sentinel` default to **false**, while `width` to **0** and `val` to the passed argument `v`.
 
-#### Helper: `_makeLevel() -> Level`
+#### Helper: `_make_level() -> Level`
 It initializes a new `Level` once called.\
 It allocates memory for the **newLevel** and initially points its `up` and `down` pointers to **_NULL_**.\
-This also creates new sentinels for the specific level hence, allocating memory to `headSentinel` and `tailSentinel` while initializing its respective pointers.
+This also creates new sentinels for the specific level hence, allocating memory to `head_sentinel` and `tail_sentinel` while initializing its respective pointers.
 
-#### Helper: `_initSkipList() -> SkipList`
+#### Helper: `_init() -> SkipList`
 This initializes the `SkipList` proper.\
 It allocates memory for the fields `LevelList` and `LevelRecordsList` while also setting its pointers to **_NULL_**.\
-It initially sets the values of `leftmost`, `rightmost`, `currHeight`, and `size` to the `LENGTH: 0`. 
+It initially sets the values of `leftmost`, `rightmost`, `curr_height`, and `size` to the `LENGTH: 0`. 
 
 #### Main: `make(n, seq) -> SkipList`
 This main operation aims to create a `SkipList` from a `sequence` with `size: n`.\
@@ -376,7 +394,7 @@ It simply returns `bool` that checks whether the `SkipList` has no elements or h
 
 ### Operation: `GET/SET/PEEK_*`
 
-#### Helper: `_getNode(l, target, fromSet, v) -> SkipNode`
+#### Helper: `_get_node(l, target, fromSet, v) -> SkipNode`
 This helper aims to search for the specific `SkipNode` at target index `i`.\
 It has two _(2)_ loop iteration:
 
@@ -392,11 +410,11 @@ It has two _(2)_ loop iteration:
 
 #### Main: `get(l, i) -> DATA`
 If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
-It utilizes the `_getNode`, once the `SkipNode` at target `i` is found it would read the `DATA` from it and returns the `val`.
+It utilizes the `_get_node`, once the `SkipNode` at target `i` is found it would read the `DATA` from it and returns the `val`.
 
 #### Main: `set(l, i, v)`
 If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
-It utilizes the `_getNode`, once the `SkipNode` at target `i` is found it would replace the `val` of `SkipNode` with `DATA: v`.
+It utilizes the `_get_node`, once the `SkipNode` at target `i` is found it would replace the `val` of `SkipNode` with `DATA: v`.
 
 #### Main: `peek_left(l) -> DATA`
 This simply returns the leftmost `DATA` of the `SkipNode`. If `reversed` is toggled **ON** it would return the rightmost `DATA` instead.
@@ -412,54 +430,54 @@ This simply returns the rightmost `DATA` of the `SkipNode`. If `reversed` is tog
 
 ### Operation: `PUSH_*`, `POP_*`
 
-#### Helpers: `_flipCoin() -> bool`
-This simulates the flipping of the coin given that it has a probability of `p = frac{1}{2}`. It utilizes `rand()` function, the rand function will get random integer value from the max threshold `RAND_MAX = 2147483647`. the comparison is based off the following:
+#### Helpers: `_flip_coin() -> bool`
+This simulates the flipping of the coin given that it has a probability of `p = 1/2 `. It utilizes `rand()` function, the rand function will get random integer value from the max threshold `RAND_MAX = 2147483647`. the comparison is based off the following:
 
 1. **Heads**
 - If `rand() > RAND_MAX / 2` it will return `true`. 
 2. **Tails**
 - If `rand() <= RAND_MAX / 2` it will return `false`. 
 
-#### Helpers: `_promoteLevel(l, fromRight) -> Level`
+#### Helpers: `_promote_level(l, from_right) -> Level`
 Useful helper function that is called whenever inserting a `SkipNode` to a `SkipList`. 
 
-It has a while loop that iterates as long as it satisfies the condition: `l->currHeight < l->maxHeight && _flipCoin() == true` since, the skipList aims to make a new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
-Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_makeLevel` whenever your `SkipNode` is at the top. It cannot add between levels. 
+It has a while loop that iterates as long as it satisfies the condition: `l->curr_height < l->max_height && _flip_coin() == true` since, the skipList aims to make a new Level above the current level whenever the flipping of coin lands `heads` otherwise it will just maintain its current level.\
+Inside the iteration, it checks first if the current level of the `SkipNode` is the topmost, since you can only `_make_level` whenever your `SkipNode` is at the top. It cannot add between levels. 
 
-Moreover, it has a (`boolean`) parameter **fromRight** that is passed as **true** if it was called by the `push_right` and **false** if the argument was from `push_left`. If it's **fromRight** then the promotion of newNode will happen on the inserted node at the right. If it's **!(fromRight)** then the promotion will happen on the leftmost while also updating its `cachedRightWidth`. 
+Moreover, it has a (`boolean`) parameter **from_right** that is passed as **true** if it was called by the `push_right` and **false** if the argument was from `push_left`. If it's **from_right** then the promotion of newNode will happen on the inserted node at the right. If it's **!(from_right)** then the promotion will happen on the leftmost while also updating its `cached_right_width`. 
 
-#### Helpers: `_demoteLevel(l, currLevel, fromRight)`
-Unlike the` _promoteLevel` it will do the reverse of promoting the level hence, by pruning the level instead.
+#### Helpers: `_demote_level(l, currLevel, from_right)`
+Unlike the` _promote_level` it will do the reverse of promoting the level hence, by pruning the level instead.
 
 Once called it starts from **`HEADER`** and traverse from up to down. It has a condition to check whether the current level is empty or not. If it is empty it will change the pointer of the current level and the next level before freeing the current topmost level, to ensure safety of updating the status of `SkipList`.
 
 #### Helpers: `_push_left_base(l, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
 Before inserting the newNode, it undergoes a series of check to update the variables relating to the `size` and `width` of the `SkipList`
-It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.
+It updates the max_height by calling `_cap_height` given that inserting an element increases the `size: n`.
 
 Before inserting, we must update the `width` of the leftmost node from **level 0** to the topmost. 
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promote_level` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
 
 #### Helpers: `_push_right_base(l, v)`
 A mirror of `_push_right_base`.\
 This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
 Before inserting the newNode, it undergoes a series of checks to update the variables relating to the `size` and `width` of the `SkipList`\
-It updates the maxHeight by calling `_capHeight` given that inserting an element increases the `size: n`.
+It updates the max_height by calling `_cap_height` given that inserting an element increases the `size: n`.
 
-Before inserting, we must update the `cachedRightWidth` since we are pushing to the right of `SkipList`.
+Before inserting, we must update the `cached_right_width` since we are pushing to the right of `SkipList`.
 
-It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promoteLevel` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
+It will restart to **level 0**, and allocate memory for the newNode. Recall that at **level 0** it contains all of the elements hence when inserting you always add first at the **level 0** and then progress up. After inserting newNode to the **level 0** it calls `_promote_level` to check whether the newly added node is applicable to increase level or not. After that it will also update the `LevelRecord` to track the height attained by the newNode. 
 
 
 #### Helpers: `_pop_left_base(l) -> bool`
 This is the "true" `pop_left` operation, unaffected by the `reversed` flag.\
 if the `size == 0` or `SkipList` is `empty` then it would immediately return `false` since we cannot pop an empty list. 
 
-Before removing a `SkipNode` from the `SkipList`, the operation checks first and updates necessary variables including `size`. Since, removing an element decreases the size of the list it also calls the `_capHeight` function to dynamically resize. 
+Before removing a `SkipNode` from the `SkipList`, the operation checks first and updates necessary variables including `size`. Since, removing an element decreases the size of the list it also calls the `_cap_height` function to dynamically resize. 
 
-After all the necessary updates, we will now call `_demoteLevel` to check whether we can prune the level or not.
+After all the necessary updates, we will now call `_demote_level` to check whether we can prune the level or not.
 
 Finally, we update the `width` for the leftmost node and return `true` if we successfully popped an element.
 
@@ -470,11 +488,11 @@ This is the "true" `pop_right` operation, unaffected by the `reversed` flag.\
 if the `size == 0` or `SkipList` is `empty` then it would immediately return `false` since we cannot pop an empty list. 
 
 Before removing a `SkipNode` from the `SkipList`, the operation checks first and updates necessary variables including `size`.\
-Since, removing an element decreases the size of the list it also calls the `_capHeight` function to dynamically resize. 
+Since, removing an element decreases the size of the list it also calls the `_cap_height` function to dynamically resize. 
 
-After all the necessary updates, we will now call `_demoteLevel` to check whether we can prune the level or not.
+After all the necessary updates, we will now call `_demote_level` to check whether we can prune the level or not.
 
-Finally, we update the `cachedRightWidth` for the rightmost node and return `true` if we successfully popped an element.
+Finally, we update the `cached_right_width` for the rightmost node and return `true` if we successfully popped an element.
 
 
 #### Main: `push_left(list, v)`
@@ -545,19 +563,20 @@ With `leaf` it uses `union` to determine whether it holds a `DATA` value and not
 ### Operation: `MAKE`
 
 
-#### Helper: `_getGreatestPowerOfTwo(number) -> exponent, k`
-This helper function aims to get the greatest power of two as well as its exponent, obtainable for a given number without exceeding it. For example, with $n=22$,
-its greatest power of two is $2^4==16$, because $2^5=32$ which exceeds it.\
+#### Helper: `_get_greatest_power_of_two(number) -> k`
+This helper function returns the exponent of the greatest power of 2 at most the given number.
+Formally, it returns the largest $k$ where $2^k \le \text{number}$.
+For example, with $n=22$, its greatest power of two is $2^4=16$, because $2^5=32$ which exceeds it.\
 It utilizes bitshifting for quick exponents.
 
-#### Helper: `_constructPTreeNodesFromRange(sequence, offset, lowerBound, upperBound) -> PTreeNode`
+#### Helper: `_construct_ptree_nodes_from_range(sequence, offset, lowerBound, upperBound) -> PTreeNode`
 A recursive function that constructs a Perfect Binary Tree from the root, with the leaves accurately representing a subsequence of the given sequence.
-Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).\
-For example, we have a sequence of
+Once it reaches the leaves, it gets the appropriate value from the sequence, along with `offset` (if it's in a different part of the sequence).
+
+For example, we have a sequence of $n=12$
 
 $$\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\}$$
 
-which is of length $12$.
 If we want to get a `PTree` of type $3$ with the leaves from indices $4$ to $11$, then we call the helper function with:
 
 $$\text{lowerBound} = 0$$
@@ -577,15 +596,33 @@ $$\{4, 5, 6, 7, 8, 9, 10, 11\}$$
 Then, the caller receives the root node.\
 The reason this is by design is that there's no need to have a separate driver code for this recursive function to call the appropriate bounds. Simply always provide $lowerBound = 0$, and then specify $upperBound = 2^k$, and it will immediately start shifting indices and constructing its children without more helper function bloat.
 
-#### Helper: `_constructPTrees(n, seq) -> head, tail`
+#### Helper: `_construct_ptrees(n, seq) -> head, tail`
 The point of this helper is to represent `n` as distinct powers of two, from highest to lowest.\
-It achieves this by repetitively using `_getGreatestPowerOfTwo` and constructing a `PTree` for each remaining subsequence using `_constructPTreeNodesFromRange`, until it exhausts the entire sequence.
+It achieves this by repetitively using `_get_greatest_power_of_two` and constructing a `PTree` for each remaining subsequence using `_construct_ptree_nodes_from_range`, until it exhausts the entire sequence.
+
+For example, we have a sequence of $n=7$
+
+$${0, 1, 2, 3, 4, 5, 6}$$
+
+We can represent n as the sum of distinct powers of two:
+
+$$n = 2^2 + 2^1 + 2^0 = 4 + 2 + 1$$
+
+So, the sequence of k's would be
+
+$${2, 1, 0}$$
+
+and there would be three PTrees. The leaves of these three PTrees would contain the numbers:
+
+$${0, 1, 2, 3}, {4, 5}, {6}$$
+
+So, it satisfies the increasing and then decreasing sequence of k's requirement.\
 After everything, it gives the caller the appropriate doubly-linked-list from `head` to `tail`.
 
 #### Main: `make(n, seq) -> list`
 With these helper functions, `make` can finally construct the list.\
 It initializes the members `n`, `reversed`, `leftmost`, and `rightmost` appropriately.\
-Then, since the datatype of `LENGTH` is unsigned, it only calls `_constructPTrees` if $n > 0$, and initializes the appropriate `head` and `tail` members.
+Then, since the datatype of `LENGTH` is unsigned, it only calls `_construct_ptrees` if $n > 0$, and initializes the appropriate `head` and `tail` members.
 
 <hr>
 </details>
@@ -613,11 +650,15 @@ It simply flips the `reversed` flag for the other operations to appropriately us
 
 ### Operation: `GET`/`SET`/`PEEK_*`
 
-#### Helper: `_getLeafNodeAtIndex(i) -> node`
-The star of the show -- this helper function's goal is to return the appropriate leaf node for a given index `i`.\
+#### Helpers:
+**`_get_leaf_node(list, i, lowerBound, upperBound) -> node`**
+**`_get_leaf_node_at_index(list, i) -> node`**
+The star of the show -- these helper functions' goal is to return the appropriate leaf node for a given index `i`.\
 Because the nodes themselves don't store their index, the function must calculate for the **"phantom"** index. That is, the function has to manually calculate the "offsets" and bounds themselves. In particular, it keeps track for `lowerBound` and `upperBound`.\
-The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to $O(logn)$.\
-It utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right. Then, it shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
+The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree, so search is brought down to $O(logn)$.
+
+`_get_leaf_node_at_index` utilizes the `l` member of the `PTree` to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right.\
+Then, `_get_leaf_node` is called for the correct `PTree` and and shifts the current recorded `lowerBound` and `upperBound` as it traverses down the tree (vertical).\
 The appropriate bounds are:
 
 $$\text{LeftChild} = [lowerBound, mid]$$
@@ -632,20 +673,22 @@ And voila, we have found the correct leaf.\
 With this helper function, we can now make:
 
 #### Main: `get(list, i) -> DATA`
-If $0 \leq i < n$ is not satisfied, then it simply returns $0$.\
-It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and returns its `DATA` value.\
+If $0 \leq i < n$ is not satisfied, then it throws an error.\
+It utilizes `_get_leaf_node_at_index` to get the appropriate node, and returns its `DATA` value.\
 The index is affected by the `reversed` flag to correct for reversal.
 
 #### Main: `set(list, i, v)`
-If $0 \leq i < n$ is not satisfied, then it simply returns.\
-It utilizes `_getLeafNodeAtIndex` to get the appropriate node, and sets its `DATA` value to `v`.\
+If $0 \leq i < n$ is not satisfied, then it throws an error.\
+It utilizes `_get_leaf_node_at_index` to get the appropriate node, and sets its `DATA` value to `v`.\
 The index is affected by the `reversed` flag to correct for reversal.\
 It also updates `leftmost` or `rightmost`, depending on whether the index rests on $0$ or $n-1$.
 
 #### Main: `peek_left(list) -> DATA`
+if $n = 0$, then it throws an error.\
 Returns `leftmost`, or `rightmost` if `reversed` flag is enabled.
 
 #### Main: `peek_right(list) -> DATA`
+if $n = 0$, then it throws an error.\
 Returns `rightmost`, or `leftmost` if `reversed` flag is enabled.
 
 <hr>
@@ -656,26 +699,33 @@ Returns `rightmost`, or `leftmost` if `reversed` flag is enabled.
 
 ### Operation: `PUSH_*`, `POP_*`
 
-#### Helper: `_constructZeroPTree(v) -> tree`
+#### Helper: `_construct_zero_ptree(v) -> tree`
 The purpose of this helper function is to construct a `PTree` of type $0$, with the given `DATA` value as its root (leaf)'s value.\
 This is useful for pushing a new value into the list.
 
 #### Helpers:
-**`_mergeNonDistinctPTreesToRight(list, start)`**\
-**`_mergeNonDistinctPTreesToLeft(list, start)`**
+**`_merge_non_distinct_ptrees_to_right(list, start)`**\
+**`_merge_non_distinct_ptrees_to_left(list, start)`**
 
 Here we have helper functions for merging non-distinct `PTrees` together, split into two: one for merging to the left, and one for merging to the right.\
-`PTrees` are non-distinct if their type `k` is the same, which means they can be combined into one greater power of two, improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing sequence of $k$'s, and overall preventing the degenerate representation of $n$ trees of type $0$.\
 It is inspired by binomial heap's merge operation.
-Given a starting doubly-linked-list node, we proceed to the right (left),
-and if our current `PTree`'s type is the same as the next `PTree`, then we construct a third `PTree` containing their two roots as children.
-We know that this is of type $k+1$, and contains $l*2$ leaf nodes.\
-We immediately stop if the next tree's type is distinct from the current tree, as we know that trees further than it are already distinct and satisfy the required k-concatenation.\
-This helper function directly modifies the doubly-linked-list of the main list.
+
+It aims to correct the list into satisfying the concatenation of a strictly increasing and strictly decreasing
+sequence of $k$'s. After a push/pop operation, there may be some PTrees that are non-distinct (that is, their $k$'s (types) are the same.) This means that we can combine these two trees into one bigger tree, with type $k+1$.
+
+We are given a sequence of PTrees as a doubly-linked-list. We start at some node in this list and proceed to the right (left). If our current PTree's type is the same as the next PTree, then we construct a third PTree containing their two roots as children. (We know that this is of type k+1, and contains l*2 leaf nodes.)\
+By assumption, we know that all the PTrees further than the current and next PTree already have distinct $k$'s (distinct types) when this function was called.
+
+By "merging" these two PTrees together, one of two conditions can happen:
+- this new larger PTree has a different $k$ from the next one.
+- this new larger PTree has the same $k$ as the next one, so we can combine them both into one even bigger PTree.
+
+The function will keep merging to the right (left) until it falls into the first condition, which means it finished correcting the list's sequence of $k$'s, since any PTree further than the two being checked are already distinct by assumption.
+(This helper function directly modifies the doubly-linked-list of the main list.)
 
 #### Helpers:
-**`_cascadeRemovalLeft(list, start) -> subHead, subTail`**\
-**`_cascadeRemovalRight(list, start) -> subHead, subTail`**
+**`_cascade_remove_left(list, start) -> subHead, subTail`**\
+**`_cascade_remove_right(list, start) -> subHead, subTail`**
 
 These are helper functions used by the `pop_*` operations.\
 They are pretty much the opposite of the merge operations, split into two: one for cascading the right of the `PTree`, and one for cascading the left.\
@@ -683,10 +733,12 @@ We know that only the leftmost (rightmost) leaf of the target `PTree` is the one
 So, its purpose is to "wrap open" the `PTree` back into a sequence of `PTrees`.\
 It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node sub-list.\
 Then the other leftover left (right) child is deallocated and removed from the list entirely.
-Each successive right (left) subtree is of type $$k-1$$ and $$l/2$$.\
+Each successive right (left) subtree is of type $$k-1$$ and $$l/2$$.
+
+Note that we assume the given PTree for this helper is of type k > 0, since if the PTree is of type 0, then it can just be immediately removed from the list without any repercussions (it's a single leaf, which is already our target for removal.)\
 After everything, it gives the caller the appropriate sublist of right-child (left-child) `PTrees`, with its own `subHead` and `subTail`.
 
-#### Helper: `_peekABoo(list)`
+#### Helper: `_peek_a_boo(list)`
 A useful helper function for updating the `leftmost`/`rightmost` value after a modification of the list.\
 A useful helper function for updating the `leftmost`/`rightmost` value after a modification of the list.\
 It is useful for peek_left/peek_right operations.\
@@ -695,30 +747,30 @@ It does this for both `leftmost` and `rightmost` in each call.
 
 #### Helper: `_push_left_base(list, v)`
 This is the "true" `push_left` operation, unaffected by the `reversed` flag.\
-It first calls `_constructZeroPTree` on the `DATA` value `v`, and pushes it to the head (left) of the doubly-linked-list.\
-Then, it calls `_mergeNonDistinctPTreesToRight` on the new head of the list, to make sure it satisfies the required k-concatenation.\
+It first calls `_construct_zero_ptree` on the `DATA` value `v`, and pushes it to the head (left) of the doubly-linked-list.\
+Then, it calls `_merge_non_distinct_ptrees_to_right` on the new head of the list, to make sure it satisfies the required k-concatenation.\
 Finally, it updates `leftmost` to the new value (and `rightmost` if the new `PTree` is also the tail).
 
 
 #### Helper: `_push_right_base(list, v)`
 A mirror of `_push_left_base`.\
 This is the "true" `push_right` operation, unaffected by the `reversed` flag.\
-It first calls `_constructZeroPTree` on the `DATA` value `v`, and pushes it to the tail (right) of the doubly-linked-list.\
-Then, it calls `_mergeNonDistinctPTreesToLeft` on the new tail of the list, to make sure it satisfies the required k-concatenation.\
+It first calls `_construct_zero_ptree` on the `DATA` value `v`, and pushes it to the tail (right) of the doubly-linked-list.\
+Then, it calls `_merge_non_distinct_ptrees_to_left` on the new tail of the list, to make sure it satisfies the required k-concatenation.\
 Finally, it updates `rightmost` to the new value (and `leftmost` if the new `PTree` is also the head).
 
 #### Helper: `_pop_left_base(list)`
 This is the "true" `pop_left` operation, unaffected by the `reversed` flag.\
 It first checks if the leftmost `PTree` is of type $0$. If it is, then it simply removes that doubly-linked-list node from the list.\
-If not, then it calls `_cascadeRemovalLeft` on the leftmost `PTree`, then pushes the new sublist to the head (left), and then finally calls `_mergeNonDistinctPTreesToRight` to fix any non-distinct types.\
-In both cases, it calls `_peekABoo(list)` to update `leftmost` and `rightmost` appropriately.
+If not, then it calls `_cascade_remove_left` on the leftmost `PTree`, then pushes the new sublist to the head (left), and then finally calls `_merge_non_distinct_ptrees_to_right` to fix any non-distinct types.\
+In both cases, it calls `_peek_a_boo(list)` to update `leftmost` and `rightmost` appropriately.
 
 #### Helper: `_pop_right_base(list)`
 A mirror of `_pop_left_base`.\
 This is the "true" `pop_right` operation, unaffected by the `reversed` flag.\
 It first checks if the rightmost `PTree` is of type $0$. If it is, then it simply removes that doubly-linked-list node from the list.\
-If not, then it calls `_cascadeRemovalRight` on the rightmost `PTree`, then pushes the new sublist to the tail (right), and then finally calls `_mergeNonDistinctPTreesToLeft` to fix any non-distinct types.\
-In both cases, it calls `_peekABoo(list)` to update `leftmost` and `rightmost` appropriately.
+If not, then it calls `_cascade_remove_right` on the rightmost `PTree`, then pushes the new sublist to the tail (right), and then finally calls `_merge_non_distinct_ptrees_to_left` to fix any non-distinct types.\
+In both cases, it calls `_peek_a_boo(list)` to update `leftmost` and `rightmost` appropriately.
 
 
 #### Main: `push_left(list, v)`

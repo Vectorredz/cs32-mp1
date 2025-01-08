@@ -9,7 +9,7 @@ typedef struct _SkipNode {
     struct _SkipNode *right;  // link to the right adjacent nodes
     struct _SkipNode *left; // link to the left adjacent nodes
     struct _SkipNode *below; // link to the each levels; level 0, node is linked to NULL
-    bool isSentinel; // flag
+    bool is_sentinel; // flag
     DATA val;  
     LENGTH width;
 } SkipNode;
@@ -18,9 +18,9 @@ typedef struct _SkipNode {
 typedef struct _Level {
     struct _Level *up;
     struct _Level *down;
-    SkipNode *headSentinel; // head
-    SkipNode *tailSentinel; // tail
-    LENGTH cachedRightWidth;
+    SkipNode *head_sentinel; // head
+    SkipNode *tail_sentinel; // tail
+    LENGTH cached_right_width;
 } Level;
 
 // Vertical doubly-linked List to store the levels
@@ -30,7 +30,7 @@ typedef struct _LevelList {
 } LevelList;
 
 typedef struct _LevelRecord {
-    Level *topLevel;
+    Level *top_level;
     struct _LevelRecord *next;
     struct _LevelRecord *prev;
 } LevelRecord;
@@ -42,32 +42,34 @@ typedef struct _LevelRecordsList {
 
 typedef struct _SkipList {
     LevelList *levels;
-    LevelRecordsList *nodeTopLevels;
+    LevelRecordsList *node_top_levels;
     
     DATA leftmost;
     DATA rightmost;
     
-    LENGTH maxHeight;
-    LENGTH currHeight;
+    LENGTH max_height;
+    LENGTH curr_height;
     LENGTH size;
     bool is_reversed;
 } SkipList;
 
 // Helpers
-LENGTH _capHeight(LENGTH n);
-bool _flipCoin();
-SkipNode *_getNode(SkipList *l, LENGTH i, bool fromSet, DATA v);
-Level *_promoteLevel(SkipList *l, bool fromRight);
-void _demoteLevel(SkipList *l, Level *currLevel, bool fromRight);
+
+LENGTH ceil_lg(LENGTH n);
+LENGTH _cap_height(LENGTH n);
+bool _flip_coin();
+SkipNode *_get_node(SkipList *l, LENGTH i, bool from_set, DATA v);
+Level *_promote_level(SkipList *l, bool from_right);
+void _demote_level(SkipList *l, Level *curr_level, bool from_right);
 void _push_left_base(SkipList *l, DATA v);
 void _push_right_base(SkipList *l, DATA v);
 bool _pop_left_base(SkipList *l);
 bool _pop_right_base(SkipList *l);
 
 // Init
-SkipNode *_makeNode(DATA v);
-Level *_makeLevel();
-SkipList *_initSkipList();
+SkipNode *_make_node(DATA v);
+Level *_make_level();
+SkipList *_init();
 SkipList *make(LENGTH n, DATA *seq);
 
 // Flags/SkipList Info

@@ -16,7 +16,7 @@ Vilar, Louise
 ### List Implementations
 
 *\* The directories for each of the 4 list implementations.\
-Each contain their own **header** and **source** file, as well as a `test.c` file for manual testing. Example:* [d-linked-list.h](doubly-linked-list/d_linked_list.h) [d-linked-list.c](doubly-linked-list/d_linked_list.c) [test.c](doubly-linked-list/test.c)
+Each contain their own **header** and **source** file. Example:* [d-linked-list.h](doubly-linked-list/d_linked_list.h) [d-linked-list.c](doubly-linked-list/d_linked_list.c)
 
 
 **[doubly-linked-list](doubly-linked-list)** - Implementation of the Doubly Linked List.\
@@ -57,8 +57,10 @@ Lastly, we aimed for $O(1)$ worst case for all lists' `reverse` operations.
 
 ## Unit Test
 
-For unit testing, we primarily used a controlled, randomized test generator for testing edge cases and determining efficiency.\
+For unit testing, we primarily used a controlled, semi-randomized test generator for testing edge cases and determining efficiency. For this reason, asserts on more complex checks were not used within the implementation (e.g Sequence of Trees increasing/decreasing $k$'s assertion). Instead, they are present in special test functions, which will be discussed later on in this section.
 It is divided into the **Python-side**, and the **C-side**.
+
+*One thing to note is that the tester directly includes a source file based on the selected list implementation in its settings header, which will be discussed later on in this section. I believe it may be an unusual and risky way of source management, though it has helped us simplify things in the meantime to not worry about object file linking when compiling and running the tester's source file directly.*
 
 ### Summary
 *\* All relevant tester files are located in **[mirror-flower](mirror-flower)***\
@@ -229,14 +231,10 @@ Included as a C header by the tester.
 | SETTING | VALUE | DEFAULT |
 | :------ | :------- | :------ |
 | IMPLEMENTATION | `DOUBLY_LINKED_LIST` / `DYNAMIC_ARRAY` / `SKIP_LIST` / `TREE_SEQUENCE` <br> The desired list to test. | `DOUBLY_LINKED_LIST` |
-| LINE_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> This is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
+| LINE_DISPLAY | `boolean` <br> Whether to display the current line executing. <br> In place of a debugger, this is useful for segfaults <br> where the tester abruptly stops <br> and the faulty line is unknown. | `true` |
 | CHECK_FOR_EFFICIENCY | `boolean` <br> Whether the automatic tester checks for efficiency (**TLE**). | `false` |
 | TLE_BOUND | `double (milliseconds)` <br> Time boundary for throwing TLE. | `1000.0` |
 | INPUT_DIRECTORY | `string` <br> The test inputs' file directory. | `inputs` |
-
-<br>
-
-*The tester directly includes a source file based on **IMPLEMENTATION**. I believe it may be an unorthodox way of testing, though it has helped us simplify things in the meantime.*
 
 <br>
 
@@ -244,11 +242,27 @@ Included as a C header by the tester.
 **[C-side.]**\
 The automatic tester for all the generated test cases.\
 It first obtains each line of the .txt and stores it in an array.\
-Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**. It also tests for its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)
-
-The tester also uses special test functions for its testing. These are global test operations that must be implemented for each list. They can be viewed in the **Global** section of **[DETAILS.md](DETAILS.md)**. In particular, it also verifies for the test operation `TEST_internal` to verify the internal tests.
+Then, it sifts through each line. If the line's **RESULT** is not **X**, then it verifies for correctness and notifies the user if an operation's output failed to match **RESULT**. It also tests for its efficiency (if **CHECK_FOR_EFFICIENCY** setting is `true`.)  Additionally, it verifies for the test operation `TEST_internal` to verify the internal tests, discussed below.
 
 If all tests pass, it notifies the user that they have passed all **Layers**.
+
+<br>
+
+### [C] Special Test Functions
+
+The tester also uses special test functions for its testing. These are global test operations that must be implemented for each list.
+
+#### Function: `TEST_elements(list) -> n, seq`
+This is used by the Unit Tester to check for correctness against the true raw sequence of `DATA` values of the list (unaffected by reversal flags), WITHOUT using `get` or any other operation.\
+For this reason, the implementer must absolutely make sure that it works correctly for any `n` and `seq`, so that there is no confusion on if it's the executed operation that failed, or if it's `TEST_elements` that's the culprit.
+
+#### Function: `TEST_internal(list) -> bool`
+This function is used in place of expensive assertions within the list implementations themselves.\
+It is used by the Unit Tester to check if any internal testing was successful. The implementer of the list can put any test within this function, as long as it returns either `true` or `false` to determine if the test was successful or not.\
+For example, the Sequence of Trees implementation tests for the required sequence of k's for each tree to be a concatenation of strictly increasing, and then strictly decreasing types. It will return `false` if it fails to satisfy this test at any point.
+
+#### Function: `TEST_reversed(list) -> bool`
+This is used by the Unit Tester to check if the list is reversed. The implementer must return their reversal flag in this function. Since all lists aim for $$O(1)$$ time complexity for `reverse`, this can apply to all lists.
 
 <br>
 
@@ -281,7 +295,7 @@ With that, the steps are as follows:
     - Run [mirror.py](mirror-flower/mirror.py)
 2. **TEST THE LIST**
     - Update [test_settings_r.h](mirror-flower/test_settings_r.h) settings to desired values
-    - Run [reflection.c](mirror-flower/reflection.c)
+    - Run [reflection.c](mirror-flower/reflection.c) (without linking the target list's source file, as it is managed by the settings already)
     - If any bugs are caught, debug with given error info and look at the line the operation failed in the files in **INPUT_DIRECTORY**
 3. **GRAPHS** *(Optional)*
     - Update [test_settings_g.h](mirror-flower/test_settings_g.h) settings to desired values

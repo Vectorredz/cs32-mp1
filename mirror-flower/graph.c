@@ -2,11 +2,13 @@
     << Grapher >>
 */
 // --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-            ||-- OUTPUT --||
-<< ----------------------------------------- */
 /*
+
+-----------------------------------------------
+GRAPHER
+-----------------------------------------------
 - After the tests, the tester will output the plot points in OUTPUT_DIRECTORY.
+
 */
 #include "test_settings_g.h"
 // --------------------------------------------------------- >>
@@ -42,13 +44,12 @@
     typedef PTreeList Reflection;
 #endif
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
 
-            ||-- HELPERS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
+/*
+-----------------------------------------------
+HELPERS
+-----------------------------------------------
+*/
 
 #include "time.h"
 
@@ -201,8 +202,16 @@ void OPERATION(FILE** output, Reflection* list, char* operation){
     EXPORT_DELTA_TIME(output, NEW_WRITE(operation, n, _PROCESSTIME(_rec, rec)), true);
 }
 
+
+/*
+-----------------------------------------------
+MAIN GRAPHER
+-----------------------------------------------
+*/
+
 int main(){
     printf("<< Grapher >>\n");
+    printf("> GRAPHING: List %d\n", IMPLEMENTATION);
 
     // Initialize others
     printf("> Initializing variables...\n");
@@ -227,17 +236,17 @@ int main(){
     const char *outputs = "../mirror-flower/outputs/";
     FILE **output = malloc(12 * sizeof(FILE));
     FILE *_make = fopen("../mirror-flower/outputs/make.txt", "w+");
-    FILE *_peek_l = fopen("../mirror-flower/outputs/peek_l.txt", "w+");
-    FILE *_peek_r = fopen("../mirror-flower/outputs/peek_r.txt", "w+");
-    FILE *_push_l = fopen("../mirror-flower/outputs/push_l.txt", "w+");
-    FILE *_push_r = fopen("../mirror-flower/outputs/push_r.txt", "w+");
+    FILE *_peek_l = fopen("../mirror-flower/outputs/peek_left.txt", "w+");
+    FILE *_peek_r = fopen("../mirror-flower/outputs/peek_right.txt", "w+");
+    FILE *_push_l = fopen("../mirror-flower/outputs/push_left.txt", "w+");
+    FILE *_push_r = fopen("../mirror-flower/outputs/push_right.txt", "w+");
     FILE *_set = fopen("../mirror-flower/outputs/set.txt", "w+");
     FILE *_get = fopen("../mirror-flower/outputs/get.txt", "w+");
     FILE *_empty = fopen("../mirror-flower/outputs/empty.txt", "w+");
     FILE *_size = fopen("../mirror-flower/outputs/size.txt", "w+");
     FILE *_reverse = fopen("../mirror-flower/outputs/reverse.txt", "w+");
-    FILE *_pop_r = fopen("../mirror-flower/outputs/pop_r.txt", "w+");
-    FILE *_pop_l = fopen("../mirror-flower/outputs/pop_l.txt", "w+");
+    FILE *_pop_r = fopen("../mirror-flower/outputs/pop_right.txt", "w+");
+    FILE *_pop_l = fopen("../mirror-flower/outputs/pop_left.txt", "w+");
     output[0] = _make;
     output[1] = _push_l;
     output[2] = _push_r;

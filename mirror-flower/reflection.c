@@ -3,11 +3,13 @@
     Will your Reflection be the same as mine?
 */
 // --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-            ||-- TESTER --||
-<< ----------------------------------------- */
 /*
-- The tester will display any wrong operations, and determine if the list passes all tests.
+
+-----------------------------------------------
+TESTER
+-----------------------------------------------
+- The tester will display any wrong operations and internal checks, and determine if the list passes all tests.
+
 */
 #include "test_settings_r.h"
 // --------------------------------------------------------- >>
@@ -26,13 +28,11 @@
 
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- MISCELLANEOUS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
+/*
+-----------------------------------------------
+MISCELLANEOUS
+-----------------------------------------------
+*/
 #if IMPLEMENTATION == DOUBLY_LINKED_lIST
     #include "../doubly-linked-list/d_linked_list.c"
     typedef list Reflection;
@@ -90,14 +90,11 @@
 
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- HELPERS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
+/*
+-----------------------------------------------
+HELPERS
+-----------------------------------------------
+*/
 
 // Used for tests
 typedef struct _TestData {
@@ -286,7 +283,7 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
         fprintf(stderr, "(( %s ))\n", path);
         fprintf(stderr, "[/] [line %zu]: WA [%lfms]\n", testNum, dt);
         fprintf(stderr, "!! Failed Operation !!\n");
-        fprintf(stderr, ":: line %zu\n:: column %zu (char FAULT: \"%c\", CORRECT: \"%c\")\n", testNum, i, RESULT[i], mRESULT[i]);
+        fprintf(stderr, ":: line %zu\n:: column %zu (char FAULT: \"%c\", CORRECT: \"%c\")\n", testNum, i, mRESULT[i], RESULT[i]);
         if (extraOperation == NULL){
             fprintf(stderr, ":: operation: %s\n", operation);
         } else {
@@ -325,15 +322,14 @@ void VERIFY(Reflection* list, char* path, size_t testNum, char* operation, char*
 }
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- << 
-
-            ||-- MAIN TESTER --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
+/*
+-----------------------------------------------
+MAIN TESTER
+-----------------------------------------------
+*/
 int main(){
     printf("<< Water Moon. >>\nWill your Reflection be the same as mine?\n");
+    printf("> REFLECTION: List %d\n", IMPLEMENTATION);
 
     // Get tests first for each file
     printf("> Getting tests for (( " INPUT_DIRECTORY " )) ...\n");
@@ -602,6 +598,8 @@ int main(){
             free(testLine[2]);
             free(testLine[3]);
             free(testLine);
+
+            opCounter++;
         }
         
         free(testData.path);

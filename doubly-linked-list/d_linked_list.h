@@ -21,6 +21,14 @@ typedef struct list{
     bool reversed;
 } list;
 
+// Helpers
+DATA _get_node(list *l, node* current_node, LENGTH i, bool from_set, DATA v);
+void push_left_base(list *l, node *current_node, DATA v);
+void push_right_base(list *l, node *current_node, DATA v);
+bool pop_left_base(list *l, node *current_node, node *store_node);
+bool pop_right_base(list *l, node *current_node, node *store_node);
+DATA _peek(list *l, bool from_right);
+
 // Init
 list *init();
 list *make(LENGTH n, DATA *seq);

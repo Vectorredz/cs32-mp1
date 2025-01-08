@@ -85,10 +85,8 @@ Now, looking within the while loop, since the loop will run at most an $n$ amoun
 
 Now, combining both recurrences, we get:
 
-$$
-T(n)=T_{outer}+T_{loop} \\
-= O(1)+O(n) 
-$$
+$$T(n)=T_{outer}+T_{loop} $$
+$$= O(1)+O(n)$$
 
 
 Which can be simplified, by definition of Big O, to $O(n)$.
@@ -143,9 +141,9 @@ For example, both push operations append a value to the leftmost or the rightmos
 
 However, `push` expands the array using `_expand_array` when the array becomes too full. Note that `_expand_array` consists of constant time operations and two for-loops. The two for-loops iterate for a total of $n$ times, where $n$ is the amount of elements in the array, and each iteration runs in $O(1)$. As a result, `_expand_array` runs in $O(n)$. 
 
-Because of this, `push` will end up running in $O(n)$ worst case. However, since `_expand_array` only executes when the array its capacity, which happens very infrequently as the array grows larger, we can say that `push` runs in $O(1)$ amortized.
+Because of this, `push` will end up running in $O(n)$ worst case. However, since `_expand_array` only executes when the array its capacity, which happens very infrequently as the array grows larger, we can say that `push` runs in $O(1)$ amortized. This is because the running time only becomes $O(n)$ when $\frac{\text{capacity}}{4}\ge n\ge 2\cdot \text{capacity}$ and $O(1)$ otherwise.
 
-Thus, we have proven that the time complexity of `push` is $O(1)$ amortized.
+Thus, we have proven that `push` runs in $O(1)$ amortized.
 
 #### Function: `pop_left` \& `pop_right`
 **Time Complexity: $O(1)$ amortized**<br>
@@ -158,7 +156,9 @@ For example, both push operations append a value to the leftmost or the rightmos
 
 However, `pop` expands the array using `_decrease_array` when the array becomes too full. Note that `_decrease_array` consists of constant time operations and two for-loops. The two for-loops iterate for a total of $n$ times, where $n$ is the amount of elements in the array, and each iteration runs in $O(1)$. As a result, `_decrease_array` runs in $O(n)$. 
 
-Because of this, `pop` will end up running in $O(n)$ worst case. However, since `_decrease_array` only executes when the array its capacity, which happens very infrequently as the array grows larger, we can say that `pop` runs in $O(1)$ amortized.
+Because of this, `pop` will end up running in $O(n)$ worst case. However, since `_decrease_array` only executes when the array its capacity, which happens very infrequently as the array grows larger, we can say that `pop` runs in $O(1)$ amortized. This is because the running time only becomes $O(n)$ when: $\frac{\text{capacity}}{4}\ge n\ge 2\cdot \text{capacity}$ and $O(1)$ otherwise.
+
+Thus, we have proven that `pop` runs in $O(1)$ amortized.
 
 #### Function: `peek`\& `size` \& `empty`
 **Time Complexity: $O(1)$ worst case**<br>
@@ -227,7 +227,7 @@ $$T_\text{init} = O(1)$$
 
 **T<sub>push</sub>: push_\***. The `push` operation only calls a helper function`_push_*_base`. This means that the time complexity of `push` is equivalent to the time complexity of `_push_*_base`. Here, `_push_*_base` calls two more functions, `_cap_height` and `_promote_level`. 
 
-For `_cap_height`,  it utilizes `ceiling` and `log` functions of `math.h` to calculate the maximum height of the skip list. Since these operations run at $O(1)$, we can expect that the time complexity for `_cap_height`, $T_\text{capHeight}$ , to be $O(1)$ worst case.
+For `_cap_height`,  it utilizes `clz` and basic arithmetic to calculate the maximum height of the skip list. Since these operations run at $O(1)$, we can expect that the time complexity for `_cap_height`, $T_\text{capHeight}$ , to be $O(1)$ worst case.
 
 Moreover,  `_promote_level` utilizes a while-loop to iterate through the maximum height of the skip list which is calculated at `_cap_height` to be $\lceil \lg n\rceil$, where n is the number of elements in the list. This means the loop will iterate for a maximum of $\lceil \lg n\rceil$ times. Since each iteration of the loop will run in constant time, $O(1)$, that would mean that the time complexity of `_promote_level` would be $O(\lg n)$ worst case. 
 
@@ -243,20 +243,17 @@ We can use the same logic for the while-loop inside `_push_*_base` as it travers
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
-$$
-T_\text{push} =T_\text{pushBase}= T_\text{capHeight}+T_\text{promote}+T_\text{while} \\
-=O(1)+O(1) \text{ expected} +O(1) \\
-T_{push} = O(1) \text{ expected} \\
-$$
+$$T_\text{push} =T_\text{pushBase}= T_\text{capHeight}+T_\text{promote}+T_\text{while}$$
+$$=O(1)+O(1) \text{ expected} +O(1)$$
+$$T_{push} = O(1) \text{ expected}$$
 
 Both push functions use similar algorithms, having almost the same functions and operations. Since there are no extra functions added and it only differs by a few constant time operations, they will have similar time complexities.
 
 Since $T_\text{push}=O(1)$ expected, $T_\text{init} = O(1)$ worst case, and $T_\text{loop} =O(\ell)$ worst case, we can conclude the following:
 
-$$
-T_\text{make} = T_\text{init} + T_\text{outer}+T_\text{loop}\cdot T_\text{push} \\
-= O(1) + O(1) + O(\ell)\cdot O(1) \text{ expected} \\
-T_\text{make} = O(l) \text{ expected}$$
+$$T_\text{make} = T_\text{init} + T_\text{outer}+T_\text{loop}\cdot T_\text{push}$$
+$$= O(1) + O(1) + O(\ell)\cdot O(1) \text{ expected}$$
+$$T_\text{make} = O(l) \text{ expected}$$
 
 $T_\text{loop}$ is multiplied to $T_\text{push}$ because for every iteration of $T_\text{loop}$ , `push` is called, thus the cost for each iteration of the loop to be $T_\text{push}$.
 
@@ -336,11 +333,9 @@ $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
 Solving the recurrence relation using *Master's Theorem*, we set $a=1$, $b=2$, critical point $p=0$, and $k=0$, where $O(n^k)$.  Since $p=k$, it falls into case 2 of the *Master's Theorem*. We get the following:
 
-$$
-T(n) = O(n^k+\log_b n) \\
-T(n)=O(n^0+\log_2n) \\ 
-T(n)=O(\log_2n)
-$$
+$$T(n) = O(n^k+\log_b n)$$
+$$T(n)=O(n^0+\log_2n)$$
+$$T(n)=O(\log_2n)$$
 
 Simplifying this further by standardizing the logarithmic function using the definition of big O, we get:
 
@@ -354,10 +349,8 @@ $$T_\text{L2}=O(\log n) \text{ expected}$$
 
 Thus, the total time complexity of `_get_node` is the following:
 
-$$
-T(n)=T_{L1}+T_{L2} \\
-=O(\log n) \text{ expected} +O(\log n) \text{expected}
-$$
+$$T(n)=T_{L1}+T_{L2}$$
+$$=O(\log n) \text{ expected} +O(\log n) \text{ expected}$$
 
 Simplifying this further, since $T_{L2}$ is somewhat of an upper bound of $T_{L1}$ due to its *expected* behavior, by definition of big O, we get the following:
 
@@ -414,7 +407,7 @@ Since $p=1$ and $k=0$, resulting in $k<p$, by Case 1 of the *Master's Theorem*, 
 
 $$T_{recursion} = O(\ell)$$
 
-**T<sub>main</sub>: \_construct_ptrees**. This function is where it all began. Analyzing the function, it is observed that the function creates a series of operations, similar to the aforementioned, that run in constant time, $O(1)$. Aside from this, it contains two function calls, $T_\text{L1}$ and $T_\text{recursion}$. 
+**T<sub>main</sub>: \_construct_ptrees**. This function is where it all begins. Analyzing the function, it is observed that the function creates a series of operations, similar to the aforementioned, that run in constant time, $O(1)$. Aside from this, it contains two function calls, $T_\text{L1}$ and $T_\text{recursion}$. 
 
 Focusing on the while-loop, it runs until $\text{current Start} > \text{upperBound}$, where $\text{currentStart}$ starts at $0$ and $\text{upperBound}$ starts at $\ell-1$. Here, $\text{currentStart}$ increments by a power of two. We can construct a working sequence of the while-loop to be the following for better visualization, where $c$ is $\text{currentStart}$ and $\ell$ is the length of the given sequence:
 
@@ -648,11 +641,9 @@ $$\\{q\\}_l=(2l_1-1)+(2l_2-1)+...$$
 So, if we were to write the memory complexity in terms of the given size of the sequence, $n$, it would have the following:
 
 
-$$
-S(n)=(2l_1-1)+(2l_2-1)+\dots \\
-S(n)=2(l_1+l_2+\dots)+(1+1+\dots) \\
-S(n)=O(2l)=O(2n)
-$$
+$$S(n)=(2l_1-1)+(2l_2-1)+\dots $$
+$$S(n)=2(l_1+l_2+\dots)+(1+1+\dots) $$
+$$S(n)=O(2l)=O(2n)$$
 
 
 This is because in the sequence of trees, the leaf nodes represent all the elements present in the given sequence. Thus, $l=n$.

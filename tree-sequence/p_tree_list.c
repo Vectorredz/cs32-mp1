@@ -1,12 +1,8 @@
 /*
-<< ------ ||
-// --------------------------------------------------------- >>
---//======================================================\\--
---|| DYNAMIC ARRAY: SEQUENCE OF PERFECT BINARY TREES
---||              [[ PHANTOM SEGMENT TREE ]]
---\\======================================================//--
-// --------------------------------------------------------- >>
-<< ------ ||
+
+-----------------------------------------------
+SEQUENCE OF PERFECT BINARY TREES
+-----------------------------------------------
 Perfect Binary Tree / Phantom Segment Tree
     The Perfect Binary Trees are represented by the struct PTree, which is a modified
     Segment Tree-esque data structure with a special property of having implicit bounds.
@@ -18,6 +14,8 @@ Perfect Binary Tree / Phantom Segment Tree
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
 // --------------------------------------------------------- >>
+#include <assert.h>
+#include <stdio.h>
 #include "p_tree_list.h"
 
 void DEFOREST(void* ptr){
@@ -25,17 +23,19 @@ void DEFOREST(void* ptr){
 }
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
+/*
+-----------------------------------------------
+HELPERS
+-----------------------------------------------
+*/
 
-            ||-- HELPERS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
-// Get the greatest power of two obtainable for a given number without exceeding it.
-// pow is the power of two, and k is the exponent
-void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
+/*
+This helper function returns the exponent of the greatest power of 2 at most the given number.
+Formally, it returns the largest k where 2^k <= number.
+For example, with n=22, its greatest power of two is 2^4=16, because 2^5=32 which exceeds it.
+It utilizes bitshifting for quick exponents.
+*/
+LENGTH _get_greatest_power_of_two(LENGTH num){
     LENGTH k = 0;
     LENGTH pow = 1;
     while (pow < num){
@@ -46,8 +46,7 @@ void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef){
         k++;
         pow = new;
     }
-    *powRef = pow;
-    *kRef = k;
+    return k;
 }
 
 /*
@@ -61,7 +60,7 @@ Then after the recursive calls, the resulting leaves would be {4, 5, 6, 7, 8, 9,
 
 Then, the caller receives the root node.
 */
-PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound){
+PTreeNode* _construct_ptree_nodes_from_range(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
     
     if ((upperBound-lowerBound+1) == 1){
@@ -72,8 +71,8 @@ PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGT
         newTreeNode->leaf = false;
 
         LENGTH mid = (upperBound+lowerBound)/2;
-        newTreeNode->left = _constructPTreeNodesFromRange(seq, seqIndexOffset, lowerBound, mid);
-        newTreeNode->right = _constructPTreeNodesFromRange(seq, seqIndexOffset, mid+1, upperBound);
+        newTreeNode->left = _construct_ptree_nodes_from_range(seq, seqIndexOffset, lowerBound, mid);
+        newTreeNode->right = _construct_ptree_nodes_from_range(seq, seqIndexOffset, mid+1, upperBound);
     }
     
     return newTreeNode;
@@ -81,11 +80,25 @@ PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGT
 
 /*
 This helper function is used exclusively for make().
-The point is to represent n as distinct powers of two, from highest to lowest.
-It achieves this by repetitively using _getGreatestPowerOfTwo and constructing a PTree for each remaining subsequence, until it exhausts the entire sequence.
+The point is to represent n as the sum of distinct powers of two, from highest to lowest.
+It achieves this by repetitively using _get_greatest_power_of_two and constructing a PTree for each remaining subsequence, until it exhausts the entire sequence.
+
+For example, we have a sequence of n=7
+{0, 1, 2, 3, 4, 5, 6}
+
+We can represent n as the sum of distinct powers of two:
+n = 2^2 + 2^1 + 2^0 = 4 + 2 + 1
+
+So, the sequence of k's would be {2, 1, 0}, and there would be three PTrees.
+The leaves of these three PTrees would contain the numbers:
+{0, 1, 2, 3}, {4, 5}, {6}.
+So, it satisfies the increasing and then decreasing sequence of k's requirement.
+
 After everything, it gives the caller the appropriate doubly-linked-list from head to tail.
 */
-void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef){
+void _construct_ptrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef){
+    assert(n > 0);
+
     PTreeListNode* head = NULL;
     PTreeListNode* tail = NULL;
     
@@ -97,14 +110,14 @@ void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNod
         It is possible that this PTree's bounds do not exhaust the entire subsequence at once,
         so we have a while loop to keep exhausting it until the very last element
         */
-        LENGTH l, k;
-        _getGreatestPowerOfTwo((upperBound-currentStart) + 1, &l, &k);
+        LENGTH k = _get_greatest_power_of_two((upperBound-currentStart) + 1);
+        LENGTH l = (LENGTH) 1 << k;
 
         // Construct a PTree for the appropriate subsequence
         PTree* ptree = (PTree*) malloc(sizeof(PTree));
         ptree->l = l;
         ptree->k = k;
-        ptree->root = _constructPTreeNodesFromRange(seq, currentStart, 0, l-1);
+        ptree->root = _construct_ptree_nodes_from_range(seq, currentStart, 0, l-1);
 
         // Usual doubly-linked-list linking of neighbors
         PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
@@ -127,23 +140,42 @@ void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNod
 }
 
 /*
-The star of the show -- this helper function's goal is to return the appropriate leaf node for a given index
+The star of the show -- these helper functions' goal is to return the appropriate leaf node for a given index
 Because the nodes themselves don't store their index, the function must calculate for the "phantom" index.
 That is, the function has to manually calculate the "offsets" and bounds themselves.
 The calculations of these offsets and bounds are only done on the needed nodes instead of every single node in every single tree,
 so search is brought down to O(logn).
+It utilizes the l member of the PTree to calculate for offsets along the doubly-linked-list (horizontal) as it traverses from left to right.
+Then, it shifts the current recorded lowerBound and upperBound as it traverses down the tree (vertical).
 */
-PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
-    if (list->n == 0){
-        return NULL;
+
+// This is for the vertical search (the correct PTree was already found)
+PTreeNode* _get_leaf_node(PTreeNode* node, LENGTH i, LENGTH lowerBound, LENGTH upperBound){
+    if (node->leaf == true){
+        assert(lowerBound == upperBound);
+        return node;
     }
+
+    /*
+    The appropriate bounds for the LeftChild and RightChild are:
+    [lowerBound, mid] OR [mid+1, upperBound]
+    So we check if the index is in either one, and update the bounds appropriately.
+    */
+    LENGTH mid = (upperBound+lowerBound)/2;
+    if (lowerBound <= i && i <= mid) {
+        return _get_leaf_node(node->left, i, lowerBound, mid);
+    } else {
+        return _get_leaf_node(node->right, i, mid + 1, upperBound);
+    }
+}
+
+// This is for the horizontal search (it aims to find the correct PTree first before vertical search)
+PTreeNode* _get_leaf_node_at_index(PTreeList* list, LENGTH i){
     PTreeListNode* currentListNode = list->head;
     LENGTH offset = 0;
 
     while (currentListNode != NULL){
-        
         PTree* ptree = currentListNode->ptree;
-        PTreeNode* currentTreeNode = ptree->root;
 
         /*
         Get the appropriate bounds for our current PTree
@@ -153,80 +185,16 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
         LENGTH lowerBound = offset;
         LENGTH upperBound = offset + ptree->l - 1;
 
-        // Base case: the PTree itself is of type 0, so the root node *is* the leaf
-        if (currentTreeNode->leaf == true){
-            // If it's the appropriate index, then we have found our leaf node.
-            if (lowerBound == i){
-                return currentTreeNode;
-
-            // If not, then move to the next tree, updating the offset in the process.
-            } else {
-                offset++;
-                currentListNode = currentListNode->next;
-                continue;
-            }
-        
-        /*
-        If the index we're trying to find isn't part of the appropriate bounds,
-        then we know for sure that it isn't part of this PTree.
-        */
-        } else {
-            if (!(lowerBound <= i && i <= upperBound)){
-                offset += ptree->l;
-                currentListNode = currentListNode->next;
-                continue;
-            }
+        // Found correct tree, start vertical search
+        if (lowerBound <= i && i <= upperBound){
+            return _get_leaf_node(ptree->root, i, lowerBound, upperBound);
         }
 
-        /*
-        Now we know that the leaf *must* be in this PTree, and that it's of type k > 0.
-        We know proceed with our search akin to a normal Segment Tree, manually updating the bounds in the process.
-        */
-
-        /*
-        This while loop's expression is actually useless because in the loop, it already checks
-        if the children are leaf nodes and immediately returns,
-        but I put it here just in case.
-        */
-        while (currentTreeNode->leaf == false){
-            PTreeNode* leftChild = currentTreeNode->left;
-            PTreeNode* rightChild = currentTreeNode->right;
-
-            /*
-            Since it's a perfect binary tree,
-            we know for sure that if the LeftChild is a leaf, then so is the RightChild.
-            */
-            if (leftChild->leaf == true){
-                /*
-                These two children are adjacent indices, and since we know the index is within either one of these two,
-                then it's either one or the other.
-                And voila, we have found the correct leaf.
-                */
-                if (lowerBound == i){
-                    return leftChild;
-                } else {
-                    return rightChild;
-                }
-
-            
-            // If it's not a leaf node, then we keep searching for the appropriate child to traverse to.
-            } else {
-                /*
-                The appropriate bounds for the LeftChild and RightChild are:
-                [lowerBound, mid] OR [mid+1, upperBound]
-                So we check if the index is in either one, and update the bounds appropriately.
-                */
-                LENGTH mid = (upperBound+lowerBound)/2;
-                if (lowerBound <= i && i <= mid) {
-                    upperBound = mid;
-                    currentTreeNode = leftChild;
-                } else {
-                    lowerBound = mid + 1;
-                    currentTreeNode = rightChild;
-                }
-            }
-        }
+        // Did not find correct tree
+        offset += ptree->l;
+        currentListNode = currentListNode->next;
     }
+    assert(false);
     return NULL;
 }
 
@@ -234,7 +202,7 @@ PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i){
 The purpose of this helper function is to construct a PTree of type 0,
 with the given DATA value as its root (leaf)'s value.
 */
-PTree* _constructZeroPTree(DATA v){
+PTree* _construct_zero_ptree(DATA v){
     PTreeNode* newTreeNode = (PTreeNode*) malloc(sizeof(PTreeNode));
     newTreeNode->leaf = true;
     newTreeNode->data = v;
@@ -249,16 +217,24 @@ PTree* _constructZeroPTree(DATA v){
 
 /*
 Here we have helper functions for merging non-distinct PTrees together, split into two: one for merging to the left, and one for merging to the right.
-PTrees are non-distinct if their type is the same, which means they can be combined into one greater power of two,
-improving the running time of the get/set operations, satisfying the concatenation of a strictly increasing and strictly decreasing
-sequence of k's, and overall preventing the degenerate representation of n PTrees of type 0.
-
 It is inspired by binomial heap's merge operation.
-Given a starting doubly-linked-list node, we proceed to the right (left),
-and if our current PTree's type is the same as the next PTree, then we construct a third PTree containing their two roots as children.
-We know that this is of type k+1, and contains l*2 leaf nodes.
+
+It aims to correct the list into satisfying the concatenation of a strictly increasing and strictly decreasing
+sequence of k's. After a push/pop operation, there may be some PTrees that are non-distinct (that is, their k's (types) are the same.)
+This means that we can combine these two trees into one bigger tree, with type k+1.
+
+We are given a sequence of PTrees as a doubly-linked-list. We start at some node in this list and proceed to the right (left).
+If our current PTree's type is the same as the next PTree, then we construct a third PTree containing their two roots as children.
+(We know that this is of type k+1, and contains l*2 leaf nodes.)
+By assumption, we know that all the PTrees further than the current and next PTree already have
+distinct k's (distinct types) when this function was called.
+By "merging" these two PTrees together, one of two conditions can happen:
+- this new larger PTree has a different k from the next one.
+- this new larger PTree has the same k as the next one, so we can combine them both into one even bigger PTree.
+The function will keep merging to the right (left) until it falls into the first condition, which means it finished correcting the list's sequence of k's,
+since any PTree further than the two being checked are already distinct by assumption.
 */
-void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
+void _merge_non_distinct_ptrees_to_right(PTreeList* list, PTreeListNode* startNode){
     // Base case: there's 0 or 1 PTrees, so we don't need to do anything.
     if (list->n <= 1){
         return;
@@ -319,8 +295,8 @@ void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode){
         nextListNode = currentListNode->next;
     }
 }
-// Exactly the same as _mergeNonDistinctPTreesToRight, but the traversal is mirrored.
-void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode){
+// Exactly the same as _merge_non_distinct_ptrees_to_right, but the traversal is mirrored.
+void _merge_non_distinct_ptrees_to_left(PTreeList* list, PTreeListNode* startNode){
     if (list->n <= 1){
         return;
     }
@@ -380,9 +356,12 @@ So, its purpose is to "wrap open" the PTree back into a sequence of PTrees.
 It does this by snipping off the right (left) subtree and making it its own doubly-linked-list node sub-list.
 Then the other leftover left (right) child is deallocated and removed from the list entirely.
 Each successive right (left) subtree is of type k-1 and l/2.
+
+Note that we assume the given PTree for this helper is of type k > 0, since if the PTree is of type 0, then it can just
+be immediately removed from the list without any repercussions (it's a single leaf, which is already our target for removal.)
 After everything, it gives the caller the appropriate sublist of right-child (left-child) PTrees.
 */
-void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
+void _cascade_remove_left(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
 
@@ -428,8 +407,8 @@ void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode
     *subHeadRef = subHead;
     *subTailRef = subTail;
 }
-// Exactly the same as _cascadeRemovalLeft, but the traversal is mirrored.
-void _cascadeRemovalRight(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
+// Exactly the same as _cascade_remove_left, but the traversal is mirrored.
+void _cascade_remove_right(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef){
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
 
@@ -478,7 +457,7 @@ It is useful for peek_left/peek_right operations.
 It does this by getting the leftmost (rightmost) PTree and traversing all the way to the leftmost (rightmost) leaf node,
 and finally updating the value.
 */
-void _peekABoo(PTreeList* list){
+void _peek_a_boo(PTreeList* list){
     if (list->n == 0){
         return;
     }
@@ -503,7 +482,7 @@ A set of 4 helper functions to make doing the correct "true" operation whether t
 */
 void _push_left_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (also leaf)
-    PTree* ptree = _constructZeroPTree(v);
+    PTree* ptree = _construct_zero_ptree(v);
 
     // Add to left of list
     PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
@@ -520,7 +499,7 @@ void _push_left_base(PTreeList* list, DATA v){
     (list->n)++;
 
     // Fix non-distinct types
-    _mergeNonDistinctPTreesToRight(list, list->head);
+    _merge_non_distinct_ptrees_to_right(list, list->head);
 
     // Update left (update right too if new tail)
     list->leftmost = v;
@@ -531,7 +510,7 @@ void _push_left_base(PTreeList* list, DATA v){
 // Exactly the same as _push_left_base, but operations are mirrored.
 void _push_right_base(PTreeList* list, DATA v){
     // Construct a PTree of type 0 with the new data as root (which is also a leaf)
-    PTree* ptree = _constructZeroPTree(v);
+    PTree* ptree = _construct_zero_ptree(v);
     PTreeListNode* newListNode = (PTreeListNode*) malloc(sizeof(PTreeListNode));
     newListNode->ptree = ptree;
     newListNode->next = NULL;
@@ -545,7 +524,7 @@ void _push_right_base(PTreeList* list, DATA v){
     }
     (list->n)++;
 
-    _mergeNonDistinctPTreesToLeft(list, list->tail);
+    _merge_non_distinct_ptrees_to_left(list, list->tail);
     list->rightmost = v;
     if (list->n == 1){
         list->leftmost = v;
@@ -574,14 +553,14 @@ bool _pop_left_base(PTreeList* list){
         DEFOREST(oldHead);
 
         // Update both just in case
-        _peekABoo(list);
+        _peek_a_boo(list);
         return true;
     }
     
     // If its of type k > 0, then we must cascade
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
-    _cascadeRemovalLeft(leftPTree, &subHead, &subTail);
+    _cascade_remove_left(leftPTree, &subHead, &subTail);
 
     // Update the list appropriately with the new sublist
     PTreeListNode* oldHead = list->head;
@@ -597,10 +576,10 @@ bool _pop_left_base(PTreeList* list){
     DEFOREST(oldHead);
 
     // Fix non-distinct types (start from furthest in the list, since we know all the cascaded right sub-trees are distinct)
-    _mergeNonDistinctPTreesToRight(list, subTail);
+    _merge_non_distinct_ptrees_to_right(list, subTail);
 
     // Update both just in case
-    _peekABoo(list);
+    _peek_a_boo(list);
     return true;
 }
 // Exactly the same as _pop_left_base, but operations are mirrored.
@@ -623,13 +602,13 @@ bool _pop_right_base(PTreeList* list){
         DEFOREST(oldTail->ptree);
         DEFOREST(oldTail);
 
-        _peekABoo(list);
+        _peek_a_boo(list);
         return true;
     }
 
     PTreeListNode* subHead = NULL;
     PTreeListNode* subTail = NULL;
-    _cascadeRemovalRight(rightPTree, &subHead, &subTail);
+    _cascade_remove_right(rightPTree, &subHead, &subTail);
     PTreeListNode* oldTail = list->tail;
     if (list->head == oldTail){
         list->head = subHead;
@@ -642,19 +621,17 @@ bool _pop_right_base(PTreeList* list){
     list->tail = subTail;
     DEFOREST(oldTail);
 
-    _mergeNonDistinctPTreesToLeft(list, subHead);
-    _peekABoo(list);
+    _merge_non_distinct_ptrees_to_left(list, subHead);
+    _peek_a_boo(list);
     return true;
 }
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
-
-            ||-- MAIN OPERATIONS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
+/*
+-----------------------------------------------
+MAIN OPERATIONS
+-----------------------------------------------
+*/
 
 // Init
 PTreeList* make(LENGTH n, DATA* seq){
@@ -663,7 +640,7 @@ PTreeList* make(LENGTH n, DATA* seq){
     PTreeListNode* head = NULL;
     PTreeListNode* tail = NULL;
     if (n > 0){
-        _constructPTrees(n, seq, &head, &tail);
+        _construct_ptrees(n, seq, &head, &tail);
         list->leftmost = seq[0];
         list->rightmost = seq[n-1];
     }
@@ -689,16 +666,19 @@ bool empty(PTreeList* list){
 // Getters/Setters
 DATA get(PTreeList* list, LENGTH i){
     if (!(0 <= i && i < list->n)){
-        return 0;
+        fprintf(stderr, "\nError: index is out of bounds!\n");
+        exit(1);
     }
-    return _getLeafNodeAtIndex(list, list->reversed == false ? i : (list->n)-1-i)->data;
+    return _get_leaf_node_at_index(list, list->reversed == false ? i : (list->n)-1-i)->data;
 }
 void set(PTreeList* list, LENGTH i, DATA v){
     if (!(0 <= i && i < list->n)){
-        return;
+        fprintf(stderr, "\nError: index is out of bounds!\n");
+        exit(1);
     }
+    
     LENGTH trueIndex = list->reversed == false ? i : (list->n)-1-i;
-    _getLeafNodeAtIndex(list, trueIndex)->data = v;
+    _get_leaf_node_at_index(list, trueIndex)->data = v;
     if (trueIndex == 0){
         list->leftmost = v;
     }
@@ -708,13 +688,15 @@ void set(PTreeList* list, LENGTH i, DATA v){
 }
 DATA peek_left(PTreeList* list){
     if (list->n == 0){
-        return 0;
+        fprintf(stderr, "\nError: peek is not allowed if size is 0!\n");
+        exit(1);
     }
     return list->reversed == false ? list->leftmost : list->rightmost;
 }
 DATA peek_right(PTreeList* list){
     if (list->n == 0){
-        return 0;
+        fprintf(stderr, "\nError: peek is not allowed if size is 0!\n");
+        exit(1);
     }
     return list->reversed == false ? list->rightmost : list->leftmost;
 }
@@ -734,17 +716,15 @@ bool pop_right(PTreeList* list){
 }
 
 
-// --------------------------------------------------------- >>
-/* ----------------------------------------- <<
+/*
+-----------------------------------------------
+TEST OPERATIONS
+-----------------------------------------------
+*/
 
-            ||-- TEST OPERATIONS --||
-
-<< ----------------------------------------- */
-// --------------------------------------------------------- >>
-
-void _getLeaves(PTreeNode* node, DATA* seq, LENGTH* iRef){
+void _get_leaf_data(PTreeNode* node, DATA* seq, LENGTH* iRef){
     if (node->leaf == false){
-        _getLeaves(node->left, seq, iRef);
+        _get_leaf_data(node->left, seq, iRef);
     }
     if (node->leaf == true){
         seq[*iRef] = node->data;
@@ -752,7 +732,7 @@ void _getLeaves(PTreeNode* node, DATA* seq, LENGTH* iRef){
         return;
     }
     if (node->leaf == false){
-        _getLeaves(node->right, seq, iRef);
+        _get_leaf_data(node->right, seq, iRef);
     }
 }
 void TEST_elements(PTreeList* list, LENGTH* nRef, DATA** seqRef){
@@ -760,7 +740,7 @@ void TEST_elements(PTreeList* list, LENGTH* nRef, DATA** seqRef){
     LENGTH i = 0;
     PTreeListNode* currentListNode = list->head;
     while (currentListNode != NULL){
-        _getLeaves(currentListNode->ptree->root, seq, &i);
+        _get_leaf_data(currentListNode->ptree->root, seq, &i);
         currentListNode = currentListNode->next;
     }
     *nRef = list->n;
@@ -795,14 +775,5 @@ bool TEST_internal(PTreeList* list){
 bool TEST_reversed(PTreeList* list){
     return list->reversed;
 }
-
-
-
-
-
-
-
-
-
 
 // :)

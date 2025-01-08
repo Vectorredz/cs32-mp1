@@ -52,17 +52,18 @@ typedef struct _PTreeList {
 // Helpers
 void DEFOREST(void* ptr);
 
-void _getGreatestPowerOfTwo(LENGTH num, LENGTH* powRef, LENGTH* kRef);
-PTreeNode* _constructPTreeNodesFromRange(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound);
-void _constructPTrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef);
-PTreeNode* _getLeafNodeAtIndex(PTreeList* list, LENGTH i);
+LENGTH _get_greatest_power_of_two(LENGTH num);
+PTreeNode* _construct_ptree_nodes_from_range(DATA* seq, LENGTH seqIndexOffset, LENGTH lowerBound, LENGTH upperBound);
+void _construct_ptrees(LENGTH n, DATA* seq, PTreeListNode** headRef, PTreeListNode** tailRef);
+PTreeNode* _get_leaf_node(PTreeNode* node, LENGTH i, LENGTH lowerBound, LENGTH upperBound);
+PTreeNode* _get_leaf_node_at_index(PTreeList* list, LENGTH i);
 
-PTree* _constructZeroPTree(DATA v);
-void _mergeNonDistinctPTreesToRight(PTreeList* list, PTreeListNode* startNode);
-void _mergeNonDistinctPTreesToLeft(PTreeList* list, PTreeListNode* startNode);
-void _cascadeRemovalLeft(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
-void _cascadeRemovalRight(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
-void _peekABoo(PTreeList* list);
+PTree* _construct_zero_ptree(DATA v);
+void _merge_non_distinct_ptrees_to_right(PTreeList* list, PTreeListNode* startNode);
+void _merge_non_distinct_ptrees_to_left(PTreeList* list, PTreeListNode* startNode);
+void _cascade_remove_left(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
+void _cascade_remove_right(PTree* ptree, PTreeListNode** subHeadRef, PTreeListNode** subTailRef);
+void _peek_a_boo(PTreeList* list);
 
 void _push_left_base(PTreeList* list, DATA v);
 void _push_right_base(PTreeList* list, DATA v);
