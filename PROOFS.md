@@ -85,10 +85,8 @@ Now, looking within the while loop, since the loop will run at most an $n$ amoun
 
 Now, combining both recurrences, we get:
 
-$$
-T(n)=T_{outer}+T_{loop} \\
-= O(1)+O(n) 
-$$
+$$T(n)=T_{outer}+T_{loop} $$
+$$= O(1)+O(n)$$
 
 
 Which can be simplified, by definition of Big O, to $O(n)$.
@@ -243,20 +241,17 @@ We can use the same logic for the while-loop inside `_push_*_base` as it travers
 
 Combining all these time complexities, we get the following time complexity for the `push` operation:
 
-$$
-T_\text{push} =T_\text{pushBase}= T_\text{capHeight}+T_\text{promote}+T_\text{while} \\
-=O(1)+O(1) \text{ expected} +O(1) \\
-T_{push} = O(1) \text{ expected} \\
-$$
+$$T_\text{push} =T_\text{pushBase}= T_\text{capHeight}+T_\text{promote}+T_\text{while}$$
+$$=O(1)+O(1) \text{ expected} +O(1)$$
+$$T_{push} = O(1) \text{ expected}$$
 
 Both push functions use similar algorithms, having almost the same functions and operations. Since there are no extra functions added and it only differs by a few constant time operations, they will have similar time complexities.
 
 Since $T_\text{push}=O(1)$ expected, $T_\text{init} = O(1)$ worst case, and $T_\text{loop} =O(\ell)$ worst case, we can conclude the following:
 
-$$
-T_\text{make} = T_\text{init} + T_\text{outer}+T_\text{loop}\cdot T_\text{push} \\
-= O(1) + O(1) + O(\ell)\cdot O(1) \text{ expected} \\
-T_\text{make} = O(l) \text{ expected}$$
+$$T_\text{make} = T_\text{init} + T_\text{outer}+T_\text{loop}\cdot T_\text{push}$$
+$$= O(1) + O(1) + O(\ell)\cdot O(1) \text{ expected}$$
+$$T_\text{make} = O(l) \text{ expected}$$
 
 $T_\text{loop}$ is multiplied to $T_\text{push}$ because for every iteration of $T_\text{loop}$ , `push` is called, thus the cost for each iteration of the loop to be $T_\text{push}$.
 
@@ -336,11 +331,9 @@ $$T(n) = T\left(\frac{n}{2}\right)+O(1)$$
 
 Solving the recurrence relation using *Master's Theorem*, we set $a=1$, $b=2$, critical point $p=0$, and $k=0$, where $O(n^k)$.  Since $p=k$, it falls into case 2 of the *Master's Theorem*. We get the following:
 
-$$
-T(n) = O(n^k+\log_b n) \\
-T(n)=O(n^0+\log_2n) \\ 
-T(n)=O(\log_2n)
-$$
+$$T(n) = O(n^k+\log_b n)$$
+$$T(n)=O(n^0+\log_2n)$$
+$$T(n)=O(\log_2n)$$
 
 Simplifying this further by standardizing the logarithmic function using the definition of big O, we get:
 
@@ -354,10 +347,8 @@ $$T_\text{L2}=O(\log n) \text{ expected}$$
 
 Thus, the total time complexity of `_get_node` is the following:
 
-$$
-T(n)=T_{L1}+T_{L2} \\
-=O(\log n) \text{ expected} +O(\log n) \text{expected}
-$$
+$$T(n)=T_{L1}+T_{L2}$$
+$$=O(\log n) \text{ expected} +O(\log n) \text{ expected}$$
 
 Simplifying this further, since $T_{L2}$ is somewhat of an upper bound of $T_{L1}$ due to its *expected* behavior, by definition of big O, we get the following:
 
@@ -648,11 +639,9 @@ $$\\{q\\}_l=(2l_1-1)+(2l_2-1)+...$$
 So, if we were to write the memory complexity in terms of the given size of the sequence, $n$, it would have the following:
 
 
-$$
-S(n)=(2l_1-1)+(2l_2-1)+\dots \\
-S(n)=2(l_1+l_2+\dots)+(1+1+\dots) \\
-S(n)=O(2l)=O(2n)
-$$
+$$S(n)=(2l_1-1)+(2l_2-1)+\dots $$
+$$S(n)=2(l_1+l_2+\dots)+(1+1+\dots) $$
+$$S(n)=O(2l)=O(2n)$$
 
 
 This is because in the sequence of trees, the leaf nodes represent all the elements present in the given sequence. Thus, $l=n$.
